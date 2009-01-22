@@ -1,23 +1,29 @@
-#include "XyDiff/include/XyDelta_FileInterface.hpp"
+#include "include/XyDelta_FileInterface.hpp"
 
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/include/XyUTF8Str.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
+#include "include/XyLatinStr.hpp"
+#include "include/XyUTF8Str.hpp"
+#include "include/XID_map.hpp"
+#include "include/XID_DOMDocument.hpp"
 
-#include "XyDiff/DeltaApply.hpp"
-#include "XyDiff/DOMPrint.hpp"
-#include "XyDiff/CommonSubSequenceAlgorithms.hpp"
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/Diff_NodesManager.hpp"
-#include "XyDiff/Diff_DeltaConstructor.hpp"
-#include "XyDiff/Diff_UniqueIdHandler.hpp"
-#include "XyDiff/DeltaException.hpp"
-#include "XyDiff/DeltaManager.hpp"
+#include "DeltaApply.hpp"
+#include "DOMPrint.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
+#include "Tools.hpp"
+#include "Diff_NodesManager.hpp"
+#include "Diff_DeltaConstructor.hpp"
+#include "Diff_UniqueIdHandler.hpp"
+#include "DeltaException.hpp"
+#include "DeltaManager.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMNodeList.hpp"
 #include "xercesc/dom/DOMElement.hpp"
+#include "xercesc/dom/DOMLSOutput.hpp"
+#include "xercesc/dom/DOMLSSerializer.hpp"
+#include "xercesc/dom/DOMLSOutput.hpp"
+#include "xercesc/dom/DOMImplementationLS.hpp"
+#include "xercesc/dom/DOMImplementationRegistry.hpp"
+#include "xercesc/dom/DOMException.hpp"
 #include "xercesc/validators/DTD/DTDValidator.hpp"
 
 
@@ -140,7 +146,7 @@ void XyDelta::ApplyDelta(const char *incDeltaName, unsigned int backwardNumber) 
  }
 
 // From ComputeDelta.cpp
-XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_2_2::DTDValidator *dtdValidator=NULL);
+XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_3_0::DTDValidator *dtdValidator=NULL);
 
 // called by main() in execComputeDelta.cpp
 
@@ -199,7 +205,42 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 
 	{
 	std::ofstream flux(deltafilename); 
-	flux << *delta << std::endl;
+	
+	// Old:flux << *delta << std::endl;
+	// Start changes
+	XMLCh tempStr[100];
+	xercesc_3_0::XMLString::transcode("LS", tempStr, 99);
+	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(tempStr);
+	xercesc_3_0::DOMLSSerializer* theSerializer = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSSerializer();
+
+	if (theSerializer->getDomConfig()->canSetParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, false))
+		theSerializer->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, false);
+	
+	
+	try {
+          // do the serialization through DOMLSSerializer::writeToString();
+		XMLCh * serializedString = theSerializer->writeToString((xercesc_3_0::DOMNode*)delta->getDocumentElement());
+		flux << xercesc_3_0::XMLString::transcode(serializedString) << std::endl;
+      }
+      catch (const xercesc_3_0::XMLException& toCatch) {
+          char* message = xercesc_3_0::XMLString::transcode(toCatch.getMessage());
+          std::cout << "Exception message is: \n"
+               << message << "\n";
+          xercesc_3_0::XMLString::release(&message);
+      }
+      catch (const xercesc_3_0::DOMException& toCatch) {
+          char* message = xercesc_3_0::XMLString::transcode(toCatch.msg);
+          std::cout << "Exception message is: \n"
+               << message << "\n";
+          xercesc_3_0::XMLString::release(&message);
+      }
+      catch (...) {
+          std::cout << "Unexpected Exception \n" ;
+      }
+
+	theSerializer->release();
+	
+	// End changes
 	}
 
 	clocksSaveDelta += rdtsc() - start ;
@@ -306,7 +347,7 @@ void XyDelta::XyLoadAndDiff(const char *versionFile , const char *deltaFile){
 		// Use DeltaManger: addDeltaElement and then SaveToDisk()
 		// Also set a fromVersionId and toVersionId using DeltaManager
 	
-        xercesc_2_2::DOMNode* deltaNode = delta->getDocumentElement()->getFirstChild();
+        xercesc_3_0::DOMNode* deltaNode = delta->getDocumentElement()->getFirstChild();
 		if ( dm.addDeltaElement(deltaNode, versionFile) == 0 ) {
 			dm.SaveToDisk();
 			dm.listAllDeltas();
@@ -362,7 +403,7 @@ int SpinProject::RunDiff(const char *openFileV0, const char *openFileV1, const c
   XyDelta::XyDiff(openFileV0, openFileV1, saveDeltaV0V1);
   
 	XID_DOMDocument *doc0 = new XID_DOMDocument(openFileV0);
-	xercesc_2_2::DOMNode* root = doc0->getDocumentElement();
+	xercesc_3_0::DOMNode* root = doc0->getDocumentElement();
 	if (root!=NULL) Restricted::XidTagSubtree(doc0, root);
 	doc0->SaveAs(saveFileV0, false);                                    
 

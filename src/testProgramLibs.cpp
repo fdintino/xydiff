@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "XyDiff/include/XID_DOMDocument.hpp"
-#include "XyDiff/include/XyDelta_DOMInterface.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
+#include "include/XID_DOMDocument.hpp"
+#include "include/XyDelta_DOMInterface.hpp"
+#include "include/XyLatinStr.hpp"
 
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMDocument.hpp"
@@ -130,21 +130,21 @@ int main(int argc, char *argv[]) {
 			XID_DOMDocument doc1(file1, true);
 			XID_DOMDocument doc2(file2, false);
 			previousXidmap = doc1.getXidMap().String();
-			xercesc_2_2::DOMDocument *delta = XyDelta::XyDiff(doc1.getDOMDocumentOwnership(), file1, doc2.getDOMDocumentOwnership(), file2, moretest?NULL:previousXidmap.c_str());
+			xercesc_3_0::DOMDocument *delta = XyDelta::XyDiff(doc1.getDOMDocumentOwnership(), file1, doc2.getDOMDocumentOwnership(), file2, moretest?NULL:previousXidmap.c_str());
 			if (delta==NULL) {
 				fprintf(stderr, "ERROR: XyDelta::XyDiff\n");
 				exit(-1);
 			}
-			xercesc_2_2::DOMElement *t = (xercesc_2_2::DOMElement*)(delta->getDocumentElement()->getLastChild());
+			xercesc_3_0::DOMElement *t = (xercesc_3_0::DOMElement*)(delta->getDocumentElement()->getLastChild());
 			if (!t) {
 				fprintf(stderr, "ERROR: Could not get <t> node in the delta\n");
 				exit(-1);
 			}
-			if (!xercesc_2_2::XMLString::equals(t->getNodeName(), L"t")) {
+			if (!xercesc_3_0::XMLString::equals(t->getNodeName(), xercesc_3_0::XMLString::transcode("t"))) {
 				fprintf(stderr, "ERROR: Could not get <t> node in the delta (reason #2)\n");
 				exit(-1);
 			}
-			XyLatinStr myXidmap(t->getAttribute(L"toXidMap"));
+			XyLatinStr myXidmap(t->getAttribute(xercesc_3_0::XMLString::transcode("toXidMap")));
 			previousXidmap = myXidmap.localForm();
 			fprintf(stderr, "found new xidmap: %s\n", previousXidmap.c_str());
 

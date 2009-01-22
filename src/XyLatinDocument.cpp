@@ -1,5 +1,5 @@
-#include "XyDiff/include/XyLatinDocument.hpp"
-#include "XyDiff/include/XyStr.hpp"
+#include "include/XyLatinDocument.hpp"
+#include "include/XyStr.hpp"
 
 #include "xercesc/sax/SAXParseException.hpp"
 #include "xercesc/sax/Locator.hpp"
@@ -32,14 +32,14 @@ XyLatinDocument::XyLatinDocument(const char * const toTranscode, int size, const
 
 const char* XyLatinDocument::localForm() {
 	if ((fLocalForm==NULL)&&(fWideForm)) {
-		XyStr::transcodeFromUTF32_andReplaceXmlHeader(fWideForm, fWideFormSize, "ISO-8859-15", &fLocalForm, &fLocalFormSize);
+		XyStr::transcodeFromUTF32_andReplaceXmlHeader(fWideForm, fWideFormSize, "ISO-8859-1", &fLocalForm, &fLocalFormSize);
 	}
 	return fLocalForm;
 }
 
 const XMLCh* XyLatinDocument::wideForm() {
 	if ((fWideForm==NULL)&&(fLocalForm)) {
-		XyStr::transcodeToUTF32(fLocalForm, fLocalFormSize, "ISO-8859-15", &fWideForm, &fWideFormSize);
+		XyStr::transcodeToUTF32(fLocalForm, fLocalFormSize, "ISO-8859-1", &fWideForm, &fWideFormSize);
 	}
 	return fWideForm;
 }

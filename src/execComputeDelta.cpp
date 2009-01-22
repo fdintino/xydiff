@@ -1,8 +1,8 @@
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XyDelta_FileInterface.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/DeltaException.hpp"
+#include "Tools.hpp"
+#include "include/XID_map.hpp"
+#include "include/XyDelta_FileInterface.hpp"
+#include "include/XyLatinStr.hpp"
+#include "DeltaException.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"
@@ -101,9 +101,9 @@ int main(int argc, char **argv) {
 		}
 	
 	try {
-    xercesc_2_2::XMLPlatformUtils::Initialize();
+    xercesc_3_0::XMLPlatformUtils::Initialize();
     }
-  catch(const xercesc_2_2::XMLException& toCatch) {
+  catch(const xercesc_3_0::XMLException& toCatch) {
     std::cerr << "Error during Xerces-c Initialization.\n" << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
     }
 
@@ -145,9 +145,11 @@ int main(int argc, char **argv) {
 		exit(-1);
 		}
 		
-	catch( const xercesc_2_2::DOMException &e ) {
+	catch( const xercesc_3_0::DOMException &e ) {
 		std::cerr << "DOMException, code=" << e.code << std::endl ;
-		std::cerr << "DOMException, message=" << e.msg << std::endl ;
+		char * tmpChar = xercesc_3_0::XMLString::transcode(e.msg);
+		std::cerr << "DOMException, message=" << tmpChar << std::endl ;
+		xercesc_3_0::XMLString::release(&tmpChar);
 		exit(-1);
 		}	
 	

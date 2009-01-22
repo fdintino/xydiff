@@ -1,9 +1,9 @@
 #ifndef DIFF_DELTACONSTRUCTOR_HXX
 #define DIFF_DELTACONSTRUCTOR_HXX
 
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
+#include "Tools.hpp"
+#include "include/XID_map.hpp"
+#include "include/XID_DOMDocument.hpp"
 
 #include <string>
 #include <vector>
@@ -29,7 +29,7 @@ class DeltaConstructor {
 		void ConstructDeleteScript( int v0nodeID, bool ancestorDeleted ) ;
 		void ConstructInsertScript( int v1nodeID, bool ancestorInserted ) ;
 		void AddAttributeOperations( int v1nodeID ) ;
-		xercesc_2_2::DOMNode* deltaDoc_ImportInsertTree( int v1nodeID, std::vector<XID_t> &xidList );
+		xercesc_3_0::DOMNode* deltaDoc_ImportInsertTree( int v1nodeID, std::vector<XID_t> &xidList );
 
 		XID_DOMDocument *v0XML, *v1XML ;
 		std::string v0filename, v1filename ;
@@ -39,7 +39,7 @@ class DeltaConstructor {
 		int moveCount, updateCount ;
 
 		XID_DOMDocument* deltaDoc ;
-		xercesc_2_2::DOMNode*        scriptRoot ;
+		xercesc_3_0::DOMNode*        scriptRoot ;
 	
 		bool ignoreUnimportantData ;
 	} ;

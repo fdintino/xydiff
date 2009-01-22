@@ -42,11 +42,11 @@ std::ostream& operator << (std::ostream& target, const VersionManagerException &
  *
  */
 
-int getPosition(xercesc_2_2::DOMNode *parent, xercesc_2_2::DOMNode *child) ;
+int getPosition(xercesc_3_0::DOMNode *parent, xercesc_3_0::DOMNode *child) ;
 
 /* Test if document is a delta */
 
-bool isDelta(const xercesc_2_2::DOMDocument *doc) ;
+bool isDelta(const xercesc_3_0::DOMDocument *doc) ;
 
 /* Pentium Internal Timer */
 

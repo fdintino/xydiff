@@ -1,5 +1,5 @@
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
+#include "Tools.hpp"
+#include "include/XyLatinStr.hpp"
 
 #include <iostream>
 #include "xercesc/util/XMLUni.hpp"
@@ -16,10 +16,10 @@
 //
 //--------------------------------------------------------------------------
 
-int getPosition(xercesc_2_2::DOMNode *parent, xercesc_2_2::DOMNode *child) {
+int getPosition(xercesc_3_0::DOMNode *parent, xercesc_3_0::DOMNode *child) {
   int pos = 1;
 	if (!parent->hasChildNodes()) throw VersionManagerException("getPosition()", "Parent has no child") ;
-  xercesc_2_2::DOMNode* test = parent->getFirstChild();
+  xercesc_3_0::DOMNode* test = parent->getFirstChild();
   while (test!=child) {
     test=test->getNextSibling();
     pos++;
@@ -34,11 +34,11 @@ int getPosition(xercesc_2_2::DOMNode *parent, xercesc_2_2::DOMNode *child) {
 //
 //--------------------------------------------------------------------------
 
-bool isDelta(const xercesc_2_2::DOMDocument *doc) {
+bool isDelta(const xercesc_3_0::DOMDocument *doc) {
 	if ((doc!=NULL)&&(doc->hasChildNodes())) {
-		xercesc_2_2::DOMElement* docRoot = doc->getDocumentElement() ;
+		xercesc_3_0::DOMElement* docRoot = doc->getDocumentElement() ;
 		if (docRoot!=NULL) {
-        	        if (xercesc_2_2::XMLString::equals(docRoot->getNodeName(), L"unit_delta")) {
+        	        if (xercesc_3_0::XMLString::equals(docRoot->getNodeName(), xercesc_3_0::XMLString::transcode("unit_delta"))) {
 				return true ;
 			}
 		}

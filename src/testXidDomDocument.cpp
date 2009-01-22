@@ -2,10 +2,10 @@
 //#include <../src/dom/RefCountedImpl.hpp>
 #include "xercesc/dom/DOMException.hpp"
 
-#include "XyDiff/include/XID_DOMDocument.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/Tools.hpp"
+#include "include/XID_DOMDocument.hpp"
+#include "include/XID_map.hpp"
+#include "include/XyLatinStr.hpp"
+#include "Tools.hpp"
 #include <stdio.h>
 #include <fstream>
 
@@ -19,9 +19,9 @@ int main(int argc, char **argv) {
 		}
 
   try {
-    xercesc_2_2::XMLPlatformUtils::Initialize();
+    xercesc_3_0::XMLPlatformUtils::Initialize();
     }
-  catch(const xercesc_2_2::XMLException& toCatch) {
+  catch(const xercesc_3_0::XMLException& toCatch) {
     std::cerr << "Error during Xerces-c Initialization.\n"
 	       << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
     }
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 	catch( const VersionManagerException &e ) {
 	  std::cerr << e << std::endl ;
 		}
-	catch( const xercesc_2_2::DOMException &e ) {
+	catch( const xercesc_3_0::DOMException &e ) {
 	  std::cerr << "DOMException, code=" << e.code << std::endl ;
 		std::cerr << "DOMException, message=" << e.msg << std::endl ;
 		}	

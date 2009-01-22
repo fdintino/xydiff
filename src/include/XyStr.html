@@ -30,7 +30,7 @@ are now encoded in 1 byte instead of 4.<br>
 <br>
 It is possible to transcode *all* characters to/from UTF32/UTF8.<br>
 <br>
-<span style="text-decoration: underline;">2. ISO-Latin, ISO-8859-15</span><br>
+<span style="text-decoration: underline;">2. ISO-Latin, ISO-8859-1</span><br>
 <br>
 ISO-Latin, the most commonly use on our Linux workstations, is
 restricted to western european languages.<br>
@@ -64,7 +64,7 @@ own tool.</span><br>
 In you file, you just need to include the header corresponding to the
 encoding you want to use.<br>
 <br>
-<pre>#include "XyDiff/include/XyLatinStr.hpp"<br>#include "XyDiff/include/XyUTF8Str.hpp"</pre>
+<pre>#include "include/XyLatinStr.hpp"<br>#include "include/XyUTF8Str.hpp"</pre>
 <br>
 Now the class has implicit constructors, destructors and pointer
 operators.<br>

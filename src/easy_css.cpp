@@ -29,7 +29,7 @@
  
 */
 
-#include "XyDiff/CommonSubSequenceAlgorithms.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
 
 #include <stdio.h>
 #define _PTHREAD

@@ -1,12 +1,13 @@
 ARCH := $(shell uname)
 
-GCC             ?= /opt/gcc-3.2.3/bin/g++
-XML4C_DIR       ?= /xyleme/tools/xerces-5.2/GCC3_Linux
+GCC             ?= /usr/bin/g++
+XML4C_DIR       ?= /usr/local
 ICU_DIR         ?= /xyleme/tools/icu-2.1/GCC3_Linux
 
-XERCES_LIBS    = -licui18n -licuuc -licudata -lustdio -lxerces-c 
+#XERCES_LIBS    = -licui18n -licuuc -licudata -lustdio -lxerces-c 
+XERCES_LIBS    = -lxerces-c 
 
-XERCES_INCLUDES = -I$(XML4C_DIR)/include -I$(ICU_DIR)/include -I$(XML4C_DIR)/include/xercesc/dom/deprecated -I$(XML4C_DIR)/include/xercesc/dom/
+XERCES_INCLUDES = -I$(XML4C_DIR)/include -I$(ICU_DIR)/include -I$(XML4C_DIR)/include/xercesc/dom/deprecated -I$(XML4C_DIR)/include/xercesc/util -I$(XML4C_DIR)/include/xercesc/dom/ -I$(XML4C_DIR)/include/xercesc/internet/
 XERCES_LIB_PATH = -L$(XML4C_DIR)/lib -L$(ICU_DIR)/lib
 
 DEPFILE = .depend
@@ -16,8 +17,11 @@ MKDIR = mkdir -p
 #localtime_r() like functions
 EXTRA_COMPILE_OPTIONS += -D_REENTRANT -D_PTHREADS -DUSE_GCC3
 
+export CFLAGS='-O3 -arch x86_64'
+export LDFLAGS='-O3 -arch x86_64'
+export CXXFLAGS='-O3 -arch x86_64' 
 # Debug
-EXTRA_COMPILE_OPTIONS += -Wall -g -fPIC
+EXTRA_COMPILE_OPTIONS += -Wall -g -fPIC -O3 -arch x86_64
 
 # Profiler <gprof>
 # EXTRA_COMPILE_OPTIONS += -pg
@@ -59,7 +63,7 @@ executables: $(EXES)
 $(TARGETS_DIR)/%: $(DEPEND)
 	@echo "Building Target $@"
 	$(MKDIR) $(TARGETS_DIR)
-	$(GCC) ${ALLLIBS} $^ -o $@ ${LIBRARY_PATH} ${LIBRARY_NAMES}
+	$(GCC)  -O3 -arch x86_64 ${ALLLIBS} $^ -o $@ ${LIBRARY_PATH} ${LIBRARY_NAMES}
 
 echo_build_%:
 	@echo "Building" $(*)
@@ -67,7 +71,7 @@ echo_build_%:
 ${LIB}: ${COMMON_OBJECTS}
 	$(MKDIR) $(TARGETS_DIR)
 	@echo "Building Library $@"
-	$(GCC) -shared -o $@ ${ALLLIBS} $^ 
+	$(GCC) -dynamiclib -O3 -arch x86_64 -lxerces-c  ${LIBRARY_PATH} -o $@ ${ALLLIBS} $^ 
 
 $(EXES):
 	@echo "	Spawn Make for $@"

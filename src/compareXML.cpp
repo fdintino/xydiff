@@ -1,11 +1,11 @@
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"
 
-#include "XyDiff/DeltaException.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
+#include "DeltaException.hpp"
+#include "include/XID_DOMDocument.hpp"
+#include "include/XID_map.hpp"
+#include "Tools.hpp"
+#include "include/XyLatinStr.hpp"
 
 #include <stdio.h>
 #include <fstream>
@@ -75,10 +75,10 @@ class XMLCompareEngine {
 		XMLCompareEngine(int option=XMLCMP_IgnoreWhiteSpaces+XMLCMP_IgnoreComments);
 
 		void compare(XID_DOMDocument *d1, XID_DOMDocument *d2);
-		void compare(xercesc_2_2::DOMNode *n1, xercesc_2_2::DOMNode *n2);
+		void compare(xercesc_3_0::DOMNode *n1, xercesc_3_0::DOMNode *n2);
 		
-		static void compareAttributes(xercesc_2_2::DOMNamedNodeMap *attributes1, xercesc_2_2::DOMNamedNodeMap *attributes2);
-		static xercesc_2_2::DOMNode* skipWhiteSpacesStartingAt(xercesc_2_2::DOMNode *n);
+		static void compareAttributes(xercesc_3_0::DOMNamedNodeMap *attributes1, xercesc_3_0::DOMNamedNodeMap *attributes2);
+		static xercesc_3_0::DOMNode* skipWhiteSpacesStartingAt(xercesc_3_0::DOMNode *n);
 		
 	
 	private:
@@ -92,18 +92,18 @@ XMLCompareEngine::XMLCompareEngine(int option) {
 	flags = option ;
   }
 
-void XMLCompareEngine::compareAttributes(xercesc_2_2::DOMNamedNodeMap *attributes1, xercesc_2_2::DOMNamedNodeMap *attributes2) {
+void XMLCompareEngine::compareAttributes(xercesc_3_0::DOMNamedNodeMap *attributes1, xercesc_3_0::DOMNamedNodeMap *attributes2) {
 	if (attributes1->getLength()!=attributes2->getLength()) {
 		FAILED(("both nodes don't have the same number of attributes: left=%d, right=%d",(int)attributes1->getLength(), (int)attributes2->getLength()));
 		}
 	for(unsigned int i=0; i<attributes1->getLength(); i++) {
-		xercesc_2_2::DOMNode *att1 = attributes1->item(i);
-		xercesc_2_2::DOMNode *att2 = attributes2->getNamedItem(att1->getNodeName());
+		xercesc_3_0::DOMNode *att1 = attributes1->item(i);
+		xercesc_3_0::DOMNode *att2 = attributes2->getNamedItem(att1->getNodeName());
 		if (att2==NULL) {
 			XyLatinStr att1str(att1->getNodeName());
 			FAILED(("attribute '%s' not found in second document", att1str.localForm()));
 			}
-		if (!xercesc_2_2::XMLString::equals(att1->getNodeValue(), att2->getNodeValue())) {
+		if (!xercesc_3_0::XMLString::equals(att1->getNodeValue(), att2->getNodeValue())) {
 			XyLatinStr att1str(att1->getNodeName());
 			XyLatinStr v1(att1->getNodeValue());
 			XyLatinStr v2(att2->getNodeValue());
@@ -113,8 +113,8 @@ void XMLCompareEngine::compareAttributes(xercesc_2_2::DOMNamedNodeMap *attribute
 	return;
 	}
 
-xercesc_2_2::DOMNode* XMLCompareEngine::skipWhiteSpacesStartingAt(xercesc_2_2::DOMNode *n) {
-	xercesc_2_2::DOMNode* t = n ;
+xercesc_3_0::DOMNode* XMLCompareEngine::skipWhiteSpacesStartingAt(xercesc_3_0::DOMNode *n) {
+	xercesc_3_0::DOMNode* t = n ;
 	while((t!=NULL)&&(!XID_DOMDocument::isRealData(t))) {
 		t = t->getNextSibling();
 		}
@@ -122,8 +122,8 @@ xercesc_2_2::DOMNode* XMLCompareEngine::skipWhiteSpacesStartingAt(xercesc_2_2::D
 	}
 
 void XMLCompareEngine::compare(XID_DOMDocument *d1, XID_DOMDocument *d2) {
-	xercesc_2_2::DOMNode* r1 = d1->getDocumentElement();
-	xercesc_2_2::DOMNode* r2 = d2->getDocumentElement();
+	xercesc_3_0::DOMNode* r1 = d1->getDocumentElement();
+	xercesc_3_0::DOMNode* r2 = d2->getDocumentElement();
 	try {
 		compare(r1, r2);
 		}
@@ -133,7 +133,7 @@ void XMLCompareEngine::compare(XID_DOMDocument *d1, XID_DOMDocument *d2) {
 	return;
 	}
 
-void XMLCompareEngine::compare(xercesc_2_2::DOMNode* n1, xercesc_2_2::DOMNode *n2) {
+void XMLCompareEngine::compare(xercesc_3_0::DOMNode* n1, xercesc_3_0::DOMNode *n2) {
 	if ((n1==NULL)&&(n2==NULL)) return;
 	if (n1==NULL) FAILED(("first document has no more nodes here"));
 	if (n2==NULL) FAILED(("second document has no more nodes here"));
@@ -144,16 +144,16 @@ void XMLCompareEngine::compare(xercesc_2_2::DOMNode* n1, xercesc_2_2::DOMNode *n
 		
 		/* -- Element Node -- */
 		
-		case xercesc_2_2::DOMNode::ELEMENT_NODE:
+		case xercesc_3_0::DOMNode::ELEMENT_NODE:
 		
-			if (!xercesc_2_2::XMLString::equals(n1->getNodeName(), n2->getNodeName())) {
+			if (!xercesc_3_0::XMLString::equals(n1->getNodeName(), n2->getNodeName())) {
 				XyLatinStr name1(n1->getNodeName());
 				FAILED(("<%s>: second document element has different name", name1.localForm() ));
 				}
 		
 			if (!(flags&XMLCMP_IgnoreAttributes)) {
-				xercesc_2_2::DOMNamedNodeMap* attributes1 = n1->getAttributes();
-				xercesc_2_2::DOMNamedNodeMap* attributes2 = n2->getAttributes();
+				xercesc_3_0::DOMNamedNodeMap* attributes1 = n1->getAttributes();
+				xercesc_3_0::DOMNamedNodeMap* attributes2 = n2->getAttributes();
 				if ((attributes1->getLength()>0)||(attributes2->getLength()>0)) {
 					try {
 						XMLCompareEngine::compareAttributes(attributes1, attributes2);
@@ -176,8 +176,8 @@ void XMLCompareEngine::compare(xercesc_2_2::DOMNode* n1, xercesc_2_2::DOMNode *n
 				}
 			else {
 				int childCount=1;
-				xercesc_2_2::DOMNode* child1 = n1->getFirstChild();
-				xercesc_2_2::DOMNode* child2 = n2->getFirstChild();
+				xercesc_3_0::DOMNode* child1 = n1->getFirstChild();
+				xercesc_3_0::DOMNode* child2 = n2->getFirstChild();
 				if (flags&XMLCMP_IgnoreWhiteSpaces) {
 					child1 = skipWhiteSpacesStartingAt(child1);
 					child2 = skipWhiteSpacesStartingAt(child2);
@@ -219,21 +219,21 @@ void XMLCompareEngine::compare(xercesc_2_2::DOMNode* n1, xercesc_2_2::DOMNode *n
 			
 		/* -- Text Node -- */
 		
-		case xercesc_2_2::DOMNode::TEXT_NODE:
-		case xercesc_2_2::DOMNode::CDATA_SECTION_NODE:
+		case xercesc_3_0::DOMNode::TEXT_NODE:
+		case xercesc_3_0::DOMNode::CDATA_SECTION_NODE:
 			if ( (!XID_DOMDocument::isRealData(n1))
 			   &&(!XID_DOMDocument::isRealData(n2))
 				 &&(flags & XMLCMP_IgnoreWhiteSpaces) ) return;
-			if (!xercesc_2_2::XMLString::equals(n1->getNodeValue(), n2->getNodeValue())) {
+			if (!xercesc_3_0::XMLString::equals(n1->getNodeValue(), n2->getNodeValue())) {
 				XyLatinStr v1(n1->getNodeValue());
 				XyLatinStr v2(n2->getNodeValue());
 				FAILED(("text value is different: <%s> vs. <%s>", v1.localForm(), v2.localForm()));
 				}
 			return;
 
-		case xercesc_2_2::DOMNode::COMMENT_NODE:
+		case xercesc_3_0::DOMNode::COMMENT_NODE:
 			if (flags&XMLCMP_IgnoreComments) return;
-			else if (!xercesc_2_2::XMLString::equals(n1->getNodeValue(), n2->getNodeValue())) {
+			else if (!xercesc_3_0::XMLString::equals(n1->getNodeValue(), n2->getNodeValue())) {
 				XyLatinStr v1(n1->getNodeValue());
 				XyLatinStr v2(n2->getNodeValue());
 				FAILED(("comment text is different: <%s> vs. <%s>", v1.localForm(), v2.localForm()));
@@ -242,7 +242,7 @@ void XMLCompareEngine::compare(xercesc_2_2::DOMNode* n1, xercesc_2_2::DOMNode *n
 
 		/* -- Other Types -- */
 
-		case xercesc_2_2::DOMNode::ENTITY_REFERENCE_NODE:
+		case xercesc_3_0::DOMNode::ENTITY_REFERENCE_NODE:
 			THROW_AWAY(("Unsupported node type Entity - can't compare"));
 			break;
 
@@ -261,9 +261,9 @@ int main(int argc, char **argv) {
 	}
 
 	try {
-		xercesc_2_2::XMLPlatformUtils::Initialize();
+		xercesc_3_0::XMLPlatformUtils::Initialize();
 	}
-	catch(const xercesc_2_2::XMLException& toCatch) {
+	catch(const xercesc_3_0::XMLException& toCatch) {
 		std::cerr << "Error during Xerces-c Initialization.\n"
 		          << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
 		exit(-1);
@@ -291,7 +291,7 @@ int main(int argc, char **argv) {
 		std::cerr << e << std::endl ;
 		exit(-1);
 	}
-	catch(const xercesc_2_2::DOMException &e ) {
+	catch(const xercesc_3_0::DOMException &e ) {
 		std::cerr << "DOMException, code=" << e.code << std::endl ;
 		std::cerr << "DOMException, message=" << e.msg << std::endl ;
 		exit(-1);

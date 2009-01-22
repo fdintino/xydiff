@@ -1,7 +1,7 @@
 
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XyDelta_FileInterface.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
+#include "Tools.hpp"
+#include "include/XyDelta_FileInterface.hpp"
+#include "include/XyLatinStr.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"
@@ -31,9 +31,9 @@ int main(int argc, char **argv) {
 	}
 	
     try {
-		xercesc_2_2::XMLPlatformUtils::Initialize();
+		xercesc_3_0::XMLPlatformUtils::Initialize();
     }
-	catch(const xercesc_2_2::XMLException& toCatch) {
+	catch(const xercesc_3_0::XMLException& toCatch) {
 		std::cerr << "Error during Xerces-c Initialization" << std::endl << "  Exception message:" << toCatch.getMessage() << std::endl;
     }
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 		exit(-1);
 	}
 		
-	catch( const xercesc_2_2::DOMException &e ) {
+	catch( const xercesc_3_0::DOMException &e ) {
 		std::cerr << "DOMException, code=" << e.code << std::endl ;
 		std::cerr << "DOMException, message=" << e.msg << std::endl ;
 		exit(-1);

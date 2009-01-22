@@ -1,6 +1,6 @@
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/DeltaReverse.hpp"
-#include "XyDiff/DeltaException.hpp"
+#include "include/XyLatinStr.hpp"
+#include "DeltaReverse.hpp"
+#include "DeltaException.hpp"
 
 //#include <../src/dom/NodeImpl.hpp>
 
@@ -10,11 +10,11 @@
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 
-#include "XyDiff/include/XID_DOMDocument.hpp"
-#include "XyDiff/include/XyDelta_DOMInterface.hpp"
+#include "include/XID_DOMDocument.hpp"
+#include "include/XyDelta_DOMInterface.hpp"
 
-#include "XyDiff/DOMPrint.hpp"
-#include "XyDiff/Tools.hpp"
+#include "DOMPrint.hpp"
+#include "Tools.hpp"
 #include <fstream>
 
 
@@ -30,8 +30,8 @@ VersionManagerException ReverseUpdateException( const std::string &cause ) {
   return VersionManagerException("Bad data", "DeltaReverse::update", cause);
 	}
 
-bool CopyAttr(xercesc_2_2::DOMElement *target, const xercesc_2_2::DOMElement *source, const XMLCh* attrName, bool MustBeFound=true) {
-	xercesc_2_2::DOMAttr *attrNode = source->getAttributeNode(attrName);
+bool CopyAttr(xercesc_3_0::DOMElement *target, const xercesc_3_0::DOMElement *source, const XMLCh* attrName, bool MustBeFound=true) {
+	xercesc_3_0::DOMAttr *attrNode = source->getAttributeNode(attrName);
 	if (attrNode==NULL) {
 		if (MustBeFound==true) {
 			THROW_AWAY(("Mandatory Attribute on Delta Operation Node was not found for CopyAttr()"));
@@ -42,63 +42,63 @@ bool CopyAttr(xercesc_2_2::DOMElement *target, const xercesc_2_2::DOMElement *so
 	return true;
 }
 
-void CopyContent(xercesc_2_2::DOMElement *target, xercesc_2_2::DOMNode *source) {
+void CopyContent(xercesc_3_0::DOMElement *target, xercesc_3_0::DOMNode *source) {
 	if (!source->hasChildNodes()) return;
-	xercesc_2_2::DOMNode *content = source->getFirstChild();
+	xercesc_3_0::DOMNode *content = source->getFirstChild();
 	if (content==NULL) return;
-	xercesc_2_2::DOMNode *contentNode = target->getOwnerDocument()->importNode(content, true);
+	xercesc_3_0::DOMNode *contentNode = target->getOwnerDocument()->importNode(content, true);
 	target->appendChild( contentNode );
 }
 
-xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_2_2::DOMDocument *reversedDoc ) {
+xercesc_3_0::DOMNode* DeltaReverse( xercesc_3_0::DOMNode *deltaElement, xercesc_3_0::DOMDocument *reversedDoc ) {
 	
 	vddprintf(("    reversing time-version header\n"));
 
-	xercesc_2_2::DOMNode* reversedElement = reversedDoc->importNode( deltaElement, false );
+	xercesc_3_0::DOMNode* reversedElement = reversedDoc->importNode( deltaElement, false );
 
-	//xercesc_2_2::DOMString from = deltaElement.getAttributes().getNamedItem("from").getNodeValue() ;
-        //xercesc_2_2::DOMString to   = deltaElement.getAttributes().getNamedItem("to"  ).getNodeValue() ;
-        const XMLCh* from = deltaElement->getAttributes()->getNamedItem(L"from")->getNodeValue() ;
-        const XMLCh* to = deltaElement->getAttributes()->getNamedItem(L"to")->getNodeValue() ;
+	//xercesc_3_0::DOMString from = deltaElement.getAttributes().getNamedItem("from").getNodeValue() ;
+        //xercesc_3_0::DOMString to   = deltaElement.getAttributes().getNamedItem("to"  ).getNodeValue() ;
+        const XMLCh* from = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("from"))->getNodeValue() ;
+        const XMLCh* to = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("to"))->getNodeValue() ;
         
-	reversedElement->getAttributes()->getNamedItem(L"to")->setNodeValue( from );
-	reversedElement->getAttributes()->getNamedItem(L"from")->setNodeValue( to );
+	reversedElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("to"))->setNodeValue( from );
+	reversedElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("from"))->setNodeValue( to );
 
-	xercesc_2_2::DOMNode* fromXidMap = deltaElement->getAttributes()->getNamedItem(L"fromXidMap");
-	xercesc_2_2::DOMNode* toXidMap   = deltaElement->getAttributes()->getNamedItem(L"toXidMap");
+	xercesc_3_0::DOMNode* fromXidMap = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("fromXidMap"));
+	xercesc_3_0::DOMNode* toXidMap   = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("toXidMap"));
 	if (fromXidMap!=NULL) {
-          //xercesc_2_2::DOMString from = fromXidMap.getNodeValue();
-		reversedElement->getAttributes()->getNamedItem(L"toXidMap")->setNodeValue( fromXidMap->getNodeValue() );
+          //xercesc_3_0::DOMString from = fromXidMap.getNodeValue();
+		reversedElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("toXidMap"))->setNodeValue( fromXidMap->getNodeValue() );
 	}
 	if (toXidMap!=NULL) {
-          //xercesc_2_2::DOMString to = toXidMap.getNodeValue();
-		reversedElement->getAttributes()->getNamedItem(L"fromXidMap")->setNodeValue( toXidMap->getNodeValue() );
+          //xercesc_3_0::DOMString to = toXidMap.getNodeValue();
+		reversedElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("fromXidMap"))->setNodeValue( toXidMap->getNodeValue() );
 	}
 
 	// No chanhges in the delta -> ok
 	if (!deltaElement->hasChildNodes()) return( reversedElement );
 	
 	// Input : read Elementary Operation
-	xercesc_2_2::DOMNode* child = deltaElement->getFirstChild() ;
+	xercesc_3_0::DOMNode* child = deltaElement->getFirstChild() ;
 	
 	// Output : precedent will be used to write Elementary Operation in reverse order
-	xercesc_2_2::DOMNode* precedent = NULL; // =NULL by default
+	xercesc_3_0::DOMNode* precedent = NULL; // =NULL by default
 
 	while (child != NULL) {
-		if (child->getNodeType()!=xercesc_2_2::DOMNode::ELEMENT_NODE) THROW_AWAY(("Bad type (%d) for Delta Operation Node", (int)child->getNodeType()));
-		xercesc_2_2::DOMElement* operationNode = (xercesc_2_2::DOMElement*) child ;
+		if (child->getNodeType()!=xercesc_3_0::DOMNode::ELEMENT_NODE) THROW_AWAY(("Bad type (%d) for Delta Operation Node", (int)child->getNodeType()));
+		xercesc_3_0::DOMElement* operationNode = (xercesc_3_0::DOMElement*) child ;
 		XyLatinStr operation(child->getNodeName());
 		
 		// Reverse DELETE into INSERT
 		
 		if (strcmp(operation, "d")==0) {
 			vddprintf(("    reversing delete into insert\n"));
-			xercesc_2_2::DOMElement* iElement = reversedDoc->createElement(L"i") ;
-			CopyAttr(iElement, operationNode, L"par", true);
-			CopyAttr(iElement, operationNode, L"pos", true);
-			CopyAttr(iElement, operationNode, L"xm", true);
-			CopyAttr(iElement, operationNode, L"move", false);
-			CopyAttr(iElement, operationNode, L"update", false);
+			xercesc_3_0::DOMElement* iElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("i")) ;
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("par"), true);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("pos"), true);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("xm"), true);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("move"), false);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("update"), false);
 			CopyContent(iElement, operationNode);
 			reversedElement->insertBefore( iElement, precedent ) ;
 			precedent = iElement ;
@@ -108,12 +108,12 @@ xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_
 		
 		else if (strcmp(operation, "i")==0) {
 	    		vddprintf(("    reversing insert into delete\n")); 
-			xercesc_2_2::DOMElement *iElement = reversedDoc->createElement(L"d") ;
-			CopyAttr(iElement, operationNode, L"par", true);
-			CopyAttr(iElement, operationNode, L"pos", true);
-			CopyAttr(iElement, operationNode, L"xm", true);
-			CopyAttr(iElement, operationNode, L"move", false);
-			CopyAttr(iElement, operationNode, L"update", false);
+			xercesc_3_0::DOMElement *iElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("d")) ;
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("par"), true);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("pos"), true);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("xm"), true);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("move"), false);
+			CopyAttr(iElement, operationNode, xercesc_3_0::XMLString::transcode("update"), false);
 			CopyContent(iElement, operationNode);
 			reversedElement->insertBefore( iElement, precedent ) ;
 			precedent = iElement ;
@@ -122,21 +122,21 @@ xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_
 		else if (strcmp(operation, "au")==0) {
 			vddprintf(("    reversing attribute update\n"));
 			
-			//xercesc_2_2::DOMString xidElem  = operationNode.getAttributes().getNamedItem("xid").getNodeValue();
-			//xercesc_2_2::DOMString attrName = operationNode.getAttributes().getNamedItem("a").getNodeValue();
-			//xercesc_2_2::DOMString oldValue = operationNode.getAttributes().getNamedItem("ov").getNodeValue();
-			//xercesc_2_2::DOMString newValue = operationNode.getAttributes().getNamedItem("nv").getNodeValue();
-			const XMLCh* xidElem = operationNode->getAttributes()->getNamedItem(L"xid")->getNodeValue();
-                        const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(L"a")->getNodeValue();
-                        const XMLCh* oldValue = operationNode->getAttributes()->getNamedItem(L"ov")->getNodeValue();
-                        const XMLCh* newValue = operationNode->getAttributes()->getNamedItem(L"nv")->getNodeValue();
+			//xercesc_3_0::DOMString xidElem  = operationNode.getAttributes().getNamedItem("xid").getNodeValue();
+			//xercesc_3_0::DOMString attrName = operationNode.getAttributes().getNamedItem("a").getNodeValue();
+			//xercesc_3_0::DOMString oldValue = operationNode.getAttributes().getNamedItem("ov").getNodeValue();
+			//xercesc_3_0::DOMString newValue = operationNode.getAttributes().getNamedItem("nv").getNodeValue();
+			const XMLCh* xidElem = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xid"))->getNodeValue();
+                        const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("a"))->getNodeValue();
+                        const XMLCh* oldValue = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("ov"))->getNodeValue();
+                        const XMLCh* newValue = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("nv"))->getNodeValue();
                         
 
-			xercesc_2_2::DOMElement* auElement = reversedDoc->createElement(L"au");
-			auElement->setAttribute(L"xid", xidElem);
-			auElement->setAttribute(L"a",   attrName);
-			auElement->setAttribute(L"nv",  oldValue);
-			auElement->setAttribute(L"ov",  newValue);
+			xercesc_3_0::DOMElement* auElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("au"));
+			auElement->setAttribute(xercesc_3_0::XMLString::transcode("xid"), xidElem);
+			auElement->setAttribute(xercesc_3_0::XMLString::transcode("a"),   attrName);
+			auElement->setAttribute(xercesc_3_0::XMLString::transcode("nv"),  oldValue);
+			auElement->setAttribute(xercesc_3_0::XMLString::transcode("ov"),  newValue);
 			
 			reversedElement->insertBefore(auElement, precedent);
 			precedent = auElement ;
@@ -145,17 +145,17 @@ xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_
 		else if (strcmp(operation, "ad")==0) {
 			vddprintf(("    reversing attribute insert into attribute delete\n"));
 
-			//xercesc_2_2::DOMString xidElem  = operationNode.getAttributes().getNamedItem("xid").getNodeValue();
-			//xercesc_2_2::DOMString attrName = operationNode.getAttributes().getNamedItem("a").getNodeValue();
-			//xercesc_2_2::DOMString attrVal  = operationNode.getAttributes().getNamedItem("v").getNodeValue();
-			const XMLCh* xidElem  = operationNode->getAttributes()->getNamedItem(L"xid")->getNodeValue();
-			const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(L"a")->getNodeValue();
-			const XMLCh* attrVal  = operationNode->getAttributes()->getNamedItem(L"v")->getNodeValue();
+			//xercesc_3_0::DOMString xidElem  = operationNode.getAttributes().getNamedItem("xid").getNodeValue();
+			//xercesc_3_0::DOMString attrName = operationNode.getAttributes().getNamedItem("a").getNodeValue();
+			//xercesc_3_0::DOMString attrVal  = operationNode.getAttributes().getNamedItem("v").getNodeValue();
+			const XMLCh* xidElem  = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xid"))->getNodeValue();
+			const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("a"))->getNodeValue();
+			const XMLCh* attrVal  = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("v"))->getNodeValue();
 			
-			xercesc_2_2::DOMElement* aiElement = reversedDoc->createElement(L"ai");
-			aiElement->setAttribute(L"xid", xidElem);
-			aiElement->setAttribute(L"a", attrName);
-			aiElement->setAttribute(L"v", attrVal);
+			xercesc_3_0::DOMElement* aiElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("ai"));
+			aiElement->setAttribute(xercesc_3_0::XMLString::transcode("xid"), xidElem);
+			aiElement->setAttribute(xercesc_3_0::XMLString::transcode("a"), attrName);
+			aiElement->setAttribute(xercesc_3_0::XMLString::transcode("v"), attrVal);
 			
 			reversedElement->insertBefore(aiElement, precedent);
 			precedent = aiElement ;
@@ -164,17 +164,17 @@ xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_
 		else if (strcmp(operation, "ai")==0) {
 			vddprintf(("    reversing attribute delete into attribute insert\n"));
 
-			//xercesc_2_2::DOMString xidElem  = operationNode.getAttributes().getNamedItem("xid").getNodeValue();
-			//xercesc_2_2::DOMString attrName = operationNode.getAttributes().getNamedItem("a").getNodeValue();
-			//xercesc_2_2::DOMString attrVal  = operationNode.getAttributes().getNamedItem("v").getNodeValue();
-                        const XMLCh* xidElem  = operationNode->getAttributes()->getNamedItem(L"xid")->getNodeValue();
-			const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(L"a")->getNodeValue();
-			const XMLCh* attrVal  = operationNode->getAttributes()->getNamedItem(L"v")->getNodeValue();
+			//xercesc_3_0::DOMString xidElem  = operationNode.getAttributes().getNamedItem("xid").getNodeValue();
+			//xercesc_3_0::DOMString attrName = operationNode.getAttributes().getNamedItem("a").getNodeValue();
+			//xercesc_3_0::DOMString attrVal  = operationNode.getAttributes().getNamedItem("v").getNodeValue();
+                        const XMLCh* xidElem  = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xid"))->getNodeValue();
+			const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("a"))->getNodeValue();
+			const XMLCh* attrVal  = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("v"))->getNodeValue();
 			
-			xercesc_2_2::DOMElement* adElement = reversedDoc->createElement(L"ad");
-			adElement->setAttribute(L"xid", xidElem);
-			adElement->setAttribute(L"a", attrName);
-			adElement->setAttribute(L"v", attrVal);
+			xercesc_3_0::DOMElement* adElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("ad"));
+			adElement->setAttribute(xercesc_3_0::XMLString::transcode("xid"), xidElem);
+			adElement->setAttribute(xercesc_3_0::XMLString::transcode("a"), attrName);
+			adElement->setAttribute(xercesc_3_0::XMLString::transcode("v"), attrVal);
 			
 			reversedElement->insertBefore(adElement, precedent);
 			precedent = adElement ;
@@ -185,24 +185,24 @@ xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_
 		else if (strcmp(operation, "u")==0) {
 			vddprintf(("    reversing update\n"));
 		  
-			xercesc_2_2::DOMNode* oldValue = child->getFirstChild() ;
+			xercesc_3_0::DOMNode* oldValue = child->getFirstChild() ;
 			if ( oldValue==NULL ) throw ReverseUpdateException("<update> has no child!");
 			
-			xercesc_2_2::DOMNode* newValue = oldValue->getNextSibling() ;
+			xercesc_3_0::DOMNode* newValue = oldValue->getNextSibling() ;
 			if ( newValue==NULL ) throw ReverseUpdateException("<update> has only one child!");
 			
-			//xercesc_2_2::DOMString xid= child.getAttributes().getNamedItem("xid").getNodeValue() ;
-                        const XMLCh* xid= child->getAttributes()->getNamedItem(L"xid")->getNodeValue() ;
+			//xercesc_3_0::DOMString xid= child.getAttributes().getNamedItem("xid").getNodeValue() ;
+                        const XMLCh* xid= child->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xid"))->getNodeValue() ;
 			
-			xercesc_2_2::DOMElement *uElement = reversedDoc->createElement(L"u") ;
-			uElement->setAttribute(L"xid", xid);
+			xercesc_3_0::DOMElement *uElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("u")) ;
+			uElement->setAttribute(xercesc_3_0::XMLString::transcode("xid"), xid);
 			
-			xercesc_2_2::DOMElement* uOld = reversedDoc->createElement(L"ov");
-			xercesc_2_2::DOMNode* uOldText = reversedDoc->importNode( newValue->getFirstChild(), true );
+			xercesc_3_0::DOMElement* uOld = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("ov"));
+			xercesc_3_0::DOMNode* uOldText = reversedDoc->importNode( newValue->getFirstChild(), true );
 			uOld->appendChild( uOldText );
 			
-			xercesc_2_2::DOMElement* uNew = reversedDoc->createElement(L"nv");
-			xercesc_2_2::DOMNode* uNewText = reversedDoc->importNode( oldValue->getFirstChild(), true );
+			xercesc_3_0::DOMElement* uNew = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("nv"));
+			xercesc_3_0::DOMNode* uNewText = reversedDoc->importNode( oldValue->getFirstChild(), true );
 			uNew->appendChild( uNewText );
 			
 			uElement->appendChild( uOld ) ;
@@ -214,12 +214,12 @@ xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode *deltaElement, xercesc_
 		else if (strcmp(operation, "renameRoot")==0) {
 			vddprintf(("    reversing renameRoot operation\n"));
 
-			const XMLCh* rFrom = operationNode->getAttributes()->getNamedItem(L"from")->getNodeValue();
-			const XMLCh* rTo   = operationNode->getAttributes()->getNamedItem(L"to")->getNodeValue();
+			const XMLCh* rFrom = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("from"))->getNodeValue();
+			const XMLCh* rTo   = operationNode->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("to"))->getNodeValue();
 			
-			xercesc_2_2::DOMElement *rrElement = reversedDoc->createElement(L"renameRoot");
-			rrElement->setAttribute(L"from", rTo);
-			rrElement->setAttribute(L"to", rFrom);
+			xercesc_3_0::DOMElement *rrElement = reversedDoc->createElement(xercesc_3_0::XMLString::transcode("renameRoot"));
+			rrElement->setAttribute(xercesc_3_0::XMLString::transcode("from"), rTo);
+			rrElement->setAttribute(xercesc_3_0::XMLString::transcode("to"), rFrom);
 			
 			reversedElement->insertBefore(rrElement, precedent);
 			precedent = rrElement ;			

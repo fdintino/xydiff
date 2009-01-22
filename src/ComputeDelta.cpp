@@ -1,16 +1,16 @@
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/include/XyUTF8Str.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
+#include "include/XyLatinStr.hpp"
+#include "include/XyUTF8Str.hpp"
+#include "include/XID_map.hpp"
+#include "include/XID_DOMDocument.hpp"
 
-#include "XyDiff/DOMPrint.hpp"
-#include "XyDiff/CommonSubSequenceAlgorithms.hpp"
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/Diff_NodesManager.hpp"
-#include "XyDiff/Diff_DeltaConstructor.hpp"
-#include "XyDiff/Diff_UniqueIdHandler.hpp"
-#include "XyDiff/DeltaException.hpp"
-#include "XyDiff/DeltaManager.hpp"
+#include "DOMPrint.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
+#include "Tools.hpp"
+#include "Diff_NodesManager.hpp"
+#include "Diff_DeltaConstructor.hpp"
+#include "Diff_UniqueIdHandler.hpp"
+#include "DeltaException.hpp"
+#include "DeltaManager.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMElement.hpp"
@@ -90,7 +90,7 @@ void TimeStep(void) {
  *******************************************************************/
 
 // apelat din XyDiff() de mai jos
-XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_2_2::DTDValidator *dtdValidator=NULL) {
+XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_3_0::DTDValidator *dtdValidator=NULL) {
 #ifdef HW_PROF
 	clocksRegisterSubtree        = 0 ;
 	clocksTopDownMatch           = 0 ;

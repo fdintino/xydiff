@@ -2,7 +2,7 @@
 #include <sys/varargs.h>
 #endif
 
-#include "XyDiff/DeltaException.hpp"
+#include "DeltaException.hpp"
 #include <errno.h>
 #include<time.h>
 #include<sys/time.h>

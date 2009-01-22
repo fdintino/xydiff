@@ -9,7 +9,7 @@ You can use this free for any purpose.  It has no warranty.
 // #define SELF_TEST
 
 #include "xercesc/util/XMLString.hpp"
-#include "XyDiff/lookup2.hpp"
+#include "lookup2.hpp"
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -33,11 +33,11 @@ hash32::hash32 ( unsigned char *buffer, unsigned long length, const hash32 &star
 }
 
 hash32::hash32(const XMLCh *str) {
-	value = hash((ub1*)str, sizeof(XMLCh)*xercesc_2_2::XMLString::stringLen(str), 0);
+	value = hash((ub1*)str, sizeof(XMLCh)*xercesc_3_0::XMLString::stringLen(str), 0);
 }
 
 hash32::hash32(const XMLCh *str, const hash32 &startingValue) {
-	value = hash((ub1*)str, sizeof(XMLCh)*xercesc_2_2::XMLString::stringLen(str), startingValue.value);
+	value = hash((ub1*)str, sizeof(XMLCh)*xercesc_3_0::XMLString::stringLen(str), startingValue.value);
 }
 
 hash32::hash32(const char *str) {

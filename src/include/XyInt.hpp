@@ -3,9 +3,9 @@
 
 /* Class to transform directly a DOMString into an int */
 
-#include "XyDiff/include/XyStr.hpp"
+#include "include/XyStr.hpp"
 
-#include "xercesc/dom/deprecated/DOMString.hpp"
+// #include "xercesc/dom/deprecated/DOMString.hpp"
 #include <stdio.h>
 #include <iostream>
 

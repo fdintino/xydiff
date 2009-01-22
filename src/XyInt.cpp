@@ -1,5 +1,5 @@
-#include "XyDiff/include/XyInt.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
+#include "include/XyInt.hpp"
+#include "include/XyLatinStr.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 
@@ -11,15 +11,15 @@
 
 XyInt::XyInt(const XMLCh* str, int size) : theIntValue(0) {
 	if ((str==NULL)||(size==0)) return;
-	if (size<0) size = xercesc_2_2::XMLString::stringLen(str);
+	if (size<0) size = xercesc_3_0::XMLString::stringLen(str);
 
 	XMLCh *tmp = new XMLCh[size+1];
 	memcpy(tmp, str, size*sizeof(XMLCh));
-	tmp[size]=xercesc_2_2::chNull;
+	tmp[size]=xercesc_3_0::chNull;
 	
-	xercesc_2_2::XMLString::trim(tmp);
+	xercesc_3_0::XMLString::trim(tmp);
 	
-	theIntValue  = xercesc_2_2::XMLString::parseInt(tmp);
+	theIntValue  = xercesc_3_0::XMLString::parseInt(tmp);
 	delete [] tmp;
 }
 
@@ -31,7 +31,7 @@ XyInt::XyInt(const char* str, int size) {
 	memcpy(tmp, str, size*sizeof(char));
 	tmp[size]='\0';
 	
-	xercesc_2_2::XMLString::trim(tmp);
+	xercesc_3_0::XMLString::trim(tmp);
 	
 	theIntValue  = atoi(tmp);
 	delete [] tmp;

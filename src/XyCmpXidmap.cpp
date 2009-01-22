@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "XyDiff/include/XID_map.hpp"
+#include "include/XID_map.hpp"
 
 using namespace std;
 

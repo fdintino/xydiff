@@ -3,16 +3,17 @@
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMException.hpp"
 
-#include "XyDiff/DeltaException.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XyStr.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/include/XyUTF8Str.hpp"
-#include "XyDiff/include/XyUTF8Document.hpp"
-#include "XyDiff/xyleme_DOMPrint.hpp"
+#include "DeltaException.hpp"
+#include "include/XID_DOMDocument.hpp"
+#include "include/XID_map.hpp"
+#include "Tools.hpp"
+#include "include/XyStr.hpp"
+#include "include/XyLatinStr.hpp"
+#include "include/XyUTF8Str.hpp"
+#include "include/XyUTF8Document.hpp"
+#include "xyleme_DOMPrint.hpp"
 #include <stdio.h>
+#include <stdlib.h>
 #include <fstream>
 #include <string>
 
@@ -35,6 +36,18 @@ void printTime(clock_t start, clock_t end, int nbOps, const char *name) {
         printf("speed %s = %06f operation / s\n", name, inv);
 }
 
+wchar_t* ConvertToWideChar(char* p)// function which converts char to widechar
+{
+      wchar_t *r;
+      r = new wchar_t[strlen(p)+1];
+
+      char *tempsour = p;
+      wchar_t *tempdest = r;
+      while(*tempdest++=*tempsour++);
+
+      return r;
+}
+
 int main(int argc, char **argv) {
   
 	if (setlocale(LC_ALL, "fr_FR")) {
@@ -44,11 +57,11 @@ int main(int argc, char **argv) {
 		printf("locale set to en_US.ISO8859-15\n");
 	}
 	try {
-		xercesc_2_2::XMLPlatformUtils::Initialize();
+		xercesc_3_0::XMLPlatformUtils::Initialize();
 	}
-	catch(const xercesc_2_2::XMLException& toCatch) {
+	catch(const xercesc_3_0::XMLException& toCatch) {
 		cerr << "Error during Xerces-c Initialization.\n"
-		     << "  Exception message:" << xercesc_2_2::XMLString::transcode(toCatch.getMessage()) << endl;
+		     << "  Exception message:" << xercesc_3_0::XMLString::transcode(toCatch.getMessage()) << endl;
 	}
 	
 	cout << "sizeof(char)=" << sizeof(char) << endl;
@@ -59,7 +72,7 @@ int main(int argc, char **argv) {
 	XyLatinStr::ConvertFromUTF8(s1);
 	cout << "test 1: " << s1 << endl;
 
-	std::string s2 = XyUTF8Str(L"test grégory").localForm();
+	std::string s2 = XyUTF8Str("test grÃ©gory").localForm();
 	XyLatinStr::ConvertFromUTF8(s2);
 	cout << "test 2: " << s2 << endl;
 	
@@ -68,8 +81,10 @@ int main(int argc, char **argv) {
 	clock_t startT = clock();
 	for(int i=0; i<1000000; i++) {
 		XyLatinStr * x = new XyLatinStr("toto");
-		tmp = x->wideForm();
-                delete x;
+		char * tmpChar = xercesc_3_0::XMLString::transcode(x->wideForm());
+		tmp = ConvertToWideChar(tmpChar);
+		xercesc_3_0::XMLString::release(&tmpChar);
+        delete x;
 	}
 	clock_t endT = clock();
 	printTime(startT, endT, 1000000, "clock()");
@@ -93,7 +108,11 @@ int main(int argc, char **argv) {
 	startT = clock();
 	for(int i=0; i<1000000; i++) {
 		XyLatinStr * x = new XyLatinStr("toto fdfsdfgsdg gfgdfgfd gfgfd gfd fgdfg fgfd fdg dfgfd fdg dfg fg dfg dfg fg dfg fdg fg fdg dfg fdg dg ffgfgdfgbbbvbfddddddd er er ezzzzzzzzzzerzerzerer fdgfgdfg fdgfdgfg cbbvbbvbgdrfgdfgdf fdgfg");
-		tmp = x->wideForm();
+		char * tmpChar = xercesc_3_0::XMLString::transcode(x->wideForm());
+		tmp = ConvertToWideChar(tmpChar);
+		xercesc_3_0::XMLString::release(&tmpChar);
+		
+		//tmp = x->wideForm();
                 delete x;
 	}
 	endT = clock();

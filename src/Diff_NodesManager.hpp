@@ -1,11 +1,11 @@
 #ifndef DIFF_NODESMANAGER_HXX
 #define DIFF_NODESMANAGER_HXX
 
-#include "XyDiff/CommonSubSequenceAlgorithms.hpp"
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/lookup2.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
+#include "Tools.hpp"
+#include "lookup2.hpp"
+#include "include/XID_map.hpp"
+#include "include/XID_DOMDocument.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 
@@ -80,8 +80,8 @@ class NodesManager {
 	  unsigned int sourceNumberOfNodes ;
 		unsigned int resultNumberOfNodes ;
 
-		std::vector<xercesc_2_2::DOMNode*> v0nodeByDID ;
-		std::vector<xercesc_2_2::DOMNode*> v1nodeByDID ;
+		std::vector<xercesc_3_0::DOMNode*> v0nodeByDID ;
+		std::vector<xercesc_3_0::DOMNode*> v1nodeByDID ;
 		//multimap<unsigned long, int> v0nodeByHash ;
 		std::vector<indexToCandidates> listOfCandidatesByParentLevelByHash;
 		
@@ -93,7 +93,7 @@ class NodesManager {
 		void PrintStats(void);
 		
 	private:
-		int registerSubtree(xercesc_2_2::DOMNode *node, bool isSource);
+		int registerSubtree(xercesc_3_0::DOMNode *node, bool isSource);
 		void computeCandidateIndexTables(int v0nodeID);
 		class UniqueIdHandler *myUniqueIdHandler;
 

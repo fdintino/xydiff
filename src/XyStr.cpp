@@ -1,4 +1,4 @@
-#include "XyDiff/include/XyStr.hpp"
+#include "include/XyStr.hpp"
 
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/PlatformUtils.hpp"
@@ -19,7 +19,7 @@
 #include <strings.h>
 #endif
 
-std::map<std::string,xercesc_2_2::XMLTranscoder*> XyStr::staticTranscoder ; 
+std::map<std::string,xercesc_3_0::XMLTranscoder*> XyStr::staticTranscoder ; 
 
 /*
  * XyStr functions (identical to StrX in xerces samples)
@@ -28,7 +28,7 @@ std::map<std::string,xercesc_2_2::XMLTranscoder*> XyStr::staticTranscoder ;
 XyStr::XyStr(const XMLCh* const toTranscode, int size, const int fastOp) : fLocalForm(NULL), fWideForm(NULL), fLocalFormSize(-1), fWideFormSize(size), theFastOptions(fastOp)
 {
 	if (toTranscode!=NULL) {
-		if (fWideFormSize<0) fWideFormSize = xercesc_2_2::XMLString::stringLen(toTranscode);
+		if (fWideFormSize<0) fWideFormSize = xercesc_3_0::XMLString::stringLen(toTranscode);
 		if ((theFastOptions & XyStr::NO_SOURCE_COPY)==0) {
 			fWideForm = newCopyOf(toTranscode, size);
 		}
@@ -46,8 +46,8 @@ XyStr::XyStr(const char* const toTranscode, int size, const int fastOp) : fLocal
 }
 
 XyStr::~XyStr() {
-	if (fLocalForm) xercesc_2_2::XMLString::release( & fLocalForm);
-	if (fWideForm ) xercesc_2_2::XMLString::release( & fWideForm );
+	if (fLocalForm) xercesc_3_0::XMLString::release( & fLocalForm);
+	if (fWideForm ) xercesc_3_0::XMLString::release( & fWideForm );
 	fLocalFormSize = -1;
 	fWideFormSize  = -1;
 }
@@ -85,14 +85,16 @@ XyStr::operator const char*() {
 
 
 const char *ErrorMsgCouldNotTranscode =   "??lTranscode Error??"; // length is 20, +1 for null char
-const XMLCh *LErrorMsgCouldNotTranscode = L"??wTranscode Error??"; // length is 20, +1 for null char
+//XMLCh LErrorMsgCouldNotTranscode[21];
+//XMLCh testStr = xercesc_3_0::XMLString::transcode("??wTranscode Error??", LErrorMsgCouldNotTranscode, 20);
+//const XMLCh *LErrorMsgCouldNotTranscode = xercesc_3_0::XMLString::transcode("Transcode Error"); // length is 20, +1 for null char
 const unsigned int MinLengthForErrorMessage = 25;
 
 XMLCh* XyStr::newCopyOf(const XMLCh* source, int size) {
-	if (size<0) size=xercesc_2_2::XMLString::stringLen(source);
+	if (size<0) size=xercesc_3_0::XMLString::stringLen(source);
 	XMLCh *r = new XMLCh[size+1];
 	memcpy(r, source, size*sizeof(XMLCh));
-	r[size]=xercesc_2_2::chNull;
+	r[size]=xercesc_3_0::chNull;
 	return r;
 }
 
@@ -104,25 +106,25 @@ char*  XyStr::newCopyOf(const char* source, int size) {
 	return r;
 }
 
-const XMLCh* tto32errorMsg = L"\n??? Transcode To UTF-32 Error ???\n";
 
 
 unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned int length, const char *outputEncoding, XMLCh** result, int *resultLength) {
+	const XMLCh* tto32errorMsg = xercesc_3_0::XMLString::transcode("\n??? Transcode To UTF-32 Error ???\n");
 
 	*result = NULL;
 	if (resultLength) *resultLength=-1;
 	if (outputEncoding==NULL) {
 		ERROR("Encoding is NULL");
-		*result = XyStr::newCopyOf(L"\n\nINTERNAL ERROR === 'outputEncoding' is NULL\n\n");
-		if (resultLength) *resultLength=(int)xercesc_2_2::XMLString::stringLen(*result);
+		*result = XyStr::newCopyOf(xercesc_3_0::XMLString::transcode("\n\nINTERNAL ERROR === 'outputEncoding' is NULL\n\n"));
+		if (resultLength) *resultLength=(int)xercesc_3_0::XMLString::stringLen(*result);
 		return 1;
 	}
 
-	xercesc_2_2::XMLTranscoder *transcoder = getTranscoder(outputEncoding);
+	xercesc_3_0::XMLTranscoder *transcoder = getTranscoder(outputEncoding);
 	if(transcoder==NULL){
 		ERROR("Can not find transcoder for: "<<outputEncoding);
-		*result = XyStr::newCopyOf(L"??? Transcode Error ???");
-		if (resultLength) *resultLength=(int)xercesc_2_2::XMLString::stringLen(*result);
+		*result = XyStr::newCopyOf(xercesc_3_0::XMLString::transcode("??? Transcode Error ???"));
+		if (resultLength) *resultLength=(int)xercesc_3_0::XMLString::stringLen(*result);
 		fprintf(stderr, "??? Transcode Error ???");
 		return 1;
 	}
@@ -152,7 +154,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 				ERROR("Unexpected problem: destination buffer is full !");
 			} else {			
 				unsigned char charSizes[maxChars+1];
-				unsigned int addedThisTime = transcoder->transcodeFrom((XMLByte*)sourceBlock, maxSourceChars, tmpResult+numberInBuf, maxChars, eatenThisTime, charSizes);
+				unsigned int addedThisTime = transcoder->transcodeFrom((XMLByte*)sourceBlock, (XMLSize_t)maxSourceChars, tmpResult+numberInBuf, (XMLSize_t)maxChars, (XMLSize_t&)eatenThisTime, charSizes);
 				bytesEaten  += eatenThisTime ;
 				numberInBuf += addedThisTime ;
 			}
@@ -161,8 +163,10 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 				ERROR("Error, transcoder does not eat any byte. Next byte is: "<<(unsigned int)sourceBlock[0]);
 				NOTE("followed by: "<<(unsigned int)sourceBlock[1]<<(unsigned int)sourceBlock[2]<<(unsigned int)sourceBlock[3]);
 				fprintf(stderr, "Error, transcoder does not eat any byte\n");
+				XMLCh LErrorMsgCouldNotTranscode[21];
+				xercesc_3_0::XMLString::transcode("??wTranscode Error??", LErrorMsgCouldNotTranscode, 20);
 				*result = XyStr::newCopyOf(LErrorMsgCouldNotTranscode);
-				if (resultLength) *resultLength=xercesc_2_2::XMLString::stringLen(*result);
+				if (resultLength) *resultLength=xercesc_3_0::XMLString::stringLen(*result);
 
 				if (!(theFastOptions & XyStr::USE_STATIC_TRANSCODER)) {
 					TRACE("delete transcoder");
@@ -176,8 +180,8 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 		}catch(...){
 			error = true;
 			ERROR("transcode exception catched... leaving...");
-			if (tmpBufferSize-numberInBuf-1>xercesc_2_2::XMLString::stringLen(tto32errorMsg)) {
-				memcpy(tmpResult+numberInBuf, tto32errorMsg, sizeof(XMLCh)*(1+xercesc_2_2::XMLString::stringLen(tto32errorMsg)));
+			if (tmpBufferSize-numberInBuf-1>xercesc_3_0::XMLString::stringLen(tto32errorMsg)) {
+				memcpy(tmpResult+numberInBuf, tto32errorMsg, sizeof(XMLCh)*(1+xercesc_3_0::XMLString::stringLen(tto32errorMsg)));
 			}
 			bytesEaten = sourceSize;
 		}
@@ -185,7 +189,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 
 	*result = new XMLCh[numberInBuf+1];
 	memcpy((void*)*result, (void*)tmpResult, numberInBuf*sizeof(XMLCh));
-	(*result)[numberInBuf] = xercesc_2_2::chNull;
+	(*result)[numberInBuf] = xercesc_3_0::chNull;
 	if (resultLength) *resultLength=(int)numberInBuf;
 
 	if (!(theFastOptions & XyStr::USE_STATIC_TRANSCODER)) {
@@ -199,20 +203,20 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 	else return 0;
 }
 
-class xercesc_2_2::XMLTranscoder * XyStr::getTranscoder(const char *encoding) {
-	xercesc_2_2::XMLTranscoder * transcoder = NULL;
+class xercesc_3_0::XMLTranscoder * XyStr::getTranscoder(const char *encoding) {
+	xercesc_3_0::XMLTranscoder * transcoder = NULL;
 	if (theFastOptions & XyStr::USE_STATIC_TRANSCODER) {
 		std::string name = encoding;
 		if (staticTranscoder.find(name)!=staticTranscoder.end()) {
 			transcoder = staticTranscoder[name];
 		} else {
-			xercesc_2_2::XMLTransService::Codes failReason;
-			transcoder = xercesc_2_2::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(encoding, failReason, XyStr::BlockSize);
+			xercesc_3_0::XMLTransService::Codes failReason;
+			transcoder = xercesc_3_0::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(encoding, failReason, XyStr::BlockSize);
 			staticTranscoder[name] = transcoder ;
 		}
 	} else {
-		xercesc_2_2::XMLTransService::Codes failReason;
-		transcoder = xercesc_2_2::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(encoding, failReason, XyStr::BlockSize);
+		xercesc_3_0::XMLTransService::Codes failReason;
+		transcoder = xercesc_3_0::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(encoding, failReason, XyStr::BlockSize);
 	}
 	if(transcoder==NULL){
 		ERROR("Can Not Create Transcoder: " << encoding);
@@ -231,7 +235,7 @@ unsigned int XyStr::internal_transcodeFromUTF32(const XMLCh* const source, const
 		return 1;
 	}
 	
-	xercesc_2_2::XMLTranscoder *transcoder = getTranscoder(outputEncoding);
+	xercesc_3_0::XMLTranscoder *transcoder = getTranscoder(outputEncoding);
 	if(transcoder==NULL){
 		ERROR("Can not find transcoder for: "<<outputEncoding);
 		sprintf(result, "??? Transcode Error ???");
@@ -242,11 +246,12 @@ unsigned int XyStr::internal_transcodeFromUTF32(const XMLCh* const source, const
 
 	unsigned int errors      = 0;
 	unsigned int sourceSize  = length;
-	unsigned int charsEaten  = 0;
-	unsigned int numberInBuf = 0;
+	XMLSize_t charsEaten  = 0;
+	XMLSize_t numberInBuf = 0;
+	
 	bool error               = false;
 	while (charsEaten<sourceSize) {
-		unsigned int maxChars = resultBufferSize - numberInBuf;
+		XMLSize_t maxChars = resultBufferSize - numberInBuf;
 		if (maxChars > XyStr::BlockSize) maxChars = XyStr::BlockSize;
 
 		if (maxChars < 15) {
@@ -261,17 +266,20 @@ unsigned int XyStr::internal_transcodeFromUTF32(const XMLCh* const source, const
 		
 		XMLCh sourceBlock[XyStr::BlockSize+1];
 		//bzero(sourceBlock, sizeof(XMLCh)*(XyStr::BlockSize+1));
-		sourceBlock[XyStr::BlockSize]=xercesc_2_2::chNull;
+		sourceBlock[XyStr::BlockSize]=xercesc_3_0::chNull;
 
 		unsigned int maxSourceChars = sourceSize-charsEaten;
 		if (maxSourceChars>XyStr::BlockSize) maxSourceChars=XyStr::BlockSize;
 		memcpy(sourceBlock, (void*)(source+charsEaten), maxSourceChars*sizeof(XMLCh));
-		sourceBlock[maxSourceChars]=xercesc_2_2::chNull;
-			
-		unsigned int eatenThisTime = 0;
+		sourceBlock[maxSourceChars]=xercesc_3_0::chNull;
+		
+		//int resultLength = strlen(result);
+		
+		XMLSize_t eatenThisTime = 0;
+		
 		try{
 			TRACEF(("transcode(%p, %d, %p, %d, (out), throw)", sourceBlock, maxSourceChars, (XMLByte*)result+numberInBuf, maxChars));
-			unsigned int addedThisTime = transcoder->transcodeTo(sourceBlock, maxSourceChars, (XMLByte*)result+numberInBuf, maxChars, eatenThisTime, xercesc_2_2::XMLTranscoder::UnRep_Throw);
+			XMLSize_t addedThisTime = transcoder->transcodeTo((XMLCh*)sourceBlock, (XMLSize_t)maxSourceChars, (XMLByte*)result+numberInBuf, (XMLSize_t)maxChars, eatenThisTime, xercesc_3_0::XMLTranscoder::UnRep_Throw);
 			charsEaten  += eatenThisTime ;
 			numberInBuf += addedThisTime ;
 		}catch(...){
@@ -281,12 +289,12 @@ unsigned int XyStr::internal_transcodeFromUTF32(const XMLCh* const source, const
 			// This will slow down the process since we now have to transcode them one by one
 			if (UseCharacterEntity) {
 				maxSourceChars=1;
-				sourceBlock[1]=xercesc_2_2::chNull;
+				sourceBlock[1]=xercesc_3_0::chNull;
 			}
 			error = true;
 			// The document is not valid, but we can accept it by replacing non transcodable chars by "?".
 			TRACEF(("transcode(%p, %d, %p, %d, (out), repl)", sourceBlock, maxSourceChars, (XMLByte*)result+numberInBuf, maxChars));
-			unsigned int addedThisTime = transcoder->transcodeTo(sourceBlock, maxSourceChars, (XMLByte*)result+numberInBuf, maxChars, eatenThisTime, xercesc_2_2::XMLTranscoder::UnRep_RepChar);
+			XMLSize_t addedThisTime = transcoder->transcodeTo((XMLCh*)sourceBlock, (XMLSize_t)maxSourceChars, (XMLByte*)result+numberInBuf, (XMLSize_t)maxChars, (XMLSize_t&)eatenThisTime, xercesc_3_0::XMLTranscoder::UnRep_RepChar);
 			//Unfortunately xerces does not allow to define the replacement char. It is hard-coded to be 0x1A !
 			//We cannot store the document with this character, since then the document could not be parsed back again.
 			// That's why we must traverse again the coded chars and replace 0x1A by '?'
@@ -351,10 +359,10 @@ unsigned int XyStr::transcodeFromUTF32(const XMLCh* const source, const unsigned
 }
 
 unsigned int XyStr::transcodeFromUTF32_andReplaceXmlHeader(const XMLCh* const source, const unsigned int length, const char *outputEncoding, char** result, int *resultLength) {
-	static const XMLCh *refHeader = L"<?xml version=\"1.0\" encoding=\"UTF-32\" ?>";
-	static unsigned long refHeaderSize = xercesc_2_2::XMLString::stringLen(refHeader);
+	static const XMLCh *refHeader = xercesc_3_0::XMLString::transcode("<?xml version=\"1.0\" encoding=\"UTF-32\" ?>");
+	static unsigned long refHeaderSize = xercesc_3_0::XMLString::stringLen(refHeader);
 	
-	if (xercesc_2_2::XMLString::startsWith(source, refHeader)) {
+	if (xercesc_3_0::XMLString::startsWith(source, refHeader)) {
 		const XMLCh *source2 = source + refHeaderSize;
 		unsigned int length2 = length - refHeaderSize;
 		

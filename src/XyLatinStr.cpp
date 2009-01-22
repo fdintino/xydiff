@@ -1,6 +1,6 @@
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/include/XyUTF8Str.hpp"
-#include "XyDiff/include/XyStr.hpp"
+#include "include/XyLatinStr.hpp"
+#include "include/XyUTF8Str.hpp"
+#include "include/XyStr.hpp"
 
 #include "xercesc/sax/SAXParseException.hpp"
 #include "xercesc/sax/Locator.hpp"
@@ -50,14 +50,14 @@ void XyLatinStr::ConvertFromUTF8(std::string & inoutStr, bool escapeSequenceXyHa
 
 const char* XyLatinStr::localForm() {
 	if ((fLocalForm==NULL)&&(fWideForm)) {
-		XyStr::transcodeFromUTF32(fWideForm, fWideFormSize, "ISO-8859-15", &fLocalForm, &fLocalFormSize, theEscapeSequenceXyHack);
+		XyStr::transcodeFromUTF32(fWideForm, fWideFormSize, "UTF-8", &fLocalForm, &fLocalFormSize, theEscapeSequenceXyHack);
 	}
 	return fLocalForm;
 }
 
 const XMLCh* XyLatinStr::wideForm() {
 	if ((fWideForm==NULL)&&(fLocalForm)) {
-		XyStr::transcodeToUTF32(fLocalForm, fLocalFormSize, "ISO-8859-15", &fWideForm, &fWideFormSize);
+		XyStr::transcodeToUTF32(fLocalForm, fLocalFormSize, "UTF-8", &fWideForm, &fWideFormSize);
 	}
 	return fWideForm;
 }

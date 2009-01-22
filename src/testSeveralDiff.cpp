@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "XyDiff/include/XID_DOMDocument.hpp"
-#include "XyDiff/include/XyDelta_DOMInterface.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
+#include "include/XID_DOMDocument.hpp"
+#include "include/XyDelta_DOMInterface.hpp"
+#include "include/XyLatinStr.hpp"
 
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMDocument.hpp"
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 		return(-1);
 	}	
 
-	xercesc_2_2::XMLPlatformUtils::Initialize();
+	xercesc_3_0::XMLPlatformUtils::Initialize();
 
 	const int REPEAT = atoi(argv[1]);
 	int nbFiles = argc-2;
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 		XID_DOMDocument doc1(file1, false);		
 		XID_DOMDocument doc2(file2, false);
 
-		xercesc_2_2::DOMDocument *delta = XyDelta::XyDiff(doc1.getDOMDocumentOwnership(), file1, doc2.getDOMDocumentOwnership(), file2);
+		xercesc_3_0::DOMDocument *delta = XyDelta::XyDiff(doc1.getDOMDocumentOwnership(), file1, doc2.getDOMDocumentOwnership(), file2);
 		if (delta==NULL) {
 			fprintf(stderr, "failed to compute delta\n");
 			return -1;

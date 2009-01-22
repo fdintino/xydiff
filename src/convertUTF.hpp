@@ -5,7 +5,7 @@
 
 /** the conversions methods below don't handle BOM (there must be no BOM).
     return false on conversion error (e.g. invalid utf8 sequence).
-    Latin9 means ISO-8859-15.
+    Latin9 means ISO-8859-1.
 */
 
 bool UTF8ToLatin9(const char *source, unsigned sourceLen,

@@ -1,4 +1,4 @@
-#include "XyDiff/Diff_UniqueIdHandler.hpp"
+#include "Diff_UniqueIdHandler.hpp"
 
 #include "xercesc/util/NameIdPool.hpp"
 #include "xercesc/util/PlatformUtils.hpp"
@@ -9,23 +9,23 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/include/XyUTF8Str.hpp"
-#include "XyDiff/Tools.hpp"
+#include "include/XyLatinStr.hpp"
+#include "include/XyUTF8Str.hpp"
+#include "Tools.hpp"
 
-void UniqueIdHandler::RegisterAttrId( xercesc_2_2::DTDValidator *theValidator ) {
-  /*  xercesc_2_2::NameIdPoolEnumerator<xercesc_2_2::DTDElementDecl> elemEnum = theValidator->getElemEnumerator();
+void UniqueIdHandler::RegisterAttrId( xercesc_3_0::DTDValidator *theValidator ) {
+  /*  xercesc_3_0::NameIdPoolEnumerator<xercesc_3_0::DTDElementDecl> elemEnum = theValidator->getElemEnumerator();
     while(elemEnum.hasMoreElements())
     {
-        const xercesc_2_2::DTDElementDecl& curElem = elemEnum.nextElement();
+        const xercesc_3_0::DTDElementDecl& curElem = elemEnum.nextElement();
         // Get an enumerator for this guy's attributes if any
         if (curElem.hasAttDefs())
         {
-            xercesc_2_2::XMLAttDefList& attList = curElem.getAttDefList();
+            xercesc_3_0::XMLAttDefList& attList = curElem.getAttDefList();
             while (attList.hasMoreElements())
             {
-                const xercesc_2_2::XMLAttDef& curAttDef = attList.nextElement();
-                if (curAttDef.getType()==xercesc_2_2::XMLAttDef::ID) {
+                const xercesc_3_0::XMLAttDef& curAttDef = attList.nextElement();
+                if (curAttDef.getType()==xercesc_3_0::XMLAttDef::ID) {
                     string key = UniqueIdHandler::UniqueKey_from_TagAttr(curElem.getFullName(),curAttDef.getFullName());
 										printf("key %s found\n", key.c_str());
 										if (attrIdList.find(key)==attrIdList.end()) attrIdList.insert(key);

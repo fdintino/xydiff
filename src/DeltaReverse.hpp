@@ -2,8 +2,8 @@
 #define DELTAREVERSE_HXX_
 
 #include "xercesc/dom/DOMNode.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
+#include "include/XID_DOMDocument.hpp"
 
-xercesc_2_2::DOMNode* DeltaReverse( xercesc_2_2::DOMNode* deltaElement , xercesc_2_2::DOMDocument *reversedDoc);
+xercesc_3_0::DOMNode* DeltaReverse( xercesc_3_0::DOMNode* deltaElement , xercesc_3_0::DOMDocument *reversedDoc);
 
 #endif

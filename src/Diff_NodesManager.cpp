@@ -1,15 +1,15 @@
 //#define VERBOSE
 
-#include "XyDiff/Diff_NodesManager.hpp"
-#include "XyDiff/Diff_UniqueIdHandler.hpp"
-#include "XyDiff/DeltaException.hpp"
-#include "XyDiff/lookup2.hpp"
-#include "XyDiff/CommonSubSequenceAlgorithms.hpp"
-#include "XyDiff/Tools.hpp"
-#include "XyDiff/include/XyLatinStr.hpp"
-#include "XyDiff/include/XyUTF8Str.hpp"
-#include "XyDiff/include/XID_map.hpp"
-#include "XyDiff/include/XID_DOMDocument.hpp"
+#include "Diff_NodesManager.hpp"
+#include "Diff_UniqueIdHandler.hpp"
+#include "DeltaException.hpp"
+#include "lookup2.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
+#include "Tools.hpp"
+#include "include/XyLatinStr.hpp"
+#include "include/XyUTF8Str.hpp"
+#include "include/XID_map.hpp"
+#include "include/XID_DOMDocument.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 
@@ -212,9 +212,9 @@ void NodesManager::setUniqueIdHandler( class UniqueIdHandler *theUniqueIdHandler
 
 void NodesManager::registerSourceDocument( XID_DOMDocument *sourceDoc ) {
 	if (sourceNumberOfNodes) THROW_AWAY(("source document has already been registered"));
-	xercesc_2_2::DOMElement* v0root = sourceDoc->getDocumentElement() ;
+	xercesc_3_0::DOMElement* v0root = sourceDoc->getDocumentElement() ;
 	v0nodeByDID.resize( 1 ); // DiffID 0 is not allowed
-	(void) registerSubtree((xercesc_2_2::DOMNode*) v0root, true);
+	(void) registerSubtree((xercesc_3_0::DOMNode*) v0root, true);
 	vddprintf(("Source Document has %d nodes\n", (int)v0nodeByDID.size()-1));
 	v0doc = sourceDoc ;
 	vddprintf(("Register precomputed index to access candidates by their ancestors (up to level %d)\n", (int)MIN_CANDIDATEPARENT_LEVEL));
@@ -225,14 +225,14 @@ void NodesManager::registerSourceDocument( XID_DOMDocument *sourceDoc ) {
 
 void NodesManager::registerResultDocument( XID_DOMDocument *resultDoc ) {
 	if (!sourceNumberOfNodes) THROW_AWAY(("source document must be registered before target document"));
-	xercesc_2_2::DOMElement* v1root = resultDoc->getDocumentElement() ;
+	xercesc_3_0::DOMElement* v1root = resultDoc->getDocumentElement() ;
 	v1nodeByDID.resize( 1 ); // DiffID 0 is not allowed
-	(void) registerSubtree((xercesc_2_2::DOMNode*) v1root, false);
+	(void) registerSubtree((xercesc_3_0::DOMNode*) v1root, false);
 	vddprintf(("Result Document has %d nodes\n", (int)v1nodeByDID.size()-1));
 	v1doc = resultDoc ;
 }
 	
-int NodesManager::registerSubtree(xercesc_2_2::DOMNode *node, bool isSource) {
+int NodesManager::registerSubtree(xercesc_3_0::DOMNode *node, bool isSource) {
 
 	if (node==NULL) throw VersionManagerException("runtime-error", "NodesManager::registerSubtree", "node is NULL"); 
 
@@ -241,10 +241,10 @@ int NodesManager::registerSubtree(xercesc_2_2::DOMNode *node, bool isSource) {
 	std::vector<int> childList ;
 	
 	switch( node->getNodeType() ) {
-		case xercesc_2_2::DOMNode::ELEMENT_NODE: {
+		case xercesc_3_0::DOMNode::ELEMENT_NODE: {
 			unsigned int attLength = node->getAttributes()->getLength();
 			for(unsigned int i=0; ((i<attLength)&&(!myAtomicInfo.hasIdAttr)); i++) {
-				xercesc_2_2::DOMNode* attr = node->getAttributes()->item( i );
+				xercesc_3_0::DOMNode* attr = node->getAttributes()->item( i );
 				std::string keyId = UniqueIdHandler::UniqueKey_from_TagAttr(node->getNodeName(),attr->getNodeName());
 				if (myUniqueIdHandler->isIdAttr(keyId)) {
 					vddprintf(("found unique key %s\n", keyId.c_str()));
@@ -261,7 +261,7 @@ int NodesManager::registerSubtree(xercesc_2_2::DOMNode *node, bool isSource) {
 			myAtomicInfo.mySubtreeHash = myAtomicInfo.myOwnHash ;
 			
 			if (node->hasChildNodes()) {
-				xercesc_2_2::DOMNode* child = node->getFirstChild() ;
+				xercesc_3_0::DOMNode* child = node->getFirstChild() ;
 				while(child!=NULL) {
 			  		int childID = registerSubtree(child, isSource);
 					if (childID>0) {
@@ -282,11 +282,11 @@ int NodesManager::registerSubtree(xercesc_2_2::DOMNode *node, bool isSource) {
 			}
 			break ;
 			
-		case xercesc_2_2::DOMNode::TEXT_NODE:
-		case xercesc_2_2::DOMNode::CDATA_SECTION_NODE:
+		case xercesc_3_0::DOMNode::TEXT_NODE:
+		case xercesc_3_0::DOMNode::CDATA_SECTION_NODE:
                   myAtomicInfo.mySubtreeHash   = hash32(node->getNodeValue());
 			myAtomicInfo.myOwnHash.value = 0x0 ;
-			if (xercesc_2_2::XMLString::stringLen(node->getNodeValue())>0) myAtomicInfo.myWeight+=(float)log((double)xercesc_2_2::XMLString::stringLen(node->getNodeValue()));
+			if (xercesc_3_0::XMLString::stringLen(node->getNodeValue())>0) myAtomicInfo.myWeight+=(float)log((double)xercesc_3_0::XMLString::stringLen(node->getNodeValue()));
 
 			/* For text nodes containing only whitespaces and \13 chars, 
 			 * set the flag 'isUnimportant'
@@ -296,11 +296,11 @@ int NodesManager::registerSubtree(xercesc_2_2::DOMNode *node, bool isSource) {
 			
 			break ;
 			
-		case xercesc_2_2::DOMNode::COMMENT_NODE:
+		case xercesc_3_0::DOMNode::COMMENT_NODE:
 			/* Nota: Like other XML Diff tools, we ignore comment nodes */
 			break ;
 			
-		case xercesc_2_2::DOMNode::ENTITY_REFERENCE_NODE:
+		case xercesc_3_0::DOMNode::ENTITY_REFERENCE_NODE:
 			cerr << "- Entity Found in the Document -" << endl ;
 			throw VersionManagerException("runtime-error", "registerSubtree", "Entity not supported - Please apply Entities before the Diff"); 
 		default: {
@@ -741,8 +741,8 @@ void NodesManager::Optimize(int v0nodeID) {
 		int childID = myAtomicInfo.firstChild ;
 		while(childID) {
 			if (!v0Assigned(childID)) {
-				xercesc_2_2::DOMNode* child = v0nodeByDID[ childID ] ;
-				if (child->getNodeType()==xercesc_2_2::DOMNode::ELEMENT_NODE) {
+				xercesc_3_0::DOMNode* child = v0nodeByDID[ childID ] ;
+				if (child->getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE) {
 					XyUTF8Str t(child->getNodeName());
 					std::string tag = (const char*)t;
 					// printf("Children <%s> is free!\n", tag.c_str());
@@ -767,8 +767,8 @@ void NodesManager::Optimize(int v0nodeID) {
 			int childID = v1AtomicInfo.firstChild ;
 			while(childID) {
 				if (!v1Assigned(childID)) {
-					xercesc_2_2::DOMNode* child = v1nodeByDID[ childID ] ;
-					if (child->getNodeType()==xercesc_2_2::DOMNode::ELEMENT_NODE) {
+					xercesc_3_0::DOMNode* child = v1nodeByDID[ childID ] ;
+					if (child->getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE) {
 						XyUTF8Str t(child->getNodeName());
 						std::string tag = (const char*)t;
 						// printf("v1 children <%s> is free!\n", tag.c_str());
@@ -873,8 +873,8 @@ void NodesManager::MarkNewTree( const int v1nodeID ) {
 		int v0nodeID =myAtomicInfo.myMatchID ;
 		
 		// Set --- XID ---
-		xercesc_2_2::DOMNode *oldnode = v0nodeByDID[ v0nodeID ] ;
-		xercesc_2_2::DOMNode *node = v1nodeByDID[ v1nodeID ] ;
+		xercesc_3_0::DOMNode *oldnode = v0nodeByDID[ v0nodeID ] ;
+		xercesc_3_0::DOMNode *node = v1nodeByDID[ v1nodeID ] ;
 
 		v1doc->getXidMap().registerNode( node, v0doc->getXidMap().getXIDbyNode( oldnode ) );
 		
@@ -892,7 +892,7 @@ void NodesManager::MarkNewTree( const int v1nodeID ) {
 		}
 	else { // Node is INSERTED
 		myAtomicInfo.myEvent = AtomicInfo::INSERTED ;
-		xercesc_2_2::DOMNode* node = v1nodeByDID[ v1nodeID ] ;
+		xercesc_3_0::DOMNode* node = v1nodeByDID[ v1nodeID ] ;
 		v1doc->getXidMap().registerNode( node, v0doc->getXidMap().allocateNewXID() ); // WORK HERE
 		vddprintf(("insert node %d with xid=%d at pos %d for parent %d\n", myAtomicInfo.myID, (int)v1doc->getXidMap().getXIDbyNode( node ), myAtomicInfo.myPosition, myAtomicInfo.myParent )) ;
 		}
@@ -1037,9 +1037,9 @@ void NodesManager::DetectUpdate(int v0nodeID) {
 			int child1 = v1AtomicInfo.firstChild ;
 			class AtomicInfo & myChild1Info = v1node[ child1 ] ;
 			if ((child1)&&(!v1Assigned(child1))&&(myChild1Info.nextSibling==0)) {
-				xercesc_2_2::DOMNode* domChild0 = v0nodeByDID[ child0 ] ;
-				xercesc_2_2::DOMNode* domChild1 = v1nodeByDID[ child1 ] ;
-				if ((domChild0->getNodeType()==xercesc_2_2::DOMNode::TEXT_NODE)&&(domChild1->getNodeType()==xercesc_2_2::DOMNode::TEXT_NODE)) {
+				xercesc_3_0::DOMNode* domChild0 = v0nodeByDID[ child0 ] ;
+				xercesc_3_0::DOMNode* domChild1 = v1nodeByDID[ child1 ] ;
+				if ((domChild0->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE)&&(domChild1->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE)) {
 					if ((myChild0Info.myEvent==AtomicInfo::DELETED)&&(myChild1Info.myEvent==AtomicInfo::INSERTED)) {
 						// ---
 						myChild0Info.myEvent = AtomicInfo::UPDATE_OLD ;

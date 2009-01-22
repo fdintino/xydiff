@@ -3,8 +3,8 @@
 
 /* Class that handles transcode value of XMLString */
 
-#include "xercesc/dom/deprecated/DOMString.hpp"
-#include "XyDiff/include/XyStr.hpp"
+// #include "xercesc/dom/deprecated/DOMString.hpp"
+#include "include/XyStr.hpp"
 
 #include <stdio.h>
 #include <iostream>

@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <iostream>
 
-//void          outputContent(ostream& target, const xercesc_2_2::DOMString &s);
+//void          outputContent(ostream& target, const xercesc_3_0::DOMString &s);
 void          outputContent(std::ostream& target, const XMLCh *s);
 void          usage();
-//ostream& operator<<(ostream& target, const xercesc_2_2::DOMString& toWrite);
-std::ostream& operator<<(std::ostream& target, xercesc_2_2::DOMNode& toWrite);
+//ostream& operator<<(ostream& target, const xercesc_3_0::DOMString& toWrite);
+std::ostream& operator<<(std::ostream& target, xercesc_3_0::DOMNode& toWrite);
 
 #endif

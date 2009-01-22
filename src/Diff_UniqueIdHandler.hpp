@@ -9,12 +9,12 @@
 #include "xercesc/util/XercesDefs.hpp"
 
 
-#include "xercesc/dom/deprecated/DOMString.hpp"
+// #include "xercesc/dom/deprecated/DOMString.hpp"
 #include "xercesc/validators/DTD/DTDValidator.hpp"
 
 class UniqueIdHandler {
 	public:
-		void RegisterAttrId(xercesc_2_2::DTDValidator *theDTDValidator);
+		void RegisterAttrId(xercesc_3_0::DTDValidator *theDTDValidator);
 		static std::string UniqueKey_from_TagAttr(const XMLCh* const tagName, const XMLCh* const attrName);
 		bool isIdAttr(const std::string &key);
 		std::map<unsigned long, int> v0nodeByIdAttrHash ;
