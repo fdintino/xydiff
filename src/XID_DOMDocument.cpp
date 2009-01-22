@@ -196,11 +196,12 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 	DOMLSSerializer* theSerializer = ((DOMImplementationLS*)impl)->createLSSerializer();
 	DOMLSOutput *theOutput = ((DOMImplementationLS*)impl)->createLSOutput();
 	DOMConfiguration *configuration = theSerializer->getDomConfig();
-	if (configuration->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true)) 
-	    configuration->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-	if (configuration->canSetParameter(XMLUni::fgDOMXMLDeclaration, true)) 
-	    configuration->setParameter(XMLUni::fgDOMXMLDeclaration, true);
+	
 	try {
+		if (configuration->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true)) 
+		    configuration->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
+		if (configuration->canSetParameter(XMLUni::fgDOMXMLDeclaration, true)) 
+		    configuration->setParameter(XMLUni::fgDOMXMLDeclaration, true);
           // do the serialization through DOMLSSerializer::write();
 		theOutput->setByteStream(xmlfile);
 		theSerializer->write((DOMDocument*)this, theOutput);
