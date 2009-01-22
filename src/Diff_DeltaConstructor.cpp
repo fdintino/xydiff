@@ -100,8 +100,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 	class AtomicInfo & myAtomicInfo = nodesManager->v0node[ v0nodeID ] ;
 	DOMNode* node = nodesManager->v0nodeByDID[ v0nodeID ] ;
 
-	XMLCh tempStrA[100];
-	XMLCh tempStrB[100];
+
 	// Apply to Children first - note that they must be enumerated in reverse order
 
 	std::vector<int> childList ;
@@ -151,14 +150,10 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 				char pos_str[10] ;
 				sprintf(parXID_str,"%d", (int)parentXID );
 				sprintf(pos_str, "%d", myPosition);
-				XMLString::transcode("d", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
-				XMLString::transcode("par", tempStrA, 99);
-				elem->setAttribute(tempStrA, XyLatinStr( parXID_str) );
-				XMLString::transcode("pos", tempStrA, 99);
-				elem->setAttribute(tempStrA, XyLatinStr(pos_str) );
-				XMLString::transcode("xm", tempStrA, 99);
-				elem->setAttribute(tempStrA,  XyLatinStr( myXidMap.c_str()) );
+				DOMElement* elem = deltaDoc->createElement(XMLString::transcode("d"));
+				elem->setAttribute(XMLString::transcode("par"), XyLatinStr( parXID_str) );
+				elem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str) );
+				elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr( myXidMap.c_str()) );
 
 				switch(myAtomicInfo.myEvent) {
 					case AtomicInfo::DELETED: {
@@ -171,8 +166,6 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 						// Erase moved subtree so that any parent deleted operation won't take it
                                           //DOMNode* movedNode = parentNode->removeChild( node );
                                           parentNode->removeChild( node );
-						// XMLString::transcode("move", tempStrA, 99);
-						// XMLString::transcode("yes", tempStrB, 99);
 						elem->setAttribute(XMLString::transcode("move"), XMLString::transcode("yes"));
 						moveCount++ ;
 						}
@@ -180,8 +173,6 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 					case AtomicInfo::UPDATE_OLD: {
 						DOMNode* contentNode = deltaDoc->importNode( node, true );
 						elem->appendChild ( contentNode );
-//						XMLString::transcode("update", tempStrA, 99);
-//						XMLString::transcode("yes", tempStrB, 99);
 						elem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
 						updateCount++ ;
 						}
@@ -250,8 +241,6 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 	class AtomicInfo & myAtomicInfo = nodesManager->v1node[ v1nodeID ] ;
 	DOMNode* node = nodesManager->v1nodeByDID[ v1nodeID ] ;
 
-	XMLCh tempStrA[100];
-	XMLCh tempStrB[100];
 	// Apply to Self first
 	
 	switch( myAtomicInfo.myEvent ) {
@@ -279,12 +268,9 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 				sprintf(parXID_str,"%d", (int)parentXID );
 				sprintf(pos_str, "%d", myPosition);
 
-				XMLString::transcode("i", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
-				XMLString::transcode("par", tempStrA, 99);
-				elem->setAttribute(tempStrA, XyLatinStr(parXID_str) );
-				XMLString::transcode("pos", tempStrA, 99);
-				elem->setAttribute(tempStrA, XyLatinStr(pos_str) );
+				DOMElement* elem = deltaDoc->createElement(XMLString::transcode("i"));
+				elem->setAttribute(XMLString::transcode("par"), XyLatinStr(parXID_str) );
+				elem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str) );
 
 				switch(myAtomicInfo.myEvent) {
 					case AtomicInfo::INSERTED: {
@@ -292,23 +278,19 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						std::vector<XID_t> xidList ;
 						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
-						XMLString::transcode("xm", tempStrA, 99);
-						elem->setAttribute(tempStrA,  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
+						elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
 						}
 						break;
 					case AtomicInfo::STRONGMOVE:
 					case AtomicInfo::WEAKMOVE: {
 						// Erase moved subtree so that any parent inserted operation won't take it
-                                          //DOMNode* movedNode = parentNode->removeChild( node );
-                                          parentNode->removeChild( node );
-						XMLString::transcode("move", tempStrA, 99);
-						XMLString::transcode("yes",  tempStrB, 99);
-						elem->setAttribute(tempStrA, tempStrB);
+                        // DOMNode* movedNode = parentNode->removeChild( node );
+                        parentNode->removeChild( node );
+						elem->setAttribute(XMLString::transcode("move"), XMLString::transcode("yes"));
 						moveCount-- ;
 			 			char xidstr[10] ;
 						sprintf(xidstr,"(%d)", (int)nodesManager->v1doc->getXidMap().getXIDbyNode( node ));
-						XMLString::transcode("xm", tempStrA, 99);
-						elem->setAttribute(tempStrA,  XyLatinStr(xidstr) );
+						elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr(xidstr) );
 						}
 						break;
 					case AtomicInfo::UPDATE_NEW: {
@@ -316,12 +298,8 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						std::vector<XID_t> xidList ;
 						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
-						XMLString::transcode("xm", tempStrA, 99);
-						elem->setAttribute(tempStrA,  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
-						
-						XMLString::transcode("update", tempStrA, 99);
-						XMLString::transcode("yes",  tempStrB, 99);
-						elem->setAttribute(tempStrA, tempStrB);
+						elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
+						elem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
 						updateCount-- ;
 						}
 						break;
