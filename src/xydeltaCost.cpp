@@ -21,6 +21,8 @@
 #define DELTAXMLATTR "deltaxml:delta"
 #define DELTAXMLUPDTXT "deltaxml:PCDATAmodify"
 
+XERCES_CPP_NAMESPACE_USE
+
 XID_DOMDocument* xydeltaDoc ;
 XID_DOMDocument* sourceDoc ;
 
@@ -33,15 +35,15 @@ std::vector<MoveInfo> moveInfoList ;
 
 bool nomove = false ;
 
-void createMoveInfoList(xercesc_3_0::DOMNode* operation) {
+void createMoveInfoList(DOMNode* operation) {
 	while (operation!=NULL) {
 	
-		if (operation->getNodeName() == xercesc_3_0::XMLString::transcode("d")) {
-			xercesc_3_0::DOMNode* moveAttr = operation->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("move"));
+		if (operation->getNodeName() == XMLString::transcode("d")) {
+			DOMNode* moveAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("move"));
 			if (moveAttr!=NULL) {
 				struct MoveInfo myMoveInfo ;
-				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, xercesc_3_0::XMLString::transcode("xm"), true);
-				xercesc_3_0::DOMNode* dataNode = sourceDoc->getXidMap().getNodeWithXID(myMoveInfo.rootXid);
+				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, XMLString::transcode("xm"), true);
+				DOMNode* dataNode = sourceDoc->getXidMap().getNodeWithXID(myMoveInfo.rootXid);
 				myMoveInfo.subtreeSize = sourceDoc->getSubtreeNodeCount(dataNode);
 				printf("move found: rootXid=%d, subtreeSize=%d\n", (int)myMoveInfo.rootXid, myMoveInfo.subtreeSize);
 				moveInfoList.push_back(myMoveInfo);
@@ -52,7 +54,7 @@ void createMoveInfoList(xercesc_3_0::DOMNode* operation) {
 	}
 
 bool findMoveInfo(struct MoveInfo *myMoveInfo) {
-	xercesc_3_0::DOMNode* node = sourceDoc->getXidMap().getNodeWithXID(myMoveInfo->rootXid);
+	DOMNode* node = sourceDoc->getXidMap().getNodeWithXID(myMoveInfo->rootXid);
 	while ((node!=NULL)&&(node!=sourceDoc->getDocumentElement())) {
 		XID_t theXid = sourceDoc->getXidMap().getXIDbyNode(node);
 		for(unsigned int i=0; i<moveInfoList.size(); i++) {
@@ -67,26 +69,26 @@ bool findMoveInfo(struct MoveInfo *myMoveInfo) {
 	return false;
 	}
 
-int getXyDeltaCost(xercesc_3_0::DOMNode* operation) {
+int getXyDeltaCost(DOMNode* operation) {
 	if (operation==NULL) return 0;
 	int myCost = 0;
 	
-	if (xercesc_3_0::XMLString::equals(operation->getNodeName(),xercesc_3_0::XMLString::transcode("d"))) {
-		xercesc_3_0::DOMNode* updateAttr = operation->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("update"));
-		xercesc_3_0::DOMNode* moveAttr = operation->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("move"));
+	if (XMLString::equals(operation->getNodeName(),XMLString::transcode("d"))) {
+		DOMNode* updateAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("update"));
+		DOMNode* moveAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("move"));
 
 		// Delete
 		if ((updateAttr==NULL)&&(moveAttr==NULL)) {
 			int dataSize = 0;
 			if (operation->hasChildNodes()) {
-				xercesc_3_0::DOMNode* data = operation->getFirstChild();
+				DOMNode* data = operation->getFirstChild();
 				dataSize=xydeltaDoc->getSubtreeNodeCount(data);
 				}
 			printf("delete %d nodes\n", dataSize);
 			myCost += dataSize;
 			if (nomove) {
 				struct MoveInfo myMoveInfo;
-				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, xercesc_3_0::XMLString::transcode("par"), false);
+				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, XMLString::transcode("par"), false);
 				if (findMoveInfo(&myMoveInfo)) {
 					printf("  substract cost of actual operation from ancestor 'move' operation: myCost-=2x%d\n", dataSize);
 					myCost -= 2*dataSize ;
@@ -98,12 +100,12 @@ int getXyDeltaCost(xercesc_3_0::DOMNode* operation) {
 		else if (updateAttr==NULL) {
 			if (nomove) {
 				struct MoveInfo myMoveInfo ;
-				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, xercesc_3_0::XMLString::transcode("xm"), true);
+				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, XMLString::transcode("xm"), true);
 				if (!findMoveInfo(&myMoveInfo)) THROW_AWAY(("internal inconsistency is move info list"));
 				printf("move-from transformed into delete %d nodes\n", myMoveInfo.subtreeSize);
 				myCost += myMoveInfo.subtreeSize;
 				struct MoveInfo ancMoveInfo ;
-				ancMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, xercesc_3_0::XMLString::transcode("par"), false);
+				ancMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, XMLString::transcode("par"), false);
 				if (findMoveInfo(&ancMoveInfo)) {
 					printf("  substract cost of actual operation from ancestor 'move' operation: myCost-=2x%d\n", myMoveInfo.subtreeSize);
 					myCost -= 2*myMoveInfo.subtreeSize ;
@@ -120,15 +122,15 @@ int getXyDeltaCost(xercesc_3_0::DOMNode* operation) {
 			}
 		}
 
-	if (xercesc_3_0::XMLString::equals(operation->getNodeName(),xercesc_3_0::XMLString::transcode("i"))) {
-		xercesc_3_0::DOMNode* updateAttr = operation->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("update"));
-		xercesc_3_0::DOMNode* moveAttr = operation->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("move"));
+	if (XMLString::equals(operation->getNodeName(),XMLString::transcode("i"))) {
+		DOMNode* updateAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("update"));
+		DOMNode* moveAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("move"));
 		
 		// Insert
 		if ((updateAttr==NULL)&&(moveAttr==NULL)) {
 			int dataSize = 0;
 			if (operation->hasChildNodes()) {
-				xercesc_3_0::DOMNode* data = operation->getFirstChild();
+				DOMNode* data = operation->getFirstChild();
 				dataSize=xydeltaDoc->getSubtreeNodeCount(data);
 				}
 			printf("delete %d nodes\n", dataSize);
@@ -139,7 +141,7 @@ int getXyDeltaCost(xercesc_3_0::DOMNode* operation) {
 		else if (updateAttr==NULL) {
 			if (nomove) {
 				struct MoveInfo myMoveInfo ;
-				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, xercesc_3_0::XMLString::transcode("xm"), true);
+				myMoveInfo.rootXid = XID_map::getXidFromAttribute(operation, XMLString::transcode("xm"), true);
 				if (!findMoveInfo(&myMoveInfo)) THROW_AWAY(("inconsistent move info list"));
 				printf("move to transformed into insert %d nodes\n", myMoveInfo.subtreeSize);
 				myCost += myMoveInfo.subtreeSize;
@@ -169,10 +171,10 @@ int main(int argc, char **argv) {
 	}
 
 	try {
-		xercesc_3_0::XMLPlatformUtils::Initialize();
+		XMLPlatformUtils::Initialize();
 	}
 
-	catch(const xercesc_3_0::XMLException& toCatch) {
+	catch(const XMLException& toCatch) {
 		std::cerr << "Error during Xerces-c Initialization.\n"
 		     << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
 	}
@@ -186,14 +188,14 @@ int main(int argc, char **argv) {
 	try {
 		xydeltaDoc = new XID_DOMDocument(xydeltaFile.c_str(), false);
 		
-		xercesc_3_0::DOMElement* deltaRoot = xydeltaDoc->getDocumentElement() ;
+		DOMElement* deltaRoot = xydeltaDoc->getDocumentElement() ;
 		if (deltaRoot==NULL) throw VersionManagerException("Data Error", "testDeltaReverse", "deltaRoot is NULL");
 		
-		xercesc_3_0::DOMNode* deltaElement = deltaRoot->getFirstChild();
+		DOMNode* deltaElement = deltaRoot->getFirstChild();
 		if (deltaElement==NULL) throw VersionManagerException("Data Error", "testDeltaReverse", "deltaElement is NULL");
 		
 		if (nomove) {
-			xercesc_3_0::DOMNode *n = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("from"));
+			DOMNode *n = deltaElement->getAttributes()->getNamedItem(XMLString::transcode("from"));
 			XyLatinStr sourceFile(n->getNodeValue());
 			printf("opening source file <%s>\n", (const char*)sourceFile);
 			sourceDoc = new XID_DOMDocument(sourceFile, true);
@@ -201,7 +203,7 @@ int main(int argc, char **argv) {
 		
 		int cost = 0;
 		if (deltaElement->hasChildNodes()) {
-			xercesc_3_0::DOMNode* firstOp = deltaElement->getFirstChild();
+			DOMNode* firstOp = deltaElement->getFirstChild();
 			if (nomove) createMoveInfoList(firstOp);
 			cost = getXyDeltaCost(firstOp);
 			}
@@ -212,7 +214,7 @@ int main(int argc, char **argv) {
 	catch( const VersionManagerException &e ) {
 		std::cerr << e << std::endl ;
 	}
-	catch( const xercesc_3_0::DOMException &e ) {
+	catch( const DOMException &e ) {
 		std::cerr << "DOM_DOMException, code=" << e.code << std::endl ;
 		std::cerr << "DOM_DOMException, message=" << e.msg << std::endl ;
 	}	

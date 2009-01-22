@@ -24,11 +24,13 @@
 
 #include "infra/general/Log.hpp"
 
-static const XMLCh gLS[] = { xercesc_3_0::chLatin_L, xercesc_3_0::chLatin_S, xercesc_3_0::chNull };
+XERCES_CPP_NAMESPACE_USE
 
-xercesc_3_0::DOMNode* XyDelta::ReverseDelta(xercesc_3_0::DOMDocument *reversedDeltaDoc, xercesc_3_0::DOMNode *deltaElement) {
+static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
+
+DOMNode* XyDelta::ReverseDelta(DOMDocument *reversedDeltaDoc, DOMNode *deltaElement) {
 	try {
-		xercesc_3_0::DOMNode* reversed = DeltaReverse(deltaElement, reversedDeltaDoc);
+		DOMNode* reversed = DeltaReverse(deltaElement, reversedDeltaDoc);
 		return reversed ;
 	}
 	catch(...) {
@@ -37,11 +39,11 @@ xercesc_3_0::DOMNode* XyDelta::ReverseDelta(xercesc_3_0::DOMDocument *reversedDe
 }
 
 
-XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_3_0::DTDValidator *dtdValidator=NULL);
+XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false);
 
 // called from computeDelta()   in file VersionManager.cpp
-xercesc_3_0::DOMDocument* XyDelta::XyDiff(xercesc_3_0::DOMDocument* doc1, const char *doc1name, 
-                   xercesc_3_0::DOMDocument* doc2, const char *doc2name, 
+DOMDocument* XyDelta::XyDiff(DOMDocument* doc1, const char *doc1name, 
+                   DOMDocument* doc2, const char *doc2name, 
                    const char *doc1xidmap) {
 
 	// doc1xidmap can be NULL => the default XidMap (1-n|n+1) will be used
@@ -78,25 +80,25 @@ xercesc_3_0::DOMDocument* XyDelta::XyDiff(xercesc_3_0::DOMDocument* doc1, const 
 	
 	TRACE("Go XidXyDiff");
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, doc1name, v1XML, doc2name, false, false, NULL);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, doc1name, v1XML, doc2name, false, false);
 
         delete v0XML;
 	v0XML = NULL;
         delete v1XML;
 	v1XML = NULL;
 
-	return (xercesc_3_0::DOMDocument*)delta;
+	return (DOMDocument*)delta;
 }
 
-void XyDelta::SaveDomDocument(xercesc_3_0::DOMDocument* d, const char *filename) {
+void XyDelta::SaveDomDocument(DOMDocument* d, const char *filename) {
 	XID_DOMDocument* xd = new XID_DOMDocument(d);
 	xd->SaveAs(filename, false);
         delete xd;
 }
 
-xercesc_3_0::DOMDocument* XyDelta::ApplyDelta(xercesc_3_0::DOMDocument* doc, xercesc_3_0::DOMNode* deltaElement, bool CreateNewDocumentResult) {
+DOMDocument* XyDelta::ApplyDelta(DOMDocument* doc, DOMNode* deltaElement, bool CreateNewDocumentResult) {
 	XID_DOMDocument* xdoc = new XID_DOMDocument(doc);
-	XyLatinStr fromXidmap(deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("fromXidMap"))->getNodeValue());
+	XyLatinStr fromXidmap(deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromXidMap"))->getNodeValue());
 
 	try {
 		xdoc->addXidMap(fromXidmap);
@@ -111,9 +113,9 @@ xercesc_3_0::DOMDocument* XyDelta::ApplyDelta(xercesc_3_0::DOMDocument* doc, xer
 		// TO-DO: testXidMap value ?	
 
                 if (CreateNewDocumentResult) {
-			xercesc_3_0::DOMImplementation* impl =  xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(gLS);
-                	xercesc_3_0::DOMDocument* resultDoc = impl->createDocument();
-			xercesc_3_0::DOMNode* resultRoot = resultDoc->importNode(appliqueDoc.getResultDocument()->getDocumentElement(), true);
+			DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
+                	DOMDocument* resultDoc = impl->createDocument();
+			DOMNode* resultRoot = resultDoc->importNode(appliqueDoc.getResultDocument()->getDocumentElement(), true);
 			resultDoc->appendChild(resultRoot);
 			return resultDoc;
 		} else {
@@ -131,39 +133,39 @@ xercesc_3_0::DOMDocument* XyDelta::ApplyDelta(xercesc_3_0::DOMDocument* doc, xer
 	}
 }
 
-unsigned int XyDelta::estimateDocumentSize(xercesc_3_0::DOMDocument *doc) {
-	xercesc_3_0::DOMNode* root = doc->getDocumentElement();
+unsigned int XyDelta::estimateDocumentSize(DOMDocument *doc) {
+	DOMNode* root = doc->getDocumentElement();
 	return (XyDelta::estimateSubtreeSize(root)+strlen("<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n"));
 	}
 
-unsigned int XyDelta::estimateSubtreeSize(xercesc_3_0::DOMNode *node) {
+unsigned int XyDelta::estimateSubtreeSize(DOMNode *node) {
 	if (node==NULL) return 0;
 
 	unsigned int mySize = 0;
 
 	switch(node->getNodeType()) {
-		case xercesc_3_0::DOMNode::ELEMENT_NODE: {
-			if (node->hasChildNodes()) mySize += 2*xercesc_3_0::XMLString::stringLen(node->getNodeName())+5;
-			else mySize += xercesc_3_0::XMLString::stringLen(node->getNodeName())+3;
+		case DOMNode::ELEMENT_NODE: {
+			if (node->hasChildNodes()) mySize += 2*XMLString::stringLen(node->getNodeName())+5;
+			else mySize += XMLString::stringLen(node->getNodeName())+3;
 
-			xercesc_3_0::DOMNamedNodeMap* attributes = node->getAttributes();
+			DOMNamedNodeMap* attributes = node->getAttributes();
 			if (attributes!=NULL) {
 				int attrCount = attributes->getLength();
 				for (int i = 0; i < attrCount; i++) {
-					xercesc_3_0::DOMNode* attr = attributes->item(i);
-					mySize += xercesc_3_0::XMLString::stringLen(attr->getNodeName())+xercesc_3_0::XMLString::stringLen(attr->getNodeValue())+4;
+					DOMNode* attr = attributes->item(i);
+					mySize += XMLString::stringLen(attr->getNodeName())+XMLString::stringLen(attr->getNodeValue())+4;
 				}
 			}
 			
-			xercesc_3_0::DOMNode* child=node->getFirstChild();
+			DOMNode* child=node->getFirstChild();
 			while (child!=NULL) {
 				mySize += XyDelta::estimateSubtreeSize(child);
 				child=child->getNextSibling();
 			}
 			break;
 		}
-		case xercesc_3_0::DOMNode::TEXT_NODE: {
-			mySize += xercesc_3_0::XMLString::stringLen(node->getNodeValue());
+		case DOMNode::TEXT_NODE: {
+			mySize += XMLString::stringLen(node->getNodeValue());
 			break;
 		}
 		default:

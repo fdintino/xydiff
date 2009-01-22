@@ -58,6 +58,8 @@ unsigned long long int clocksSaveDelta              ;
 struct timeb timeStart ;
 struct timeb timeLast ;
 
+XERCES_CPP_NAMESPACE_USE
+
 void TimeInit(void) {
   vddprintf(("TimeInit\n")) ;
 	ftime ( &timeStart );
@@ -90,7 +92,7 @@ void TimeStep(void) {
  *******************************************************************/
 
 // apelat din XyDiff() de mai jos
-XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_3_0::DTDValidator *dtdValidator=NULL) {
+XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false) {
 #ifdef HW_PROF
 	clocksRegisterSubtree        = 0 ;
 	clocksTopDownMatch           = 0 ;
@@ -113,9 +115,6 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 	TRACE("PHASE 1: Register ID-Attributes");
 	
 	UniqueIdHandler myUniqueIdHandler ;
-	if (dtdValidator!=NULL) {
-		myUniqueIdHandler.RegisterAttrId( dtdValidator );
-		}
 		
 	// Create object that manages meta-data for nodes of both documents
 	class NodesManager xyMappingEngine;

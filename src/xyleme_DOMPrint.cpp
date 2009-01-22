@@ -212,6 +212,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+XERCES_CPP_NAMESPACE_USE
 using namespace std;
 
 // ---------------------------------------------------------------------------
@@ -232,15 +233,15 @@ using namespace std;
 //static bool     doValidation    = false;
 //static bool     doEscapes       = true;
 
-static const XMLCh gLS[] = { xercesc_3_0::chLatin_L, xercesc_3_0::chLatin_S, xercesc_3_0::chNull };
+static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 // ---------------------------------------------------------------------------
 //  Forward references
 // ---------------------------------------------------------------------------
-//void          outputContent(ostream& target, const xercesc_3_0::DOMString &s);
+//void          outputContent(ostream& target, const DOMString &s);
 void          usage();
-//ostream& operator<<(ostream& target, const xercesc_3_0::DOMString& toWrite);
-ostream& operator<<(ostream& target, xercesc_3_0::DOMNode& toWrite);
+//ostream& operator<<(ostream& target, const DOMString& toWrite);
+ostream& operator<<(ostream& target, DOMNode& toWrite);
 
 
 // ---------------------------------------------------------------------------
@@ -256,10 +257,10 @@ ostream& operator<<(ostream& target, xercesc_3_0::DOMNode& toWrite);
 extern bool PrintWithXID;
 extern XID_map *PrintXidMap;
 
-ostream& operator<<(ostream& target, xercesc_3_0::DOMNode &toWrite)
+ostream& operator<<(ostream& target, DOMNode &toWrite)
 {
     if ((PrintWithXID)&&(PrintXidMap!=NULL)) {
-        if ((toWrite.getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE)||(toWrite.getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE)) {
+        if ((toWrite.getNodeType()==DOMNode::TEXT_NODE)||(toWrite.getNodeType()==DOMNode::ELEMENT_NODE)) {
             target << "[XID=" << PrintXidMap->getXIDbyNode(&toWrite)<<"]";
 	}
     }
@@ -270,14 +271,14 @@ ostream& operator<<(ostream& target, xercesc_3_0::DOMNode &toWrite)
 
 	switch (toWrite.getNodeType())
     {
-		case xercesc_3_0::DOMNode::TEXT_NODE:
+		case DOMNode::TEXT_NODE:
         {
           outputContent(target, nodeValue);
           
             break;
         }
 
-        case xercesc_3_0::DOMNode::PROCESSING_INSTRUCTION_NODE :
+        case DOMNode::PROCESSING_INSTRUCTION_NODE :
         {
             target  << "<?"
                     << XyLatinStr(nodeName).localForm()
@@ -287,14 +288,14 @@ ostream& operator<<(ostream& target, xercesc_3_0::DOMNode &toWrite)
             break;
         }
 
-        case xercesc_3_0::DOMNode::DOCUMENT_NODE :
+        case DOMNode::DOCUMENT_NODE :
         {
             // Bug here:  we need to find a way to get the encoding name
             //   for the default code page on the system where the
             //   program is running, and plug that in for the encoding
             //   name.  
             target << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n";
-            xercesc_3_0::DOMNode* child = toWrite.getFirstChild();
+            DOMNode* child = toWrite.getFirstChild();
             while( child != 0)
             {
                 target << *child << endl;
@@ -304,17 +305,17 @@ ostream& operator<<(ostream& target, xercesc_3_0::DOMNode &toWrite)
             break;
         }
 
-        case xercesc_3_0::DOMNode::ELEMENT_NODE :
+        case DOMNode::ELEMENT_NODE :
         {
             // Output the element start tag.
             target << '<' << XyLatinStr(nodeName).localForm();
 
             // Output any attributes on this element
-            xercesc_3_0::DOMNamedNodeMap* attributes = toWrite.getAttributes();
+            DOMNamedNodeMap* attributes = toWrite.getAttributes();
             int attrCount = attributes->getLength();
             for (int i = 0; i < attrCount; i++)
             {
-                xercesc_3_0::DOMNode*  attribute = attributes->item(i);
+                DOMNode*  attribute = attributes->item(i);
 
                 target  << ' ' << XyLatinStr(attribute->getNodeName()).localForm()
                         << "=\"";
@@ -327,7 +328,7 @@ ostream& operator<<(ostream& target, xercesc_3_0::DOMNode &toWrite)
             //  Test for the presence of children, which includes both
             //  text content and nested elements.
             //
-            xercesc_3_0::DOMNode* child = toWrite.getFirstChild();
+            DOMNode* child = toWrite.getFirstChild();
             if (child != 0)
             {
                 // There are children. Close start-tag, and output children.
@@ -352,21 +353,21 @@ ostream& operator<<(ostream& target, xercesc_3_0::DOMNode &toWrite)
             break;
         }
 
-        case xercesc_3_0::DOMNode::ENTITY_REFERENCE_NODE:
+        case DOMNode::ENTITY_REFERENCE_NODE:
         {
-            xercesc_3_0::DOMNode* child;
+            DOMNode* child;
             for (child = toWrite.getFirstChild(); child != 0; child = child->getNextSibling())
                 target << *child;
             break;
         }
 
-        case xercesc_3_0::DOMNode::CDATA_SECTION_NODE:
+        case DOMNode::CDATA_SECTION_NODE:
         {
             target << "<![CDATA[" << XyLatinStr(nodeValue).localForm() << "]]>";
             break;
         }
 
-        case xercesc_3_0::DOMNode::COMMENT_NODE:
+        case DOMNode::COMMENT_NODE:
         {
             target << "<!--" << XyLatinStr(nodeValue).localForm() << "-->";
             break;

@@ -13,6 +13,7 @@
 char s[5000];
 int testlevel=20;
 
+XERCES_CPP_NAMESPACE_USE
 using namespace std;
 
 void generateTestFiles(int argc, char **argv) {
@@ -130,21 +131,21 @@ int main(int argc, char *argv[]) {
 			XID_DOMDocument doc1(file1, true);
 			XID_DOMDocument doc2(file2, false);
 			previousXidmap = doc1.getXidMap().String();
-			xercesc_3_0::DOMDocument *delta = XyDelta::XyDiff(doc1.getDOMDocumentOwnership(), file1, doc2.getDOMDocumentOwnership(), file2, moretest?NULL:previousXidmap.c_str());
+			DOMDocument *delta = XyDelta::XyDiff(doc1.getDOMDocumentOwnership(), file1, doc2.getDOMDocumentOwnership(), file2, moretest?NULL:previousXidmap.c_str());
 			if (delta==NULL) {
 				fprintf(stderr, "ERROR: XyDelta::XyDiff\n");
 				exit(-1);
 			}
-			xercesc_3_0::DOMElement *t = (xercesc_3_0::DOMElement*)(delta->getDocumentElement()->getLastChild());
+			DOMElement *t = (DOMElement*)(delta->getDocumentElement()->getLastChild());
 			if (!t) {
 				fprintf(stderr, "ERROR: Could not get <t> node in the delta\n");
 				exit(-1);
 			}
-			if (!xercesc_3_0::XMLString::equals(t->getNodeName(), xercesc_3_0::XMLString::transcode("t"))) {
+			if (!XMLString::equals(t->getNodeName(), XMLString::transcode("t"))) {
 				fprintf(stderr, "ERROR: Could not get <t> node in the delta (reason #2)\n");
 				exit(-1);
 			}
-			XyLatinStr myXidmap(t->getAttribute(xercesc_3_0::XMLString::transcode("toXidMap")));
+			XyLatinStr myXidmap(t->getAttribute(XMLString::transcode("toXidMap")));
 			previousXidmap = myXidmap.localForm();
 			fprintf(stderr, "found new xidmap: %s\n", previousXidmap.c_str());
 

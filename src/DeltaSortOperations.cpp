@@ -8,25 +8,27 @@
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/util/XMLString.hpp"
 
+XERCES_CPP_NAMESPACE_USE
+
 /*                                       */
 /*                                       */
 /* ---- ++++ DELETE OPERATIONS ++++ ---- */
 /*                                       */
 /*                                       */
 
-SortDeleteOperationsEngine::SortDeleteOperationsEngine(XID_DOMDocument *sourceDoc, xercesc_3_0::DOMNode* firstOperatorSibling) {
+SortDeleteOperationsEngine::SortDeleteOperationsEngine(XID_DOMDocument *sourceDoc, DOMNode* firstOperatorSibling) {
 	registerOperations(sourceDoc, firstOperatorSibling);
-	xercesc_3_0::DOMNode* docRoot = sourceDoc->getDocumentElement();
+	DOMNode* docRoot = sourceDoc->getDocumentElement();
 	unrollList(sourceDoc, docRoot);
 	count=0;
 	}
 	
-void SortDeleteOperationsEngine::registerOperations(XID_DOMDocument *sourceDoc, xercesc_3_0::DOMNode *firstOperatorSibling) {
+void SortDeleteOperationsEngine::registerOperations(XID_DOMDocument *sourceDoc, DOMNode *firstOperatorSibling) {
 	
-	xercesc_3_0::DOMNode* op=firstOperatorSibling;
+	DOMNode* op=firstOperatorSibling;
 	while(op!=NULL) {
-		if (xercesc_3_0::XMLString::equals(op->getNodeName(),xercesc_3_0::XMLString::transcode("d"))) {
-			XyLatinStr xidmapStr(op->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xm"))->getNodeValue());
+		if (XMLString::equals(op->getNodeName(),XMLString::transcode("d"))) {
+			XyLatinStr xidmapStr(op->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue());
 			
 			XidMap_Parser parse(xidmapStr) ;
 			XID_t myXid = parse.getRootXID();
@@ -38,10 +40,10 @@ void SortDeleteOperationsEngine::registerOperations(XID_DOMDocument *sourceDoc, 
 	
 	}
 
-void SortDeleteOperationsEngine::unrollList(XID_DOMDocument *sourceDoc, xercesc_3_0::DOMNode *node) {
+void SortDeleteOperationsEngine::unrollList(XID_DOMDocument *sourceDoc, DOMNode *node) {
 	
 	if (node->hasChildNodes()) {
-		xercesc_3_0::DOMNode* child = node->getLastChild();
+		DOMNode* child = node->getLastChild();
 		while(child!=NULL) {
 			unrollList(sourceDoc, child);
 			child=child->getPreviousSibling();
@@ -49,7 +51,7 @@ void SortDeleteOperationsEngine::unrollList(XID_DOMDocument *sourceDoc, xercesc_
 		}
 	
 	XID_t myXid = sourceDoc->getXidMap().getXIDbyNode(node);
-	std::map<XID_t, xercesc_3_0::DOMNode*>::iterator p = operationBySourceNode.find((long)myXid);
+	std::map<XID_t, DOMNode*>::iterator p = operationBySourceNode.find((long)myXid);
 	if (p!=operationBySourceNode.end()) theList.push_back(p->second);
 
 	}
@@ -58,7 +60,7 @@ bool SortDeleteOperationsEngine::isListEmpty(void) {
 	return(count>=theList.size());
 	}
 
-xercesc_3_0::DOMNode* SortDeleteOperationsEngine::getNextDeleteOperation(void) {
+DOMNode* SortDeleteOperationsEngine::getNextDeleteOperation(void) {
 	if (count>=theList.size()) THROW_AWAY(("count %d larger than list size %d",(int)count,(int)theList.size()));
 	return theList[count++];
 	}
@@ -80,24 +82,24 @@ xercesc_3_0::DOMNode* SortDeleteOperationsEngine::getNextDeleteOperation(void) {
  *                                                                 *
  *******************************************************************/
 
-InsertOpWithPos::InsertOpWithPos(xercesc_3_0::DOMNode *_op) {
+InsertOpWithPos::InsertOpWithPos(DOMNode *_op) {
 	op=_op;
-	pos = (int)XyInt(op->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("pos"))->getNodeValue());
-	parentXID = (XID_t)(int)XyInt(op->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("par"))->getNodeValue());
+	pos = (int)XyInt(op->getAttributes()->getNamedItem(XMLString::transcode("pos"))->getNodeValue());
+	parentXID = (XID_t)(int)XyInt(op->getAttributes()->getNamedItem(XMLString::transcode("par"))->getNodeValue());
 	}
 
 bool cmpSiblingInsertOrder::operator() (InsertOpWithPos op1, InsertOpWithPos op2) const {
-	if (!xercesc_3_0::XMLString::equals(op1.op->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("par"))->getNodeValue(), op2.op->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("par"))->getNodeValue())) {
+	if (!XMLString::equals(op1.op->getAttributes()->getNamedItem(XMLString::transcode("par"))->getNodeValue(), op2.op->getAttributes()->getNamedItem(XMLString::transcode("par"))->getNodeValue())) {
 		THROW_AWAY(("two supposed sibling insert operations do not have the same parents"));
 		}
 	return (op1.pos>op2.pos);
 	}
 
-SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDoc, xercesc_3_0::DOMNode *firstOperatorSibling) {
+SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDoc, DOMNode *firstOperatorSibling) {
 
-	xercesc_3_0::DOMNode* op=firstOperatorSibling;
+	DOMNode* op=firstOperatorSibling;
 	while(op!=NULL) {
-		if (xercesc_3_0::XMLString::equals(op->getNodeName(),xercesc_3_0::XMLString::transcode("i"))) {
+		if (XMLString::equals(op->getNodeName(),XMLString::transcode("i"))) {
 
 			InsertOpWithPos iOp(op);
 			
@@ -120,7 +122,7 @@ SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDo
 	theDoc=sourceDoc ;
 	}
 	
-xercesc_3_0::DOMNode* SortInsertOperationsEngine::getNextInsertOperation(void) {
+DOMNode* SortInsertOperationsEngine::getNextInsertOperation(void) {
 	if (insertList.size()==0) THROW_AWAY(("insert list is empty"));
 	
 	int countSurvey=insertList.size();
@@ -130,7 +132,7 @@ xercesc_3_0::DOMNode* SortInsertOperationsEngine::getNextInsertOperation(void) {
 		if (countSurvey<0) THROW_AWAY(("this is a bad Delta: can not find any insert with existing parent. cross-dependencies??"));
 		}
 
-	xercesc_3_0::DOMNode* op = insertList[count].top().op;
+	DOMNode* op = insertList[count].top().op;
 	insertList[count].pop();
 	if (insertList[count].empty()) {
 		std::vector<siblingList>::iterator i=insertList.begin();

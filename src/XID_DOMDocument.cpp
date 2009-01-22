@@ -37,9 +37,10 @@
 #include <iostream>
 #include <fstream>
 
+XERCES_CPP_NAMESPACE_USE
 using namespace std;
 
-static const XMLCh gLS[] = { xercesc_3_0::chLatin_L, xercesc_3_0::chLatin_S, xercesc_3_0::chNull };
+static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 //
 // Opens an XML file and if possible its associated XID-mapping file
@@ -57,13 +58,13 @@ class GlobalPrintContext_t globalPrintContext ;
 // Create new XID_DOMDocument
 
 XID_DOMDocument* XID_DOMDocument::createDocument(void) {
-  xercesc_3_0::DOMImplementation* impl =  xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(gLS);
-  xercesc_3_0::DOMDocument* doc = impl->createDocument();
+  DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
+  DOMDocument* doc = impl->createDocument();
   return new XID_DOMDocument(doc, NULL, true);
 }
 
-xercesc_3_0::DOMDocument * XID_DOMDocument::getDOMDocumentOwnership() {
-	xercesc_3_0::DOMDocument * doc = theDocument;
+DOMDocument * XID_DOMDocument::getDOMDocumentOwnership() {
+	DOMDocument * doc = theDocument;
 	theDocument = NULL;
 	return doc;
 }
@@ -113,7 +114,7 @@ void XID_DOMDocument::addXidMapFile(const char *xidmapFilename) {
 int XID_DOMDocument::addXidMap(const char *theXidmap) {
 	if (xidmap!=NULL) THROW_AWAY(("can't attach XidMap, slot not empty"));
 	TRACE("getDocumentElement()");
-	xercesc_3_0::DOMElement* docRoot = getDocumentElement();
+	DOMElement* docRoot = getDocumentElement();
 	if (theXidmap==NULL) {
 		int nodecount = getDocumentNodeCount() ;
 		char xidstring[100];
@@ -135,7 +136,7 @@ void XID_DOMDocument::initEmptyXidmapStartingAt(XID_t firstAvailableXid) {
 
 // Construct XID_DOMDocument from a DOM_Document
 
-XID_DOMDocument::XID_DOMDocument(xercesc_3_0::DOMDocument *doc, const char *xidmapStr, bool adoptDocument) : xidmap(NULL), theDocument(doc), theParser(NULL), doReleaseTheDocument(adoptDocument)
+XID_DOMDocument::XID_DOMDocument(DOMDocument *doc, const char *xidmapStr, bool adoptDocument) : xidmap(NULL), theDocument(doc), theParser(NULL), doReleaseTheDocument(adoptDocument)
 {
 	if (xidmapStr) {
 		(void)addXidMap(xidmapStr);
@@ -166,8 +167,8 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 	
 	// Saves XML file
 	
-	//xercesc_3_0::LocalFileFormatTarget xmlfile(xml_filename);
-	xercesc_3_0::LocalFileFormatTarget *xmlfile = new xercesc_3_0::LocalFileFormatTarget(xml_filename);
+	//LocalFileFormatTarget xmlfile(xml_filename);
+	LocalFileFormatTarget *xmlfile = new LocalFileFormatTarget(xml_filename);
 	if (!xmlfile) {
 		cerr << "Error: could not open <" << xml_filename << "> for output" << endl ;
 		return ;
@@ -191,26 +192,26 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 		xidmapfile << xidString ;
 	}
 
-	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(xercesc_3_0::XMLString::transcode("LS"));
-	xercesc_3_0::DOMLSSerializer* theSerializer = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSSerializer();
-	xercesc_3_0::DOMLSOutput *theOutput = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSOutput();
+	DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
+	DOMLSSerializer* theSerializer = ((DOMImplementationLS*)impl)->createLSSerializer();
+	DOMLSOutput *theOutput = ((DOMImplementationLS*)impl)->createLSOutput();
 	
 	try {
           // do the serialization through DOMLSSerializer::write();
 		theOutput->setByteStream(xmlfile);
-		theSerializer->write((xercesc_3_0::DOMDocument*)this, theOutput);
+		theSerializer->write((DOMDocument*)this, theOutput);
       }
-      catch (const xercesc_3_0::XMLException& toCatch) {
-          char* message = xercesc_3_0::XMLString::transcode(toCatch.getMessage());
+      catch (const XMLException& toCatch) {
+          char* message = XMLString::transcode(toCatch.getMessage());
           std::cout << "Exception message is: \n"
                << message << "\n";
-          xercesc_3_0::XMLString::release(&message);
+          XMLString::release(&message);
       }
-      catch (const xercesc_3_0::DOMException& toCatch) {
-          char* message = xercesc_3_0::XMLString::transcode(toCatch.msg);
+      catch (const DOMException& toCatch) {
+          char* message = XMLString::transcode(toCatch.msg);
           std::cout << "Exception message is: \n"
                << message << "\n";
-          xercesc_3_0::XMLString::release(&message);
+          XMLString::release(&message);
       }
       catch (...) {
           std::cout << "Unexpected Exception \n" ;
@@ -228,7 +229,7 @@ XID_DOMDocument* XID_DOMDocument::copy(const XID_DOMDocument *doc, bool withXID)
 	std::cout << "XID_DOMDocument::copy" << std::endl;
 	XID_DOMDocument* result = XID_DOMDocument::createDocument() ;
 	std::cout << "create document ok" << std::endl;
-	xercesc_3_0::DOMNode* resultRoot = result->importNode((xercesc_3_0::DOMNode*)doc->getDocumentElement(), true);
+	DOMNode* resultRoot = result->importNode((DOMNode*)doc->getDocumentElement(), true);
 	std::cout << "node import ok" << std::endl;
 	result->appendChild(resultRoot);
 	std::cout << "append child ok" << std::endl;
@@ -256,18 +257,18 @@ XID_DOMDocument::~XID_DOMDocument() {
  ***                                                    ***
  ************************************************************************************************************************************/
 
-class xydeltaParseHandler : public xercesc_3_0::DOMErrorHandler {
+class xydeltaParseHandler : public DOMErrorHandler {
 public:
-  void warning(const xercesc_3_0::SAXParseException& e);
-  void error(const xercesc_3_0::SAXParseException& e);
-  void fatalError(const xercesc_3_0::SAXParseException& e);
+  void warning(const SAXParseException& e);
+  void error(const SAXParseException& e);
+  void fatalError(const SAXParseException& e);
   void resetErrors() {};
-  bool handleError(const xercesc_3_0::DOMError& domError);
+  bool handleError(const DOMError& domError);
 } ;
 
-bool xydeltaParseHandler::handleError(const xercesc_3_0::DOMError& domError)
+bool xydeltaParseHandler::handleError(const DOMError& domError)
 {
-  xercesc_3_0::DOMLocator* locator = domError.getLocation();
+  DOMLocator* locator = domError.getLocation();
   cerr << "\n(GF) Error at (file " << XyLatinStr(locator->getURI()).localForm()
        << ", line " << locator->getLineNumber()
        << ", char " << locator->getColumnNumber()
@@ -275,21 +276,21 @@ bool xydeltaParseHandler::handleError(const xercesc_3_0::DOMError& domError)
   throw VersionManagerException("xydeltaParseHandler", "error", "-");
 }
 
-void xydeltaParseHandler::error(const xercesc_3_0::SAXParseException& e) {
+void xydeltaParseHandler::error(const SAXParseException& e) {
 	cerr << "\n(GF) Error at (file " << XyLatinStr(e.getSystemId()).localForm()
 	     << ", line " << e.getLineNumber()
 	     << ", char " << e.getColumnNumber()
 	     << "): " << XyLatinStr(e.getMessage()).localForm() << endl;
 	throw VersionManagerException("xydeltaParseHandler", "error", "-");
 	}
-void xydeltaParseHandler::fatalError(const xercesc_3_0::SAXParseException& e) {
+void xydeltaParseHandler::fatalError(const SAXParseException& e) {
 	cerr << "\n(GF) Fatal Error at (file " << XyLatinStr(e.getSystemId()).localForm()
 	     << ", line " << e.getLineNumber()
 	     << ", char " << e.getColumnNumber()
 	     << "): " << XyLatinStr(e.getMessage()).localForm() << endl;
 	throw VersionManagerException("xydeltaParseHandler", "fatal error", "-");
 	}
-void xydeltaParseHandler::warning(const xercesc_3_0::SAXParseException& e) {
+void xydeltaParseHandler::warning(const SAXParseException& e) {
 	cerr << "\n(GF) Warning at (file " << XyLatinStr(e.getSystemId()).localForm()
 	     << ", line " << e.getLineNumber()
 	     << ", char " << e.getColumnNumber()
@@ -304,9 +305,9 @@ void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) 
 	
 	// Initialize the XML4C2 system
 	try {
-		xercesc_3_0::XMLPlatformUtils::Initialize();
+		XMLPlatformUtils::Initialize();
 	}
-	catch(const xercesc_3_0::XMLException& e) {
+	catch(const XMLException& e) {
 		cerr << "Error during Xerces-c Initialization.\n"
 		     << "  Exception message:" << XyLatinStr(e.getMessage()).localForm() << endl;
 		ERROR("Xerces::Initialize() FAILED");
@@ -321,33 +322,33 @@ void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) 
         // The parser owns the Validator, so we don't have to free it
   	// The parser also owns the DOMDocument
 	
-	static xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(gLS);
-	theParser = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSParser(xercesc_3_0::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	static DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
+	theParser = ((DOMImplementationLS*)impl)->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 	//bool ignoresWhitespace = theParser->getIncludeIgnorableWhitespace();
 	
 	bool errorsOccured = false;
   
 	try {
-		// theParser->setFeature(xercesc_3_0::XMLUni::fgDOMValidation, doValidation);
+		// theParser->setFeature(XMLUni::fgDOMValidation, doValidation);
 		//theParser->setDoValidation(doValidation);
-		xercesc_3_0::DOMErrorHandler * handler = new xydeltaParseHandler();
-		if (theParser->getDomConfig()->canSetParameter(xercesc_3_0::XMLUni::fgDOMValidate, doValidation))
-			theParser->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMValidate, doValidation);
-		if (theParser->getDomConfig()->canSetParameter(xercesc_3_0::XMLUni::fgDOMElementContentWhitespace, false))
-			theParser->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMElementContentWhitespace, false);
-		theParser->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMErrorHandler, handler);
+		DOMErrorHandler * handler = new xydeltaParseHandler();
+		if (theParser->getDomConfig()->canSetParameter(XMLUni::fgDOMValidate, doValidation))
+			theParser->getDomConfig()->setParameter(XMLUni::fgDOMValidate, doValidation);
+		if (theParser->getDomConfig()->canSetParameter(XMLUni::fgDOMElementContentWhitespace, false))
+			theParser->getDomConfig()->setParameter(XMLUni::fgDOMElementContentWhitespace, false);
+		theParser->getDomConfig()->setParameter(XMLUni::fgDOMErrorHandler, handler);
 	//	theParser->setErrorHandler(handler);
                 theDocument = theParser->parseURI(xmlfile);
-	} catch (const xercesc_3_0::XMLException& e) {
+	} catch (const XMLException& e) {
 		cerr << "XMLException: An error occured during parsing\n   Message: "
 		     << XyLatinStr(e.getMessage()).localForm() << endl;
 		errorsOccured = true;
 		throw VersionManagerException("XML Exception", "parseDOM_Document", "See previous exception messages for more details");
-	} catch (const xercesc_3_0::DOMException& toCatch) {
-		char* message = xercesc_3_0::XMLString::transcode(toCatch.msg);
+	} catch (const DOMException& toCatch) {
+		char* message = XMLString::transcode(toCatch.msg);
 		cout << "Exception message is: \n"
 			<< message << "\n";
-		xercesc_3_0::XMLString::release(&message);
+		XMLString::release(&message);
 	}
 	catch (...) {
        cout << "Unexpected Exception \n" ;
@@ -358,14 +359,14 @@ void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) 
 // get Document(Subtree)NodeCount
 //---------------------------------------------------------------------------
 
-int XID_DOMDocument::getSubtreeNodeCount(xercesc_3_0::DOMNode *node) {
+int XID_DOMDocument::getSubtreeNodeCount(DOMNode *node) {
 	int count = 0;
 	if (node==NULL) {
 		FATAL("unexpected NULL node");
 		abort();
 	}
         if(node->hasChildNodes()) {
-		xercesc_3_0::DOMNode* child = node->getFirstChild();
+		DOMNode* child = node->getFirstChild();
 		while(child!=NULL) {
 			count += getSubtreeNodeCount(child);
 			child=child->getNextSibling();
@@ -376,7 +377,7 @@ int XID_DOMDocument::getSubtreeNodeCount(xercesc_3_0::DOMNode *node) {
 	}
 
 int XID_DOMDocument::getDocumentNodeCount() {
-	xercesc_3_0::DOMElement* docRoot = this->getDocumentElement() ;
+	DOMElement* docRoot = this->getDocumentElement() ;
 	if (docRoot==NULL) {
 		ERROR("document has no Root Element");
 		return 0;
@@ -384,14 +385,14 @@ int XID_DOMDocument::getDocumentNodeCount() {
 	return getSubtreeNodeCount( docRoot );
 }
 
-bool XID_DOMDocument::isRealData(xercesc_3_0::DOMNode *node) {
+bool XID_DOMDocument::isRealData(DOMNode *node) {
 	switch(node->getNodeType()) {
 		
 /*
  * this part needs to be optimized as it uses XyLatinStr (XML transcode)
  */ 
 
-		case xercesc_3_0::DOMNode::TEXT_NODE: {
+		case DOMNode::TEXT_NODE: {
 			XyLatinStr theText( node->getNodeValue() );
 			unsigned int l = strlen(theText.localForm()) ;
 			for(unsigned int i=0;i<l;i++) {
@@ -406,28 +407,34 @@ bool XID_DOMDocument::isRealData(xercesc_3_0::DOMNode *node) {
 	}
 
 
-void Restricted::XidTagSubtree(XID_DOMDocument *doc, xercesc_3_0::DOMNode* node) {
+void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 	
 	// Tag Node
 	
 	XID_t myXid = doc->getXidMap().getXIDbyNode(node);
-	if (node->getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE) {
+	if (node->getNodeType()==DOMNode::ELEMENT_NODE) {
 		char xidStr[20];
 		sprintf(xidStr, "%d", (int)myXid);
-		xercesc_3_0::DOMNamedNodeMap* attr = node->getAttributes();
+		DOMNamedNodeMap* attr = node->getAttributes();
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
 		// If we are dealing with the root node
 		//if (doc->getDocumentNode()->isEqualNode(node)) {
-		if (node->isEqualNode((xercesc_3_0::DOMNode*)doc->getDocumentElement())) {
-			xercesc_3_0::DOMAttr* attrNodeNS = doc->createAttributeNS(
-				xercesc_3_0::XMLString::transcode("http://www.w3.org/2000/xmlns/"),
-				xercesc_3_0::XMLString::transcode("xmlns:xyd"));
-				attrNodeNS->setValue(xercesc_3_0::XMLString::transcode("urn:schemas-xydiff:xydelta"));
+		if (node->isEqualNode((DOMNode*)doc->getDocumentElement())) {
+			DOMAttr* attrNodeNS = doc->createAttributeNS(
+				XMLString::transcode("http://www.w3.org/2000/xmlns/"),
+				XMLString::transcode("xmlns:xyd"));
+				attrNodeNS->setValue(XMLString::transcode("urn:schemas-xydiff:xydelta"));
 				attr->setNamedItem(attrNodeNS);
 		}
+<<<<<<< .working
 		xercesc_3_0::DOMAttr* attrNode = doc->createAttributeNS(
 			xercesc_3_0::XMLString::transcode("urn:schemas-xydiff:xydelta"),
 			xercesc_3_0::XMLString::transcode("xyd:XyXid"));
+=======
+		DOMAttr* attrNode = doc->createAttributeNS(
+			XMLString::transcode("urn:schemas-xydiff:xydelta"),
+			XMLString::transcode("xyd:xid"));
+>>>>>>> .merge-right.r20
 		attrNode->setValue(XyLatinStr(xidStr).wideForm());
 		attr->setNamedItem(attrNode);
 		}
@@ -436,7 +443,7 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, xercesc_3_0::DOMNode* node)
 	// Apply Recursively
 	
 	if (node->hasChildNodes()) {
-          xercesc_3_0::DOMNode* child = node->getFirstChild();
+          DOMNode* child = node->getFirstChild();
 		while(child!=NULL) {
 			XidTagSubtree(doc, child);
 			child=child->getNextSibling();
@@ -464,17 +471,17 @@ void XID_DOMDocument::setXmlVersion(const XMLCh *version)
 	theDocument->setXmlVersion(version);
 }
 
-xercesc_3_0::DOMConfiguration * XID_DOMDocument::getDOMConfig() const
+DOMConfiguration * XID_DOMDocument::getDOMConfig() const
 {
 	return theDocument->getDOMConfig();
 }
 
-xercesc_3_0::DOMElement * XID_DOMDocument::createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, XMLFileLoc fileLoc1, XMLFileLoc fileLoc2)
+DOMElement * XID_DOMDocument::createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, XMLFileLoc fileLoc1, XMLFileLoc fileLoc2)
 {
 	return theDocument->createElementNS(element, xmlNameSpace, fileLoc1, fileLoc2);
 }
 
-xercesc_3_0::DOMXPathResult * XID_DOMDocument::evaluate(const XMLCh *xpath, const xercesc_3_0::DOMNode *node, const xercesc_3_0::DOMXPathNSResolver *resolver, xercesc_3_0::DOMXPathResult::ResultType resultType, xercesc_3_0::DOMXPathResult *result)
+DOMXPathResult * XID_DOMDocument::evaluate(const XMLCh *xpath, const DOMNode *node, const DOMXPathNSResolver *resolver, DOMXPathResult::ResultType resultType, DOMXPathResult *result)
 {
 	return theDocument->evaluate(xpath, node, resolver, resultType, result);
 }
@@ -489,76 +496,76 @@ void XID_DOMDocument::setXmlStandalone(bool isStandalone)
 	theDocument->setXmlStandalone(isStandalone);
 }
 
-xercesc_3_0::DOMXPathNSResolver * XID_DOMDocument::createNSResolver(const xercesc_3_0::DOMNode *node)
+DOMXPathNSResolver * XID_DOMDocument::createNSResolver(const DOMNode *node)
 {
 	return theDocument->createNSResolver(node);
 }
-xercesc_3_0::DOMNode::NodeType XID_DOMDocument::getNodeType() const
+DOMNode::NodeType XID_DOMDocument::getNodeType() const
 {
   return theDocument->getNodeType();
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::getParentNode() const
+DOMNode * XID_DOMDocument::getParentNode() const
 {
   return theDocument->getParentNode();
 }
 
-xercesc_3_0::DOMNodeList * XID_DOMDocument::getChildNodes() const
+DOMNodeList * XID_DOMDocument::getChildNodes() const
 {
   return theDocument->getChildNodes();
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::getFirstChild() const
+DOMNode * XID_DOMDocument::getFirstChild() const
 {
   return theDocument->getFirstChild();
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::getLastChild() const
+DOMNode * XID_DOMDocument::getLastChild() const
 {
   return theDocument->getLastChild();
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::getPreviousSibling() const
+DOMNode * XID_DOMDocument::getPreviousSibling() const
 {
   return theDocument->getPreviousSibling();
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::getNextSibling() const
+DOMNode * XID_DOMDocument::getNextSibling() const
 {
   return theDocument->getNextSibling();
 }
 
-xercesc_3_0::DOMNamedNodeMap * XID_DOMDocument::getAttributes() const
+DOMNamedNodeMap * XID_DOMDocument::getAttributes() const
 {
   return theDocument->getAttributes();
 }
 
-xercesc_3_0::DOMDocument * XID_DOMDocument::getOwnerDocument() const
+DOMDocument * XID_DOMDocument::getOwnerDocument() const
 {
   return theDocument->getOwnerDocument();
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::cloneNode(bool deep) const
+DOMNode * XID_DOMDocument::cloneNode(bool deep) const
 {
   return theDocument->cloneNode(deep);
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::insertBefore(xercesc_3_0::DOMNode * node1, xercesc_3_0::DOMNode * node2)
+DOMNode * XID_DOMDocument::insertBefore(DOMNode * node1, DOMNode * node2)
 {
   return theDocument->insertBefore(node1, node2);
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::replaceChild(xercesc_3_0::DOMNode * node1, xercesc_3_0::DOMNode *node2)
+DOMNode * XID_DOMDocument::replaceChild(DOMNode * node1, DOMNode *node2)
 {
   return theDocument->replaceChild(node1, node2);
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::removeChild(xercesc_3_0::DOMNode *node1)
+DOMNode * XID_DOMDocument::removeChild(DOMNode *node1)
 {
   return theDocument->removeChild(node1);
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::appendChild(xercesc_3_0::DOMNode *node1)
+DOMNode * XID_DOMDocument::appendChild(DOMNode *node1)
 {
   return theDocument->appendChild(node1);
 }
@@ -608,17 +615,17 @@ bool XID_DOMDocument::hasAttributes() const
   return theDocument->hasAttributes();
 }
 
-bool XID_DOMDocument::isSameNode(const xercesc_3_0::DOMNode *node) const
+bool XID_DOMDocument::isSameNode(const DOMNode *node) const
 {
   return theDocument->isSameNode(node);
 }
 
-bool XID_DOMDocument::isEqualNode(const xercesc_3_0::DOMNode *node) const
+bool XID_DOMDocument::isEqualNode(const DOMNode *node) const
 {
   return theDocument->isEqualNode(node);
 }
 
-void * XID_DOMDocument::setUserData(const XMLCh *key, void *data, xercesc_3_0::DOMUserDataHandler *handler)
+void * XID_DOMDocument::setUserData(const XMLCh *key, void *data, DOMUserDataHandler *handler)
 {
   return theDocument->setUserData(key, data, handler);
 }
@@ -633,7 +640,7 @@ const XMLCh * XID_DOMDocument::getBaseURI() const
   return theDocument->getBaseURI();
 }
 
-// short int XID_DOMDocument::compareTreePosition(const xercesc_3_0::DOMNode *node) const
+// short int XID_DOMDocument::compareTreePosition(const DOMNode *node) const
 // {
 //   return theDocument->compareTreePosition(node);
 // }
@@ -663,7 +670,7 @@ const XMLCh * XID_DOMDocument::lookupNamespaceURI(const XMLCh *prefix) const
   return theDocument->lookupNamespaceURI(prefix);
 }
 // 
-// xercesc_3_0::DOMNode * XID_DOMDocument::getInterface(const XMLCh *feature)
+// DOMNode * XID_DOMDocument::getInterface(const XMLCh *feature)
 // {
 //   return theDocument->getInterface(feature);
 // }
@@ -688,77 +695,77 @@ void XID_DOMDocument::release() {
 	}
 }
 
-xercesc_3_0::DOMXPathExpression * XID_DOMDocument::createExpression(const XMLCh *xpath, const xercesc_3_0::DOMXPathNSResolver *resolver)
+DOMXPathExpression * XID_DOMDocument::createExpression(const XMLCh *xpath, const DOMXPathNSResolver *resolver)
 {
 	return theDocument->createExpression(xpath, resolver);
 }
 
-xercesc_3_0::DOMRange * XID_DOMDocument::createRange()
+DOMRange * XID_DOMDocument::createRange()
 {
   return theDocument->createRange();
 }
 
-xercesc_3_0::DOMElement * XID_DOMDocument::createElement(const XMLCh *tagName)
+DOMElement * XID_DOMDocument::createElement(const XMLCh *tagName)
 {
   return theDocument->createElement(tagName);
 }
 
-xercesc_3_0::DOMDocumentFragment * XID_DOMDocument::createDocumentFragment()
+DOMDocumentFragment * XID_DOMDocument::createDocumentFragment()
 {
   return theDocument->createDocumentFragment();
 }
 
-xercesc_3_0::DOMText * XID_DOMDocument::createTextNode(const XMLCh *data)
+DOMText * XID_DOMDocument::createTextNode(const XMLCh *data)
 {
   return theDocument->createTextNode(data);
 }
 
-xercesc_3_0::DOMComment * XID_DOMDocument::createComment(const XMLCh *data)
+DOMComment * XID_DOMDocument::createComment(const XMLCh *data)
 {
   return theDocument->createComment(data);
 }
 
-xercesc_3_0::DOMCDATASection * XID_DOMDocument::createCDATASection(const XMLCh *data)
+DOMCDATASection * XID_DOMDocument::createCDATASection(const XMLCh *data)
 {
   return theDocument->createCDATASection(data);
 }
 
-xercesc_3_0::DOMProcessingInstruction * XID_DOMDocument::createProcessingInstruction(const XMLCh *target, const XMLCh *data)
+DOMProcessingInstruction * XID_DOMDocument::createProcessingInstruction(const XMLCh *target, const XMLCh *data)
 {
   return theDocument->createProcessingInstruction(target, data);
 }
 
-xercesc_3_0::DOMAttr * XID_DOMDocument::createAttribute(const XMLCh *name)
+DOMAttr * XID_DOMDocument::createAttribute(const XMLCh *name)
 {
   return theDocument->createAttribute(name);
 }
 
-xercesc_3_0::DOMEntityReference * XID_DOMDocument::createEntityReference(const XMLCh *name)
+DOMEntityReference * XID_DOMDocument::createEntityReference(const XMLCh *name)
 {
   return theDocument->createEntityReference(name);
 }
 
-xercesc_3_0::DOMDocumentType * XID_DOMDocument::getDoctype() const
+DOMDocumentType * XID_DOMDocument::getDoctype() const
 {
   return theDocument->getDoctype();
 }
 
-xercesc_3_0::DOMImplementation *XID_DOMDocument::getImplementation() const
+DOMImplementation *XID_DOMDocument::getImplementation() const
 {
   return theDocument->getImplementation();
 }
 
-xercesc_3_0::DOMElement * XID_DOMDocument::getDocumentElement() const
+DOMElement * XID_DOMDocument::getDocumentElement() const
 {
   return theDocument->getDocumentElement();
 }
 
-xercesc_3_0::DOMNodeList * XID_DOMDocument::getElementsByTagName(const XMLCh *tagName) const
+DOMNodeList * XID_DOMDocument::getElementsByTagName(const XMLCh *tagName) const
 {
   return theDocument->getElementsByTagName(tagName);
 }
 
-short int XID_DOMDocument::compareDocumentPosition(const xercesc_3_0::DOMNode *node) const
+short int XID_DOMDocument::compareDocumentPosition(const DOMNode *node) const
 {
 	return theDocument->compareDocumentPosition(node);
 }
@@ -773,7 +780,7 @@ void * XID_DOMDocument::getFeature(const XMLCh *param1, const XMLCh *param2) con
 	return theDocument->getFeature(param1, param2);
 }
 
-xercesc_3_0::DOMNode * XID_DOMDocument::importNode(const xercesc_3_0::DOMNode *importNode, bool deep)
+DOMNode * XID_DOMDocument::importNode(const DOMNode *importNode, bool deep)
 {
   return theDocument->importNode(importNode, deep);
 }
@@ -788,22 +795,22 @@ const XMLCh * XID_DOMDocument::getXmlEncoding() const
 	return theDocument->getXmlEncoding();
 }
 
-xercesc_3_0::DOMElement * XID_DOMDocument::createElementNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName)
+DOMElement * XID_DOMDocument::createElementNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName)
 {
   return theDocument->createElementNS(namespaceURI, qualifiedName);
 }
 
-xercesc_3_0::DOMAttr * XID_DOMDocument::createAttributeNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName)
+DOMAttr * XID_DOMDocument::createAttributeNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName)
 {
   return theDocument->createAttributeNS(namespaceURI, qualifiedName);
 }
 
-xercesc_3_0::DOMNodeList * XID_DOMDocument::getElementsByTagNameNS(const XMLCh *namespaceURI, const XMLCh *localName) const
+DOMNodeList * XID_DOMDocument::getElementsByTagNameNS(const XMLCh *namespaceURI, const XMLCh *localName) const
 {
   return theDocument->getElementsByTagNameNS(namespaceURI, localName);
 }
 
-xercesc_3_0::DOMElement * XID_DOMDocument::getElementById(const XMLCh *elementId) const
+DOMElement * XID_DOMDocument::getElementById(const XMLCh *elementId) const
 {
   return theDocument->getElementById(elementId);
 }
@@ -873,25 +880,25 @@ void XID_DOMDocument::setStrictErrorChecking(bool strictErrorChecking)
 }
 
 // 
-// xercesc_3_0::DOMErrorHandler * XID_DOMDocument::getErrorHandler() const
+// DOMErrorHandler * XID_DOMDocument::getErrorHandler() const
 // {
 //   return theDocument->getErrorHandler();
 // }
 // 
 // 
-// void XID_DOMDocument::setErrorHandler(xercesc_3_0::DOMErrorHandler *handler)
+// void XID_DOMDocument::setErrorHandler(DOMErrorHandler *handler)
 // {
 //   return theDocument->setErrorHandler(handler);
 // }
 
 
-xercesc_3_0::DOMNode * XID_DOMDocument::renameNode(xercesc_3_0::DOMNode *n, const XMLCh *namespaceURI, const XMLCh *name)
+DOMNode * XID_DOMDocument::renameNode(DOMNode *n, const XMLCh *namespaceURI, const XMLCh *name)
 {
   return theDocument->renameNode(n, namespaceURI, name);
 }
 
 
-xercesc_3_0::DOMNode * XID_DOMDocument::adoptNode(xercesc_3_0::DOMNode *node)
+DOMNode * XID_DOMDocument::adoptNode(DOMNode *node)
 {
   return theDocument->adoptNode(node);
 }
@@ -921,36 +928,36 @@ void XID_DOMDocument::normalizeDocument()
 // }
 
 
-xercesc_3_0::DOMEntity * XID_DOMDocument::createEntity(const XMLCh *name)
+DOMEntity * XID_DOMDocument::createEntity(const XMLCh *name)
 {
   return theDocument->createEntity(name);
 }
 
 
-xercesc_3_0::DOMDocumentType * XID_DOMDocument::createDocumentType(const XMLCh *name)
+DOMDocumentType * XID_DOMDocument::createDocumentType(const XMLCh *name)
 {
   return theDocument->createDocumentType(name);
 }
 
 
-xercesc_3_0::DOMNotation * XID_DOMDocument::createNotation(const XMLCh *name)
+DOMNotation * XID_DOMDocument::createNotation(const XMLCh *name)
 {
   return theDocument->createNotation(name);
 }
 
 
-xercesc_3_0::DOMElement * XID_DOMDocument::createElementNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName, const XMLSSize_t lineNum, const XMLSSize_t columnNum)
+DOMElement * XID_DOMDocument::createElementNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName, const XMLSSize_t lineNum, const XMLSSize_t columnNum)
 {
 
   return theDocument->createElementNS(namespaceURI, qualifiedName, lineNum, columnNum);
 }
 
-xercesc_3_0::DOMTreeWalker * XID_DOMDocument::createTreeWalker(xercesc_3_0::DOMNode *root, long unsigned int whatToShow, xercesc_3_0::DOMNodeFilter *filter, bool entityReferenceExpansion){
+DOMTreeWalker * XID_DOMDocument::createTreeWalker(DOMNode *root, long unsigned int whatToShow, DOMNodeFilter *filter, bool entityReferenceExpansion){
   return theDocument->createTreeWalker(root, whatToShow, filter, entityReferenceExpansion);
 }
 
 
-xercesc_3_0::DOMNodeIterator * XID_DOMDocument::createNodeIterator(xercesc_3_0::DOMNode *root, long unsigned int whatToShow, xercesc_3_0::DOMNodeFilter *filter, bool entityReferenceExpansion)
+DOMNodeIterator * XID_DOMDocument::createNodeIterator(DOMNode *root, long unsigned int whatToShow, DOMNodeFilter *filter, bool entityReferenceExpansion)
 {
   return theDocument->createNodeIterator(root, whatToShow, filter, entityReferenceExpansion);
 }

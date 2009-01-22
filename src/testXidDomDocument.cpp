@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <fstream>
 
+XERCES_CPP_NAMESPACE_USE
+
 int main(int argc, char **argv) {
   
 	if (argc<2) {
@@ -19,9 +21,9 @@ int main(int argc, char **argv) {
 		}
 
   try {
-    xercesc_3_0::XMLPlatformUtils::Initialize();
+    XMLPlatformUtils::Initialize();
     }
-  catch(const xercesc_3_0::XMLException& toCatch) {
+  catch(const XMLException& toCatch) {
     std::cerr << "Error during Xerces-c Initialization.\n"
 	       << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
     }
@@ -51,7 +53,7 @@ int main(int argc, char **argv) {
 	catch( const VersionManagerException &e ) {
 	  std::cerr << e << std::endl ;
 		}
-	catch( const xercesc_3_0::DOMException &e ) {
+	catch( const DOMException &e ) {
 	  std::cerr << "DOMException, code=" << e.code << std::endl ;
 		std::cerr << "DOMException, message=" << e.msg << std::endl ;
 		}	

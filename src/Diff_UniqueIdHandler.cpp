@@ -13,19 +13,21 @@
 #include "include/XyUTF8Str.hpp"
 #include "Tools.hpp"
 
-void UniqueIdHandler::RegisterAttrId( xercesc_3_0::DTDValidator *theValidator ) {
-  /*  xercesc_3_0::NameIdPoolEnumerator<xercesc_3_0::DTDElementDecl> elemEnum = theValidator->getElemEnumerator();
+XERCES_CPP_NAMESPACE_USE
+
+void UniqueIdHandler::RegisterAttrId( DTDValidator *theValidator ) {
+  /*  NameIdPoolEnumerator<DTDElementDecl> elemEnum = theValidator->getElemEnumerator();
     while(elemEnum.hasMoreElements())
     {
-        const xercesc_3_0::DTDElementDecl& curElem = elemEnum.nextElement();
+        const DTDElementDecl& curElem = elemEnum.nextElement();
         // Get an enumerator for this guy's attributes if any
         if (curElem.hasAttDefs())
         {
-            xercesc_3_0::XMLAttDefList& attList = curElem.getAttDefList();
+            XMLAttDefList& attList = curElem.getAttDefList();
             while (attList.hasMoreElements())
             {
-                const xercesc_3_0::XMLAttDef& curAttDef = attList.nextElement();
-                if (curAttDef.getType()==xercesc_3_0::XMLAttDef::ID) {
+                const XMLAttDef& curAttDef = attList.nextElement();
+                if (curAttDef.getType()==XMLAttDef::ID) {
                     string key = UniqueIdHandler::UniqueKey_from_TagAttr(curElem.getFullName(),curAttDef.getFullName());
 										printf("key %s found\n", key.c_str());
 										if (attrIdList.find(key)==attrIdList.end()) attrIdList.insert(key);

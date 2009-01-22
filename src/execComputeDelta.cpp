@@ -28,6 +28,8 @@ extern unsigned long long int clocksSaveDelta              ;
 
 #endif
 
+XERCES_CPP_NAMESPACE_USE
+
 unsigned long getFileSize(const char *filename) {
         FILE *file = fopen(filename, "rb");
         if (file==NULL) return(0);
@@ -101,17 +103,16 @@ int main(int argc, char **argv) {
 		}
 	
 	try {
-    xercesc_3_0::XMLPlatformUtils::Initialize();
+    XMLPlatformUtils::Initialize();
     }
-  catch(const xercesc_3_0::XMLException& toCatch) {
+  catch(const XMLException& toCatch) {
     std::cerr << "Error during Xerces-c Initialization.\n" << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
     }
 
   // Open source document, and create DELTA
 
 	try {
-		//if (defaultDeltafile) deltafile=file1+".forwardDelta.xml";
-		if (defaultDeltafile) deltafile="stdout";
+		if (defaultDeltafile) deltafile=file1+".forwardDelta.xml";
 		/* Compute Delta over FILE1.XML and FILE2.XML */
 		XyDelta::XyDiff(file1.c_str(), file2.c_str(), deltafile.c_str(), ignoreSpacesFlag);
 
@@ -146,11 +147,11 @@ int main(int argc, char **argv) {
 		exit(-1);
 		}
 		
-	catch( const xercesc_3_0::DOMException &e ) {
+	catch( const DOMException &e ) {
 		std::cerr << "DOMException, code=" << e.code << std::endl ;
-		char * tmpChar = xercesc_3_0::XMLString::transcode(e.msg);
+		char * tmpChar = XMLString::transcode(e.msg);
 		std::cerr << "DOMException, message=" << tmpChar << std::endl ;
-		xercesc_3_0::XMLString::release(&tmpChar);
+		XMLString::release(&tmpChar);
 		exit(-1);
 		}	
 	

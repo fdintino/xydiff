@@ -33,6 +33,8 @@ unsigned long long int   clocksConstructDOMDelta    ;
 
 bool _XyDiff_DontSaveXidmapToFile = false;
 
+XERCES_CPP_NAMESPACE_USE
+
 XID_DOMDocument *DeltaConstructor::getDeltaDocument(void) {
 	return deltaDoc ;
 	}
@@ -62,25 +64,25 @@ DeltaConstructor::DeltaConstructor(
 	XMLCh tempStr[100];
 	XMLCh tempStr2[100];
 
-	xercesc_3_0::XMLString::transcode("unit_delta", tempStr, 99);
-	xercesc_3_0::DOMElement* deltaRoot = deltaDoc->createElement(tempStr);
+	XMLString::transcode("unit_delta", tempStr, 99);
+	DOMElement* deltaRoot = deltaDoc->createElement(tempStr);
 	deltaRoot->setAttributeNS(
-		xercesc_3_0::XMLString::transcode("http://www.w3.org/2000/xmlns/"),
-		xercesc_3_0::XMLString::transcode("xmlns:xyd"),
-		xercesc_3_0::XMLString::transcode("http://www.nflc.org/schema/xydiff/"));
-	deltaDoc->appendChild( (xercesc_3_0::DOMNode*) deltaRoot );
+		XMLString::transcode("http://www.w3.org/2000/xmlns/"),
+		XMLString::transcode("xmlns:xyd"),
+		XMLString::transcode("http://www.nflc.org/schema/xydiff/"));
+	deltaDoc->appendChild( (DOMNode*) deltaRoot );
 
-	xercesc_3_0::XMLString::transcode("t", tempStr, 99);	
-	xercesc_3_0::DOMElement* tElem = deltaDoc->createElement(tempStr);
+	XMLString::transcode("t", tempStr, 99);	
+	DOMElement* tElem = deltaDoc->createElement(tempStr);
 
-	xercesc_3_0::XMLString::transcode("from", tempStr, 99);
+	XMLString::transcode("from", tempStr, 99);
 	tElem->setAttribute(tempStr, XyLatinStr(v0filename.c_str()) );
 
-	xercesc_3_0::XMLString::transcode("to", tempStr, 99);
+	XMLString::transcode("to", tempStr, 99);
 	tElem->setAttribute(tempStr, XyLatinStr(v1filename.c_str()) );
 
-	xercesc_3_0::XMLString::transcode("IgnoreBlankTexts", tempStr, 99);
-	xercesc_3_0::XMLString::transcode("yes", tempStr2, 99);
+	XMLString::transcode("IgnoreBlankTexts", tempStr, 99);
+	XMLString::transcode("yes", tempStr2, 99);
 	if (ignoreUnimportantData) tElem->setAttribute(tempStr,tempStr2);
 	deltaRoot->appendChild( tElem );
 
@@ -96,7 +98,7 @@ DeltaConstructor::DeltaConstructor(
 void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted ) {
 
 	class AtomicInfo & myAtomicInfo = nodesManager->v0node[ v0nodeID ] ;
-	xercesc_3_0::DOMNode* node = nodesManager->v0nodeByDID[ v0nodeID ] ;
+	DOMNode* node = nodesManager->v0nodeByDID[ v0nodeID ] ;
 
 	XMLCh tempStrA[100];
 	XMLCh tempStrB[100];
@@ -132,7 +134,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 				}
 
 			else {
-				xercesc_3_0::DOMNode* parentNode = node->getParentNode() ;
+				DOMNode* parentNode = node->getParentNode() ;
 				std::string myXidMap ;
 				if (myAtomicInfo.myEvent==AtomicInfo::DELETED) {
 					myXidMap = nodesManager->v0doc->getXidMap().String( node );
@@ -149,37 +151,37 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 				char pos_str[10] ;
 				sprintf(parXID_str,"%d", (int)parentXID );
 				sprintf(pos_str, "%d", myPosition);
-				xercesc_3_0::XMLString::transcode("d", tempStrA, 99);
-				xercesc_3_0::DOMElement* elem = deltaDoc->createElement(tempStrA);
-				xercesc_3_0::XMLString::transcode("par", tempStrA, 99);
+				XMLString::transcode("d", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("par", tempStrA, 99);
 				elem->setAttribute(tempStrA, XyLatinStr( parXID_str) );
-				xercesc_3_0::XMLString::transcode("pos", tempStrA, 99);
+				XMLString::transcode("pos", tempStrA, 99);
 				elem->setAttribute(tempStrA, XyLatinStr(pos_str) );
-				xercesc_3_0::XMLString::transcode("xm", tempStrA, 99);
+				XMLString::transcode("xm", tempStrA, 99);
 				elem->setAttribute(tempStrA,  XyLatinStr( myXidMap.c_str()) );
 
 				switch(myAtomicInfo.myEvent) {
 					case AtomicInfo::DELETED: {
-						xercesc_3_0::DOMNode* contentNode = deltaDoc->importNode( node, true );
+						DOMNode* contentNode = deltaDoc->importNode( node, true );
 						elem->appendChild ( contentNode );
 						}
 						break;
 					case AtomicInfo::STRONGMOVE:
 					case AtomicInfo::WEAKMOVE: {
 						// Erase moved subtree so that any parent deleted operation won't take it
-                                          //xercesc_3_0::DOMNode* movedNode = parentNode->removeChild( node );
+                                          //DOMNode* movedNode = parentNode->removeChild( node );
                                           parentNode->removeChild( node );
-						xercesc_3_0::XMLString::transcode("move", tempStrA, 99);
-						xercesc_3_0::XMLString::transcode("yes", tempStrB, 99);
+						XMLString::transcode("move", tempStrA, 99);
+						XMLString::transcode("yes", tempStrB, 99);
 						elem->setAttribute(tempStrA, tempStrB);
 						moveCount++ ;
 						}
 						break;
 					case AtomicInfo::UPDATE_OLD: {
-						xercesc_3_0::DOMNode* contentNode = deltaDoc->importNode( node, true );
+						DOMNode* contentNode = deltaDoc->importNode( node, true );
 						elem->appendChild ( contentNode );
-						xercesc_3_0::XMLString::transcode("update", tempStrA, 99);
-						xercesc_3_0::XMLString::transcode("yes", tempStrB, 99);
+						XMLString::transcode("update", tempStrA, 99);
+						XMLString::transcode("yes", tempStrB, 99);
 						elem->setAttribute(tempStrA, tempStrB);
 						updateCount++ ;
 						}
@@ -216,11 +218,11 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
  *         ++++ Construct Insert Script ++++         *
  *****************************************************/
 
-xercesc_3_0::DOMNode* DeltaConstructor::deltaDoc_ImportInsertTree( int v1nodeID, std::vector<XID_t> &xidList ) {
+DOMNode* DeltaConstructor::deltaDoc_ImportInsertTree( int v1nodeID, std::vector<XID_t> &xidList ) {
 	class AtomicInfo & myAtomicInfo = nodesManager->v1node[ v1nodeID ] ;
 	
-	xercesc_3_0::DOMNode* node = nodesManager->v1nodeByDID[ v1nodeID ] ;
-	xercesc_3_0::DOMNode* newNode = deltaDoc->importNode( node, false );
+	DOMNode* node = nodesManager->v1nodeByDID[ v1nodeID ] ;
+	DOMNode* newNode = deltaDoc->importNode( node, false );
 	
 	// Now apply to Children
 	
@@ -231,7 +233,7 @@ xercesc_3_0::DOMNode* DeltaConstructor::deltaDoc_ImportInsertTree( int v1nodeID,
 		// If Children is to be inserted
 		if ((myChildInfo.myEvent==AtomicInfo::INSERTED)
 		     ||(myChildInfo.myEvent==AtomicInfo::UPDATE_NEW)) {
-			xercesc_3_0::DOMNode* childNode = deltaDoc_ImportInsertTree(child, xidList);
+			DOMNode* childNode = deltaDoc_ImportInsertTree(child, xidList);
 			newNode->appendChild(childNode);
 			}
 			
@@ -246,7 +248,7 @@ xercesc_3_0::DOMNode* DeltaConstructor::deltaDoc_ImportInsertTree( int v1nodeID,
 void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserted ) {
 	
 	class AtomicInfo & myAtomicInfo = nodesManager->v1node[ v1nodeID ] ;
-	xercesc_3_0::DOMNode* node = nodesManager->v1nodeByDID[ v1nodeID ] ;
+	DOMNode* node = nodesManager->v1nodeByDID[ v1nodeID ] ;
 
 	XMLCh tempStrA[100];
 	XMLCh tempStrB[100];
@@ -268,7 +270,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 				}
 
 			else {
-				xercesc_3_0::DOMNode* parentNode = node->getParentNode() ;
+				DOMNode* parentNode = node->getParentNode() ;
 				XID_t parentXID = nodesManager->v1doc->getXidMap().getXIDbyNode( parentNode );
 				int myPosition = myAtomicInfo.myPosition ; // getPosition( parentNode, node );
 
@@ -277,48 +279,48 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 				sprintf(parXID_str,"%d", (int)parentXID );
 				sprintf(pos_str, "%d", myPosition);
 
-				xercesc_3_0::XMLString::transcode("i", tempStrA, 99);
-				xercesc_3_0::DOMElement* elem = deltaDoc->createElement(tempStrA);
-				xercesc_3_0::XMLString::transcode("par", tempStrA, 99);
+				XMLString::transcode("i", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("par", tempStrA, 99);
 				elem->setAttribute(tempStrA, XyLatinStr(parXID_str) );
-				xercesc_3_0::XMLString::transcode("pos", tempStrA, 99);
+				XMLString::transcode("pos", tempStrA, 99);
 				elem->setAttribute(tempStrA, XyLatinStr(pos_str) );
 
 				switch(myAtomicInfo.myEvent) {
 					case AtomicInfo::INSERTED: {
 						// DOM_Node contentNode = deltaDoc.importNode( node, true );
 						std::vector<XID_t> xidList ;
-						xercesc_3_0::DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
+						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
-						xercesc_3_0::XMLString::transcode("xm", tempStrA, 99);
+						XMLString::transcode("xm", tempStrA, 99);
 						elem->setAttribute(tempStrA,  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
 						}
 						break;
 					case AtomicInfo::STRONGMOVE:
 					case AtomicInfo::WEAKMOVE: {
 						// Erase moved subtree so that any parent inserted operation won't take it
-                                          //xercesc_3_0::DOMNode* movedNode = parentNode->removeChild( node );
+                                          //DOMNode* movedNode = parentNode->removeChild( node );
                                           parentNode->removeChild( node );
-						xercesc_3_0::XMLString::transcode("move", tempStrA, 99);
-						xercesc_3_0::XMLString::transcode("yes",  tempStrB, 99);
+						XMLString::transcode("move", tempStrA, 99);
+						XMLString::transcode("yes",  tempStrB, 99);
 						elem->setAttribute(tempStrA, tempStrB);
 						moveCount-- ;
 			 			char xidstr[10] ;
 						sprintf(xidstr,"(%d)", (int)nodesManager->v1doc->getXidMap().getXIDbyNode( node ));
-						xercesc_3_0::XMLString::transcode("xm", tempStrA, 99);
+						XMLString::transcode("xm", tempStrA, 99);
 						elem->setAttribute(tempStrA,  XyLatinStr(xidstr) );
 						}
 						break;
 					case AtomicInfo::UPDATE_NEW: {
 						// DOM_Node contentNode = deltaDoc.importNode( node, true );
 						std::vector<XID_t> xidList ;
-						xercesc_3_0::DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
+						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
-						xercesc_3_0::XMLString::transcode("xm", tempStrA, 99);
+						XMLString::transcode("xm", tempStrA, 99);
 						elem->setAttribute(tempStrA,  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
 						
-						xercesc_3_0::XMLString::transcode("update", tempStrA, 99);
-						xercesc_3_0::XMLString::transcode("yes",  tempStrB, 99);
+						XMLString::transcode("update", tempStrA, 99);
+						XMLString::transcode("yes",  tempStrB, 99);
 						elem->setAttribute(tempStrA, tempStrB);
 						updateCount-- ;
 						}
@@ -370,7 +372,7 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 	
 	vddprintf(("add attr ops on node %d\n", v1nodeID ));
 
-	xercesc_3_0::DOMNode *node = nodesManager->v1nodeByDID[ v1nodeID ] ;
+	DOMNode *node = nodesManager->v1nodeByDID[ v1nodeID ] ;
 
 	char xidstr[10] ;
 	XMLCh tempStr[100];
@@ -382,41 +384,41 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 	if (!nodesManager->v1Assigned( v1nodeID )) {
 		vddprintf(("node is new, skipping\n"));
 	} else {
-		if (node->getNodeType()!=xercesc_3_0::DOMNode::ELEMENT_NODE) {
+		if (node->getNodeType()!=DOMNode::ELEMENT_NODE) {
 			vddprintf(("node is not an element, skipping\n"));
 			return ;
 		}
 		
 		int v0nodeID = nodesManager->v1node[ v1nodeID ].myMatchID ;
-		xercesc_3_0::DOMNode* oldnode = nodesManager->v0nodeByDID[ v0nodeID ] ;
+		DOMNode* oldnode = nodesManager->v0nodeByDID[ v0nodeID ] ;
 	
 		unsigned int attLength = node->getAttributes()->getLength() ;
 		for(unsigned int i=0; i<attLength; i++) {
-			xercesc_3_0::DOMNode* attr = node->getAttributes()->item( i );
-			xercesc_3_0::DOMNode* oldattr = oldnode->getAttributes()->getNamedItem(attr->getNodeName()) ;
+			DOMNode* attr = node->getAttributes()->item( i );
+			DOMNode* oldattr = oldnode->getAttributes()->getNamedItem(attr->getNodeName()) ;
 			if (oldattr==NULL) {
 				vddprintf(("new node %d, attribute %d inserted\n", v1nodeID, i));
-				xercesc_3_0::XMLString::transcode("ai", tempStr, 99);
-				xercesc_3_0::DOMElement* elem = deltaDoc->createElement(tempStr);
-				xercesc_3_0::XMLString::transcode("xid", tempStr, 99);
+				XMLString::transcode("ai", tempStr, 99);
+				DOMElement* elem = deltaDoc->createElement(tempStr);
+				XMLString::transcode("xid", tempStr, 99);
 				elem->setAttribute(tempStr, XyLatinStr(xidstr) );
-				xercesc_3_0::XMLString::transcode("a", tempStr, 99);
+				XMLString::transcode("a", tempStr, 99);
 				elem->setAttribute(tempStr,   attr->getNodeName() );
-				xercesc_3_0::XMLString::transcode("v", tempStr, 99);
+				XMLString::transcode("v", tempStr, 99);
 				elem->setAttribute(tempStr,   attr->getNodeValue() );
 				scriptRoot->appendChild( elem );
 			}
-			else if (!xercesc_3_0::XMLString::equals(attr->getNodeValue(), oldattr->getNodeValue())) {
+			else if (!XMLString::equals(attr->getNodeValue(), oldattr->getNodeValue())) {
 				vddprintf(("new node %d, attribute %d updated\n", v1nodeID, i));
-				xercesc_3_0::XMLString::transcode("au", tempStr, 99);
-				xercesc_3_0::DOMElement* elem = deltaDoc->createElement(tempStr);
-				xercesc_3_0::XMLString::transcode("xid", tempStr, 99);
+				XMLString::transcode("au", tempStr, 99);
+				DOMElement* elem = deltaDoc->createElement(tempStr);
+				XMLString::transcode("xid", tempStr, 99);
 				elem->setAttribute(tempStr, XyLatinStr(xidstr) );
-				xercesc_3_0::XMLString::transcode("a", tempStr, 99);
+				XMLString::transcode("a", tempStr, 99);
 				elem->setAttribute(tempStr,   attr->getNodeName() );
-				xercesc_3_0::XMLString::transcode("ov", tempStr, 99);
+				XMLString::transcode("ov", tempStr, 99);
 				elem->setAttribute(tempStr,  oldattr->getNodeValue() );
-				xercesc_3_0::XMLString::transcode("nv", tempStr, 99);
+				XMLString::transcode("nv", tempStr, 99);
 				elem->setAttribute(tempStr,  attr->getNodeValue() );
 				scriptRoot->appendChild( elem );
 			}
@@ -427,17 +429,17 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 
 		attLength = oldnode->getAttributes()->getLength() ;
 		for(unsigned int i=0; i<attLength; i++) {
-			xercesc_3_0::DOMNode* oldattr = oldnode->getAttributes()->item( i );
-			xercesc_3_0::DOMNode* attr = node->getAttributes()->getNamedItem(oldattr->getNodeName()) ;
+			DOMNode* oldattr = oldnode->getAttributes()->item( i );
+			DOMNode* attr = node->getAttributes()->getNamedItem(oldattr->getNodeName()) ;
 			if (attr==NULL) {
 				vddprintf(("old node %d, attribute %d deleted\n", v0nodeID, i));
-				xercesc_3_0::XMLString::transcode("ad", tempStr, 99);
-				xercesc_3_0::DOMElement* elem = deltaDoc->createElement(tempStr);
-				xercesc_3_0::XMLString::transcode("xid", tempStr, 99);
+				XMLString::transcode("ad", tempStr, 99);
+				DOMElement* elem = deltaDoc->createElement(tempStr);
+				XMLString::transcode("xid", tempStr, 99);
 				elem->setAttribute(tempStr, XyLatinStr(xidstr) );
-				xercesc_3_0::XMLString::transcode("a", tempStr, 99);
+				XMLString::transcode("a", tempStr, 99);
 				elem->setAttribute(tempStr,  oldattr->getNodeName() );
-				xercesc_3_0::XMLString::transcode("v", tempStr, 99);
+				XMLString::transcode("v", tempStr, 99);
 				elem->setAttribute(tempStr,   oldattr->getNodeValue() );
 				scriptRoot->appendChild( elem );
 			}
@@ -491,7 +493,7 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	
 	localStart = rdtsc() ;
 
-	xercesc_3_0::DOMNode* v1rootElement = v1XML->getDocumentElement() ;
+	DOMNode* v1rootElement = v1XML->getDocumentElement() ;
 	v1XML->getXidMap().SetRootElement( v1rootElement );
 	
 	if (!_XyDiff_DontSaveXidmapToFile) {
@@ -503,12 +505,12 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	
 	XMLCh tempStr[100];
 
-	xercesc_3_0::DOMNode* tElem = deltaDoc->getDocumentElement()->getFirstChild();
-	xercesc_3_0::XMLString::transcode("fromXidMap", tempStr, 99);
-	xercesc_3_0::DOMAttr* v0XidMapNode = deltaDoc->createAttribute(tempStr);
+	DOMNode* tElem = deltaDoc->getDocumentElement()->getFirstChild();
+	XMLString::transcode("fromXidMap", tempStr, 99);
+	DOMAttr* v0XidMapNode = deltaDoc->createAttribute(tempStr);
 	v0XidMapNode->setNodeValue(XyLatinStr(v0XML->getXidMap().String().c_str()));
-	xercesc_3_0::XMLString::transcode("fromXidMap", tempStr, 99);
-	xercesc_3_0::DOMAttr* v1XidMapNode = deltaDoc->createAttribute(tempStr);
+	XMLString::transcode("fromXidMap", tempStr, 99);
+	DOMAttr* v1XidMapNode = deltaDoc->createAttribute(tempStr);
 	v1XidMapNode->setNodeValue(XyLatinStr(v1XML->getXidMap().String().c_str()));
 	tElem->getAttributes()->setNamedItem(v0XidMapNode);
 	tElem->getAttributes()->setNamedItem(v1XidMapNode);
@@ -558,10 +560,10 @@ void DeltaConstructor::constructDeltaDocument(void) {
 
 	/* --- Add Rename Root Operation --- */
 	
-	if (!xercesc_3_0::XMLString::equals(v0XML->getDocumentElement()->getNodeName(), v1XML->getDocumentElement()->getNodeName())) {
-		xercesc_3_0::DOMElement *rrOp = scriptRoot->getOwnerDocument()->createElement(xercesc_3_0::XMLString::transcode("renameRoot"));
-		rrOp->setAttribute(xercesc_3_0::XMLString::transcode("from"), v0XML->getDocumentElement()->getNodeName());
-		rrOp->setAttribute(xercesc_3_0::XMLString::transcode("to"), v1XML->getDocumentElement()->getNodeName());
+	if (!XMLString::equals(v0XML->getDocumentElement()->getNodeName(), v1XML->getDocumentElement()->getNodeName())) {
+		DOMElement *rrOp = scriptRoot->getOwnerDocument()->createElement(XMLString::transcode("renameRoot"));
+		rrOp->setAttribute(XMLString::transcode("from"), v0XML->getDocumentElement()->getNodeName());
+		rrOp->setAttribute(XMLString::transcode("to"), v1XML->getDocumentElement()->getNodeName());
 		scriptRoot->appendChild(rrOp);
 	}
 	

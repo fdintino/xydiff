@@ -10,16 +10,18 @@
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 
+XERCES_CPP_NAMESPACE_USE
+
 //--------------------------------------------------------------------------
 //
 //get the child position of a node in the source document
 //
 //--------------------------------------------------------------------------
 
-int getPosition(xercesc_3_0::DOMNode *parent, xercesc_3_0::DOMNode *child) {
+int getPosition(DOMNode *parent, DOMNode *child) {
   int pos = 1;
 	if (!parent->hasChildNodes()) throw VersionManagerException("getPosition()", "Parent has no child") ;
-  xercesc_3_0::DOMNode* test = parent->getFirstChild();
+  DOMNode* test = parent->getFirstChild();
   while (test!=child) {
     test=test->getNextSibling();
     pos++;
@@ -34,11 +36,11 @@ int getPosition(xercesc_3_0::DOMNode *parent, xercesc_3_0::DOMNode *child) {
 //
 //--------------------------------------------------------------------------
 
-bool isDelta(const xercesc_3_0::DOMDocument *doc) {
+bool isDelta(const DOMDocument *doc) {
 	if ((doc!=NULL)&&(doc->hasChildNodes())) {
-		xercesc_3_0::DOMElement* docRoot = doc->getDocumentElement() ;
+		DOMElement* docRoot = doc->getDocumentElement() ;
 		if (docRoot!=NULL) {
-        	        if (xercesc_3_0::XMLString::equals(docRoot->getNodeName(), xercesc_3_0::XMLString::transcode("unit_delta"))) {
+        	        if (XMLString::equals(docRoot->getNodeName(), XMLString::transcode("unit_delta"))) {
 				return true ;
 			}
 		}

@@ -11,7 +11,9 @@
 #include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
-	
+
+XERCES_CPP_NAMESPACE_USE
+
 int main(int argc, char **argv) {
   
 	if (argc<2) {
@@ -22,9 +24,9 @@ int main(int argc, char **argv) {
 		}
 
   try {
-    xercesc_3_0::XMLPlatformUtils::Initialize();
+    XMLPlatformUtils::Initialize();
     }
-  catch(const xercesc_3_0::XMLException& toCatch) {
+  catch(const XMLException& toCatch) {
     std::cerr << "Error during Xerces-c Initialization.\n"
 	       << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
     }
@@ -33,7 +35,7 @@ int main(int argc, char **argv) {
 		printf("Opening file <%s>\n", argv[1]);
 		XID_DOMDocument* d = new XID_DOMDocument(argv[1]);
 	
-		xercesc_3_0::DOMElement* root = d->getDocumentElement();
+		DOMElement* root = d->getDocumentElement();
 		if (root!=NULL) Restricted::XidTagSubtree(d, root);
 		
 		std::string fileWithXID = argv[1] ;
@@ -45,9 +47,9 @@ int main(int argc, char **argv) {
 	catch( const VersionManagerException &e ) {
 	  std::cerr << e << std::endl ;
 		}
-	catch( const xercesc_3_0::DOMException &e ) {
+	catch( const DOMException &e ) {
 	  std::cerr << "DOM_DOMException, code=" << e.code << std::endl ;
-		std::cerr << "DOM_DOMException, message=" << xercesc_3_0::XMLString::transcode(e.msg) << std::endl ;
+		std::cerr << "DOM_DOMException, message=" << XMLString::transcode(e.msg) << std::endl ;
 		}	
 	std::cout << "Terminated." << std::endl ;
 	}

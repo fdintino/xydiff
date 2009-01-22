@@ -9,17 +9,19 @@
  * XyInt functions (analog to XyStr)
  */
 
+XERCES_CPP_NAMESPACE_USE 
+
 XyInt::XyInt(const XMLCh* str, int size) : theIntValue(0) {
 	if ((str==NULL)||(size==0)) return;
-	if (size<0) size = xercesc_3_0::XMLString::stringLen(str);
+	if (size<0) size = XMLString::stringLen(str);
 
 	XMLCh *tmp = new XMLCh[size+1];
 	memcpy(tmp, str, size*sizeof(XMLCh));
-	tmp[size]=xercesc_3_0::chNull;
+	tmp[size]=chNull;
 	
-	xercesc_3_0::XMLString::trim(tmp);
+	XMLString::trim(tmp);
 	
-	theIntValue  = xercesc_3_0::XMLString::parseInt(tmp);
+	theIntValue  = XMLString::parseInt(tmp);
 	delete [] tmp;
 }
 
@@ -31,7 +33,7 @@ XyInt::XyInt(const char* str, int size) {
 	memcpy(tmp, str, size*sizeof(char));
 	tmp[size]='\0';
 	
-	xercesc_3_0::XMLString::trim(tmp);
+	XMLString::trim(tmp);
 	
 	theIntValue  = atoi(tmp);
 	delete [] tmp;

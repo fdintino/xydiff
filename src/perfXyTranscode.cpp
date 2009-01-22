@@ -26,6 +26,7 @@
 #include <locale.h>
 #include <time.h>
 
+XERCES_CPP_NAMESPACE_USE
 using namespace std;
 
 void printTime(clock_t start, clock_t end, int nbOps, const char *name) {
@@ -57,11 +58,11 @@ int main(int argc, char **argv) {
 		printf("locale set to en_US.ISO8859-15\n");
 	}
 	try {
-		xercesc_3_0::XMLPlatformUtils::Initialize();
+		XMLPlatformUtils::Initialize();
 	}
-	catch(const xercesc_3_0::XMLException& toCatch) {
+	catch(const XMLException& toCatch) {
 		cerr << "Error during Xerces-c Initialization.\n"
-		     << "  Exception message:" << xercesc_3_0::XMLString::transcode(toCatch.getMessage()) << endl;
+		     << "  Exception message:" << XMLString::transcode(toCatch.getMessage()) << endl;
 	}
 	
 	cout << "sizeof(char)=" << sizeof(char) << endl;
@@ -81,9 +82,9 @@ int main(int argc, char **argv) {
 	clock_t startT = clock();
 	for(int i=0; i<1000000; i++) {
 		XyLatinStr * x = new XyLatinStr("toto");
-		char * tmpChar = xercesc_3_0::XMLString::transcode(x->wideForm());
+		char * tmpChar = XMLString::transcode(x->wideForm());
 		tmp = ConvertToWideChar(tmpChar);
-		xercesc_3_0::XMLString::release(&tmpChar);
+		XMLString::release(&tmpChar);
         delete x;
 	}
 	clock_t endT = clock();
@@ -108,9 +109,9 @@ int main(int argc, char **argv) {
 	startT = clock();
 	for(int i=0; i<1000000; i++) {
 		XyLatinStr * x = new XyLatinStr("toto fdfsdfgsdg gfgdfgfd gfgfd gfd fgdfg fgfd fdg dfgfd fdg dfg fg dfg dfg fg dfg fdg fg fdg dfg fdg dg ffgfgdfgbbbvbfddddddd er er ezzzzzzzzzzerzerzerer fdgfgdfg fdgfdgfg cbbvbbvbgdrfgdfgdf fdgfg");
-		char * tmpChar = xercesc_3_0::XMLString::transcode(x->wideForm());
+		char * tmpChar = XMLString::transcode(x->wideForm());
 		tmp = ConvertToWideChar(tmpChar);
-		xercesc_3_0::XMLString::release(&tmpChar);
+		XMLString::release(&tmpChar);
 		
 		//tmp = x->wideForm();
                 delete x;

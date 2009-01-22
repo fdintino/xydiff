@@ -15,6 +15,8 @@ You can use this free for any purpose.  It has no warranty.
 #include <stdlib.h>
 #include <cstring>
 
+XERCES_CPP_NAMESPACE_USE
+
 typedef  unsigned long  int  ub4;   /* unsigned 4-byte quantities */
 typedef  unsigned       char ub1;
 
@@ -33,11 +35,11 @@ hash32::hash32 ( unsigned char *buffer, unsigned long length, const hash32 &star
 }
 
 hash32::hash32(const XMLCh *str) {
-	value = hash((ub1*)str, sizeof(XMLCh)*xercesc_3_0::XMLString::stringLen(str), 0);
+	value = hash((ub1*)str, sizeof(XMLCh)*XMLString::stringLen(str), 0);
 }
 
 hash32::hash32(const XMLCh *str, const hash32 &startingValue) {
-	value = hash((ub1*)str, sizeof(XMLCh)*xercesc_3_0::XMLString::stringLen(str), startingValue.value);
+	value = hash((ub1*)str, sizeof(XMLCh)*XMLString::stringLen(str), startingValue.value);
 }
 
 hash32::hash32(const char *str) {

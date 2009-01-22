@@ -13,6 +13,8 @@
 
 #include <stdio.h>
 
+XERCES_CPP_NAMESPACE_USE
+
 /*************************************************************************************
  *                                                                                   *
  * ---- ---- Xid Map Parser : Parses XID string and manage its information ---- ---- *
@@ -98,15 +100,15 @@ XID_map::XID_map(void)
 	: referenceCount(0), nodeByXid(NULL), xidByNode(NULL), firstAvailableXID(XID_INVALID), docRoot(NULL)
 {
 	
-	nodeByXid         = new std::map<XID_t, xercesc_3_0::DOMNode*> ;
-	xidByNode         = new std::map<xercesc_3_0::DOMNode*, XID_t> ;
+	nodeByXid         = new std::map<XID_t, DOMNode*> ;
+	xidByNode         = new std::map<DOMNode*, XID_t> ;
 }
 
 /*
  * Construct Default XID-map mapping the XID-String to the given Subtree
  */
 
-XID_map::XID_map( const char *str, xercesc_3_0::DOMNode *IncDocRoot)
+XID_map::XID_map( const char *str, DOMNode *IncDocRoot)
 	: referenceCount(0), nodeByXid(NULL), xidByNode(NULL), firstAvailableXID(XID_INVALID), docRoot(NULL)
 {
 	TRACE("init");
@@ -118,7 +120,7 @@ XID_map::XID_map( const char *str, xercesc_3_0::DOMNode *IncDocRoot)
 	TRACE("ok");
 }
 
-void XID_map::SetRootElement( xercesc_3_0::DOMNode *IncDocRoot ) {
+void XID_map::SetRootElement( DOMNode *IncDocRoot ) {
 	if (docRoot==NULL) docRoot = IncDocRoot ;
 	else THROW_AWAY(("There was already a root element"));
 }
@@ -151,7 +153,7 @@ std::string XID_map::String(void) {
 	return ( String( docRoot, true ) );
 }
 
-std::string XID_map::String(xercesc_3_0::DOMNode *node, bool printFirstAvailXID) {
+std::string XID_map::String(DOMNode *node, bool printFirstAvailXID) {
 	std::vector<XID_t> xidList ;
 	_internal_TraceTree( xidList, node );
 	return StringFromList( xidList, printFirstAvailXID );
@@ -159,9 +161,9 @@ std::string XID_map::String(xercesc_3_0::DOMNode *node, bool printFirstAvailXID)
 
 /* PRIVATE */
 
-void XID_map::_internal_TraceTree( std::vector<XID_t> &xidList, xercesc_3_0::DOMNode *node ) {
+void XID_map::_internal_TraceTree( std::vector<XID_t> &xidList, DOMNode *node ) {
   if (node->hasChildNodes()) {
-	  xercesc_3_0::DOMNode *child = node->getFirstChild() ;
+	  DOMNode *child = node->getFirstChild() ;
 		while(child != NULL ) {
 			_internal_TraceTree( xidList, child ) ;
 			child = child->getNextSibling();
@@ -221,22 +223,22 @@ bool XID_map::findNodeWithXID(const XID_t xid) {
 	else return false;
 };
 
-xercesc_3_0::DOMNode* XID_map::getNodeWithXID(const XID_t xid) {
+DOMNode* XID_map::getNodeWithXID(const XID_t xid) {
 	if ( nodeByXid->find(xid) != nodeByXid->end() ) {
-		xercesc_3_0::DOMNode* node =  (*nodeByXid)[xid];
+		DOMNode* node =  (*nodeByXid)[xid];
 		return node ;
 	}else {
 		THROW_AWAY(("could not find node with XID=%d",(int)xid));
 	}
 }
 
-XID_t XID_map::getXIDbyNode(xercesc_3_0::DOMNode *node) {
+XID_t XID_map::getXIDbyNode(DOMNode *node) {
 	if (node==NULL) THROW_AWAY(("can't find NULL DOMNode"));
 	if (xidByNode->find( node ) != xidByNode->end()) {
 		return (*xidByNode)[ node] ;
 	} else {
-		if (node->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE) std::cerr << "CONTEXT:: text_node=" << node->getNodeValue() << std::endl ;
-		else if (node->getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE) std::cerr << "CONTEXT:: element_node name=" << node->getNodeName() << std::endl ;
+		if (node->getNodeType()==DOMNode::TEXT_NODE) std::cerr << "CONTEXT:: text_node=" << node->getNodeValue() << std::endl ;
+		else if (node->getNodeType()==DOMNode::ELEMENT_NODE) std::cerr << "CONTEXT:: element_node name=" << node->getNodeName() << std::endl ;
 		else std::cerr << "Node type="<<node->getNodeType()<<std::endl;
 		THROW_AWAY(("Node(Impl) not found"));
 	}
@@ -267,7 +269,7 @@ XID_t XID_map::allocateNewXID(void) {
  *
  */
 
-void XID_map::registerNode( xercesc_3_0::DOMNode *node, XID_t xid ) {
+void XID_map::registerNode( DOMNode *node, XID_t xid ) {
 	if (xid==XID_INVALID) THROW_AWAY(("XID is INVALID"));
         if (node==NULL) THROW_AWAY(("can not register NULL DOMNode"));
           
@@ -279,7 +281,7 @@ void XID_map::registerNode( xercesc_3_0::DOMNode *node, XID_t xid ) {
 	(*xidByNode)[ node ] = xid ;
 }
 
-void XID_map::removeNode( xercesc_3_0::DOMNode *node ) {
+void XID_map::removeNode( DOMNode *node ) {
 	XID_t xid = getXIDbyNode( node );
 	if (!nodeByXid->erase( xid )) THROW_AWAY(("xid %d not found",(int)xid));
        
@@ -292,17 +294,17 @@ void XID_map::removeNode( xercesc_3_0::DOMNode *node ) {
  * Management of Node-2-XID mappings at Subtree level
  */
 
-void XID_map::mapSubtree( const char *str, xercesc_3_0::DOMNode *node ) {
+void XID_map::mapSubtree( const char *str, DOMNode *node ) {
 	XidMap_Parser parse( str );
 	registerSubtree( parse, node );
 }
 
-void XID_map::registerSubtree( XidMap_Parser &parse, xercesc_3_0::DOMNode *node ) {
+void XID_map::registerSubtree( XidMap_Parser &parse, DOMNode *node ) {
 	
 	if (node==NULL) THROW_AWAY(("can not register NULL node"));
 	
-	if (!nodeByXid) nodeByXid = new std::map<XID_t, xercesc_3_0::DOMNode*> ;
-	if (!xidByNode) xidByNode = new std::map<xercesc_3_0::DOMNode*, XID_t> ;
+	if (!nodeByXid) nodeByXid = new std::map<XID_t, DOMNode*> ;
+	if (!xidByNode) xidByNode = new std::map<DOMNode*, XID_t> ;
 	
 	firstAvailableXID = parse.getFirstAvailableXID( firstAvailableXID ) ;
 	_internal_registerSubtree( parse, node );
@@ -315,9 +317,9 @@ void XID_map::registerSubtree( XidMap_Parser &parse, xercesc_3_0::DOMNode *node 
 	}
 }
 
-void XID_map::_internal_registerSubtree( XidMap_Parser &parse, xercesc_3_0::DOMNode *node ) {
+void XID_map::_internal_registerSubtree( XidMap_Parser &parse, DOMNode *node ) {
 	if ( node->hasChildNodes() ) {
-	  xercesc_3_0::DOMNode* child = node->getFirstChild() ;
+	  DOMNode* child = node->getFirstChild() ;
 		while(child!=NULL) {
 		  _internal_registerSubtree( parse, child );
 			child = child->getNextSibling() ;
@@ -328,9 +330,9 @@ void XID_map::_internal_registerSubtree( XidMap_Parser &parse, xercesc_3_0::DOMN
 	registerNode( node, nodeXid );
 }
 
-void XID_map::removeSubtree( xercesc_3_0::DOMNode *node ) {
+void XID_map::removeSubtree( DOMNode *node ) {
   if ( node->hasChildNodes() ) {
-	  xercesc_3_0::DOMNode* child = node->getFirstChild() ;
+	  DOMNode* child = node->getFirstChild() ;
 		while(child!=NULL) {
 		  removeSubtree( child );
 			child = child->getNextSibling() ;
@@ -378,10 +380,10 @@ void XID_map::removeReference(XID_map* &inoutXidmapPtr) {
 
 /** Some Tools about XIDs **/
 
-XID_t XID_map::getXidFromAttribute(xercesc_3_0::DOMNode* elem, const XMLCh *attrName, bool parenthesis) {
+XID_t XID_map::getXidFromAttribute(DOMNode* elem, const XMLCh *attrName, bool parenthesis) {
 	if (elem==NULL) THROW_AWAY(("node is null"));
-	if (elem->getNodeType()!=xercesc_3_0::DOMNode::ELEMENT_NODE) THROW_AWAY(("node is not an element node"));
-	xercesc_3_0::DOMNode* attrNode = elem->getAttributes()->getNamedItem(attrName);
+	if (elem->getNodeType()!=DOMNode::ELEMENT_NODE) THROW_AWAY(("node is not an element node"));
+	DOMNode* attrNode = elem->getAttributes()->getNamedItem(attrName);
 	if (attrNode==NULL) THROW_AWAY(("attribute <%s> not found", attrName));
 	
 	XyLatinStr xidStr(attrNode->getNodeValue());

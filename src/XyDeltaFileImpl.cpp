@@ -38,6 +38,8 @@
 #include <sys/timeb.h>
 #include <sys/time.h>
 
+XERCES_CPP_NAMESPACE_USE
+
 extern unsigned long long int clocksComputeDelta           ;
 
 extern unsigned long long int clocksReadDocuments          ;
@@ -146,7 +148,7 @@ void XyDelta::ApplyDelta(const char *incDeltaName, unsigned int backwardNumber) 
  }
 
 // From ComputeDelta.cpp
-XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false, xercesc_3_0::DTDValidator *dtdValidator=NULL);
+XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false);
 
 // called by main() in execComputeDelta.cpp
 
@@ -193,7 +195,7 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	/* --- DO IT ---- */
 
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), ignoreSpacesFlag, verbose, NULL);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), ignoreSpacesFlag, verbose);
 
 
 	/* ---- [[ Phase Terminal: ]] Save Result in a file ---- */
@@ -209,36 +211,36 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	// Old:flux << *delta << std::endl;
 	// Start changes
 	XMLCh tempStr[100];
-	xercesc_3_0::XMLString::transcode("LS", tempStr, 99);
-	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(tempStr);
-	xercesc_3_0::DOMLSSerializer* theSerializer = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSSerializer();
+	XMLString::transcode("LS", tempStr, 99);
+	DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(tempStr);
+	DOMLSSerializer* theSerializer = ((DOMImplementationLS*)impl)->createLSSerializer();
 
-	if (theSerializer->getDomConfig()->canSetParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, true))
-		theSerializer->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, true);
+	if (theSerializer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true))
+		theSerializer->getDomConfig()->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
 	
 	
 	try {
           // do the serialization through DOMLSSerializer::writeToString();
-		XMLCh * serializedString = theSerializer->writeToString((xercesc_3_0::DOMNode*)delta->getDocumentElement());
+		XMLCh * serializedString = theSerializer->writeToString((DOMNode*)delta->getDocumentElement());
 		const char *stdoutString = "stdout";
 		if (strcmp(deltafilename, stdoutString) != 0) {
 			std::ofstream flux(deltafilename);
-			flux << xercesc_3_0::XMLString::transcode(serializedString) << std::endl;
+			flux << XMLString::transcode(serializedString) << std::endl;
 		} else {
-			std::cout << xercesc_3_0::XMLString::transcode(serializedString) << "\n";
+			std::cout << XMLString::transcode(serializedString) << "\n";
 		}
       }
-      catch (const xercesc_3_0::XMLException& toCatch) {
-          char* message = xercesc_3_0::XMLString::transcode(toCatch.getMessage());
+      catch (const XMLException& toCatch) {
+          char* message = XMLString::transcode(toCatch.getMessage());
           std::cout << "Exception message is: \n"
                << message << "\n";
-          xercesc_3_0::XMLString::release(&message);
+          XMLString::release(&message);
       }
-      catch (const xercesc_3_0::DOMException& toCatch) {
-          char* message = xercesc_3_0::XMLString::transcode(toCatch.msg);
+      catch (const DOMException& toCatch) {
+          char* message = XMLString::transcode(toCatch.msg);
           std::cout << "Exception message is: \n"
                << message << "\n";
-          xercesc_3_0::XMLString::release(&message);
+          XMLString::release(&message);
       }
       catch (...) {
           std::cout << "Unexpected Exception \n" ;
@@ -341,7 +343,7 @@ void XyDelta::XyLoadAndDiff(const char *versionFile , const char *deltaFile){
 		/* --- DO IT ---- */
 
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), false, false, NULL);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), false, false);
 
 
 		/* ---- [[ Phase Terminal: ]] Save Result in a file ---- */
@@ -353,7 +355,7 @@ void XyDelta::XyLoadAndDiff(const char *versionFile , const char *deltaFile){
 		// Use DeltaManger: addDeltaElement and then SaveToDisk()
 		// Also set a fromVersionId and toVersionId using DeltaManager
 	
-        xercesc_3_0::DOMNode* deltaNode = delta->getDocumentElement()->getFirstChild();
+        DOMNode* deltaNode = delta->getDocumentElement()->getFirstChild();
 		if ( dm.addDeltaElement(deltaNode, versionFile) == 0 ) {
 			dm.SaveToDisk();
 			dm.listAllDeltas();
@@ -409,7 +411,7 @@ int SpinProject::RunDiff(const char *openFileV0, const char *openFileV1, const c
   XyDelta::XyDiff(openFileV0, openFileV1, saveDeltaV0V1);
   
 	XID_DOMDocument *doc0 = new XID_DOMDocument(openFileV0);
-	xercesc_3_0::DOMNode* root = doc0->getDocumentElement();
+	DOMNode* root = doc0->getDocumentElement();
 	if (root!=NULL) Restricted::XidTagSubtree(doc0, root);
 	doc0->SaveAs(saveFileV0, false);                                    
 

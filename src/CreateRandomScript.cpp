@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <fstream>
 
+XERCES_CPP_NAMESPACE_USE
 using namespace std;
 
 /* Globals */
@@ -62,15 +63,15 @@ class ChangeSimulator {
 										double _updateProb,
 										double _insertProb);
 	
-		void registerSubTree(   xercesc_3_0::DOMNode *root ) ;
-		void unregisterSubTree( xercesc_3_0::DOMNode *root ) ;
+		void registerSubTree(   DOMNode *root ) ;
+		void unregisterSubTree( DOMNode *root ) ;
 	
-	  void DELETE(xercesc_3_0::DOMNode *node);
-	  void UPDATE(xercesc_3_0::DOMNode *node);
-	  void INSERT(xercesc_3_0::DOMNode *node);
+	  void DELETE(DOMNode *node);
+	  void UPDATE(DOMNode *node);
+	  void INSERT(DOMNode *node);
 		
-		std::vector<xercesc_3_0::DOMNode*> elementNodes ;
-		std::vector<xercesc_3_0::DOMNode*> textNodes ;
+		std::vector<DOMNode*> elementNodes ;
+		std::vector<DOMNode*> textNodes ;
 		
 		XID_DOMDocument* resultingDocument ;
 		XID_DOMDocument* deletedData ;
@@ -81,7 +82,7 @@ class ChangeSimulator {
 		double insertProb;
 		
 	private:
-		xercesc_3_0::DOMElement* deltaElement ;
+		DOMElement* deltaElement ;
 	} ;
 
 /*
@@ -107,47 +108,47 @@ ChangeSimulator::ChangeSimulator(XID_DOMDocument *sourceDoc,
 	std::cout << "Creating Document for deleted nodes" << std::endl ;
 
 	deletedData = XID_DOMDocument::createDocument() ;
-	xercesc_3_0::DOMElement* deletedDataElement = deletedData->createElement(xercesc_3_0::XMLString::transcode("deletedNodesRoot"));
-	//xercesc_3_0::DOMNode* deletedDataRoot       = 
+	DOMElement* deletedDataElement = deletedData->createElement(XMLString::transcode("deletedNodesRoot"));
+	//DOMNode* deletedDataRoot       = 
         deletedData->appendChild( deletedDataElement );
 	deletedData->initEmptyXidmapStartingAt(-1);
 		
 	std::cout << "Creating Delta Document" << std::endl ;
 
 	deltaDoc         = XID_DOMDocument::createDocument() ;
-	xercesc_3_0::DOMElement* elem = deltaDoc->createElement(xercesc_3_0::XMLString::transcode("unit_delta"));
+	DOMElement* elem = deltaDoc->createElement(XMLString::transcode("unit_delta"));
 	deltaDoc->appendChild( elem );
-	deltaElement     = deltaDoc->createElement(xercesc_3_0::XMLString::transcode("t"));
-	deltaElement->setAttribute(xercesc_3_0::XMLString::transcode("from"), XyLatinStr(sourceFilename));
-	deltaElement->setAttribute(xercesc_3_0::XMLString::transcode("to"), XyLatinStr(targetFilename));
+	deltaElement     = deltaDoc->createElement(XMLString::transcode("t"));
+	deltaElement->setAttribute(XMLString::transcode("from"), XyLatinStr(sourceFilename));
+	deltaElement->setAttribute(XMLString::transcode("to"), XyLatinStr(targetFilename));
 	deltaDoc->getDocumentElement()->appendChild(deltaElement);
 
 	std::cout << "Register document nodes as candidate for changes" << std::endl ;
 
-	xercesc_3_0::DOMNode* docRoot = resultingDocument->getDocumentElement();
+	DOMNode* docRoot = resultingDocument->getDocumentElement();
 	if (docRoot==NULL) THROW_AWAY(("source document is empty"));
 	registerSubTree( docRoot ) ;
 	}
 
-void ChangeSimulator::registerSubTree( xercesc_3_0::DOMNode *node ) {
+void ChangeSimulator::registerSubTree( DOMNode *node ) {
 
   if (node->hasChildNodes()) {
 
-    xercesc_3_0::DOMNode* child = node->getFirstChild();
+    DOMNode* child = node->getFirstChild();
 		while( child != NULL ) {
 			registerSubTree( child ) ;
 			child = child->getNextSibling() ;
 			}
     }
 	
-	if  (node->getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE) elementNodes.push_back(node);
-	else if(node->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE) textNodes.push_back(node);
+	if  (node->getNodeType()==DOMNode::ELEMENT_NODE) elementNodes.push_back(node);
+	else if(node->getNodeType()==DOMNode::TEXT_NODE) textNodes.push_back(node);
 	}
 	
 
-std::vector<xercesc_3_0::DOMNode*> &erase(std::vector<xercesc_3_0::DOMNode*> &t, xercesc_3_0::DOMNode *node) {
+std::vector<DOMNode*> &erase(std::vector<DOMNode*> &t, DOMNode *node) {
 	unsigned long count=0;
-	for(std::vector<xercesc_3_0::DOMNode*>::iterator i=t.begin(); i!=t.end();) {
+	for(std::vector<DOMNode*>::iterator i=t.begin(); i!=t.end();) {
 		if (*i==node) {
 			i=t.erase(i);
 			count++;
@@ -159,21 +160,21 @@ std::vector<xercesc_3_0::DOMNode*> &erase(std::vector<xercesc_3_0::DOMNode*> &t,
 	return t;
 	}
 
-void ChangeSimulator::unregisterSubTree( xercesc_3_0::DOMNode *node ) {
+void ChangeSimulator::unregisterSubTree( DOMNode *node ) {
 
   if (node->hasChildNodes()) {
 
-    xercesc_3_0::DOMNode *child = node->getFirstChild();
+    DOMNode *child = node->getFirstChild();
 		while( child != NULL ) {
 			unregisterSubTree( child ) ;
 			child = child->getNextSibling() ;
 			}
     }
 	
-	if  (node->getNodeType()==xercesc_3_0::DOMNode::ELEMENT_NODE) {
+	if  (node->getNodeType()==DOMNode::ELEMENT_NODE) {
 		elementNodes=erase(elementNodes, node);
 		}
-  else if(node->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE) {
+  else if(node->getNodeType()==DOMNode::TEXT_NODE) {
 		textNodes=erase(textNodes, node);
 		}
 
@@ -187,28 +188,28 @@ void ChangeSimulator::unregisterSubTree( xercesc_3_0::DOMNode *node ) {
  ********************************/
 		
 
-void ChangeSimulator::DELETE( xercesc_3_0::DOMNode *node ) {
+void ChangeSimulator::DELETE( DOMNode *node ) {
 	XID_t nodeXID = resultingDocument->getXidMap().getXIDbyNode( node );
 
   std::cout << "...delete() xid=" << nodeXID << std::endl ;
 
-	xercesc_3_0::DOMNode* parent = node->getParentNode();
+	DOMNode* parent = node->getParentNode();
 	
 	// Can't have two TEXT brothers - So delete one of them
 	
-	xercesc_3_0::DOMNode* next = node->getNextSibling() ;
-	xercesc_3_0::DOMNode* previous = node->getPreviousSibling() ;
+	DOMNode* next = node->getNextSibling() ;
+	DOMNode* previous = node->getPreviousSibling() ;
 	if ((next!=NULL)&&(previous!=NULL)) {
-		if ((next->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE)&&(previous->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE)) {
+		if ((next->getNodeType()==DOMNode::TEXT_NODE)&&(previous->getNodeType()==DOMNode::TEXT_NODE)) {
 		  DELETE( previous );
 			}
 	  }
 	
 	// Copy of deleted node in the Garbage
 	
-	xercesc_3_0::DOMNode* deletedNode = deletedData->importNode( node, true );
+	DOMNode* deletedNode = deletedData->importNode( node, true );
 	deletedData->getXidMap().mapSubtree( resultingDocument->getXidMap().String( node ).c_str(), deletedNode );
-	xercesc_3_0::DOMElement* NodeElement = deletedData->createElement(xercesc_3_0::XMLString::transcode("DeletedData"));
+	DOMElement* NodeElement = deletedData->createElement(XMLString::transcode("DeletedData"));
 	NodeElement->appendChild( deletedNode );
 	deletedData->getDocumentElement()->appendChild( NodeElement );
 
@@ -218,11 +219,11 @@ void ChangeSimulator::DELETE( xercesc_3_0::DOMNode *node ) {
 	sprintf(parXID_str, "%d", (int)resultingDocument->getXidMap().getXIDbyNode(parent) );
 	char pos_str[10];
 	sprintf(pos_str,    "%d", getPosition(parent, node) );
-	xercesc_3_0::DOMElement* op = deltaDoc->createElement(xercesc_3_0::XMLString::transcode("d"));
-	op->setAttribute(xercesc_3_0::XMLString::transcode("par"), XyLatinStr(parXID_str) );
-	op->setAttribute(xercesc_3_0::XMLString::transcode("pos"), XyLatinStr(pos_str) );
-	op->setAttribute(xercesc_3_0::XMLString::transcode("xm") , XyLatinStr((resultingDocument->getXidMap().String( node ).c_str()) ));
-	xercesc_3_0::DOMNode* contentNode = deltaDoc->importNode( node, true );
+	DOMElement* op = deltaDoc->createElement(XMLString::transcode("d"));
+	op->setAttribute(XMLString::transcode("par"), XyLatinStr(parXID_str) );
+	op->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str) );
+	op->setAttribute(XMLString::transcode("xm") , XyLatinStr((resultingDocument->getXidMap().String( node ).c_str()) ));
+	DOMNode* contentNode = deltaDoc->importNode( node, true );
 	op->appendChild( contentNode ) ;
 	deltaElement->appendChild(op);
   
@@ -248,9 +249,9 @@ void ChangeSimulator::DELETE( xercesc_3_0::DOMNode *node ) {
  ********************************/
 	
 
-void ChangeSimulator::UPDATE( xercesc_3_0::DOMNode *node ) {
+void ChangeSimulator::UPDATE( DOMNode *node ) {
 
-	xercesc_3_0::DOMNode* parent = node->getParentNode();
+	DOMNode* parent = node->getParentNode();
 	int node_position = getPosition(parent, node);
 	if (node_position!=1) return;
 
@@ -259,34 +260,34 @@ void ChangeSimulator::UPDATE( xercesc_3_0::DOMNode *node ) {
 
 	char text[50] ;
 	sprintf(text, "UpdatedValue_%d", (int)updated );
-	xercesc_3_0::DOMNode* newText = resultingDocument->createTextNode(XyLatinStr(text));
+	DOMNode* newText = resultingDocument->createTextNode(XyLatinStr(text));
 	
 	// Create corresponding delta operation
 	
-	xercesc_3_0::DOMElement* dElem = deltaDoc->createElement(xercesc_3_0::XMLString::transcode("d"));
-	xercesc_3_0::DOMElement* iElem = deltaDoc->createElement(xercesc_3_0::XMLString::transcode("i"));
+	DOMElement* dElem = deltaDoc->createElement(XMLString::transcode("d"));
+	DOMElement* iElem = deltaDoc->createElement(XMLString::transcode("i"));
 	char oldXidStr[10];
 	char newXidStr[10];
 	sprintf(oldXidStr, "(%d)", (int)nodeXID);
 	sprintf(newXidStr, "(%d)", (int)resultingDocument->getXidMap().allocateNewXID());
-	dElem->setAttribute(xercesc_3_0::XMLString::transcode("xm"), XyLatinStr(oldXidStr));
-	iElem->setAttribute(xercesc_3_0::XMLString::transcode("xm"), XyLatinStr(newXidStr));
+	dElem->setAttribute(XMLString::transcode("xm"), XyLatinStr(oldXidStr));
+	iElem->setAttribute(XMLString::transcode("xm"), XyLatinStr(newXidStr));
 
 	char parXID_str[10] ;
 	sprintf(parXID_str, "%d", (int)resultingDocument->getXidMap().getXIDbyNode(parent) );
 	char pos_str[10];
 	sprintf(pos_str,    "%d", node_position );
 	if (node_position!=1) THROW_AWAY(("update operations are only valid for single text node attached to a label"));
-	dElem->setAttribute(xercesc_3_0::XMLString::transcode("par"), XyLatinStr(parXID_str) );
-	dElem->setAttribute(xercesc_3_0::XMLString::transcode("pos"), XyLatinStr(pos_str)    );
-	dElem->setAttribute(xercesc_3_0::XMLString::transcode("update"), xercesc_3_0::XMLString::transcode("yes"));
-	iElem->setAttribute(xercesc_3_0::XMLString::transcode("par"), XyLatinStr(parXID_str) );
-	iElem->setAttribute(xercesc_3_0::XMLString::transcode("pos"), XyLatinStr(pos_str)    );
-	iElem->setAttribute(xercesc_3_0::XMLString::transcode("update"), xercesc_3_0::XMLString::transcode("yes"));
+	dElem->setAttribute(XMLString::transcode("par"), XyLatinStr(parXID_str) );
+	dElem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str)    );
+	dElem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
+	iElem->setAttribute(XMLString::transcode("par"), XyLatinStr(parXID_str) );
+	iElem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str)    );
+	iElem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
 
-	xercesc_3_0::DOMNode* oldValue = deltaDoc->importNode(node, true);
+	DOMNode* oldValue = deltaDoc->importNode(node, true);
 	dElem->appendChild(oldValue);
-	xercesc_3_0::DOMNode* newValue = deltaDoc->importNode(newText, true);
+	DOMNode* newValue = deltaDoc->importNode(newText, true);
 	iElem->appendChild(newValue);
 	
 	deltaElement->appendChild(dElem);
@@ -315,7 +316,7 @@ void ChangeSimulator::UPDATE( xercesc_3_0::DOMNode *node ) {
  ********************************/
 	
 
-void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
+void ChangeSimulator::INSERT( DOMNode *node ) {
 	XID_t nodeXID = resultingDocument->getXidMap().getXIDbyNode( node );
 	
 	std::cout << "...insert() parentXid=" << nodeXID << std::endl ;
@@ -327,33 +328,33 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 	
 	// ---- Choose random type
 
-	xercesc_3_0::DOMNode::NodeType type ;
+	DOMNode::NodeType type ;
 	if (random()%2) {
-	  type=xercesc_3_0::DOMNode::ELEMENT_NODE;
+	  type=DOMNode::ELEMENT_NODE;
 		}
 	else {
-	  type=xercesc_3_0::DOMNode::TEXT_NODE ;
+	  type=DOMNode::TEXT_NODE ;
 		}
 	
 	// ---- Change type if surrounding brother are TEXT NODES too
 
-	if ((type==xercesc_3_0::DOMNode::TEXT_NODE)&&(node->hasChildNodes())) {
+	if ((type==DOMNode::TEXT_NODE)&&(node->hasChildNodes())) {
 	  if (position==1) {
-		  if (node->getFirstChild()->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE) {
-		    type = xercesc_3_0::DOMNode::ELEMENT_NODE ;
+		  if (node->getFirstChild()->getNodeType()==DOMNode::TEXT_NODE) {
+		    type = DOMNode::ELEMENT_NODE ;
 				}
 			}
     else {
 		  // find the one going to be its previous brother
-			xercesc_3_0::DOMNode* previous = node->getFirstChild() ;
+			DOMNode* previous = node->getFirstChild() ;
 	    for(unsigned int i=2; i<position; i++) previous = previous->getNextSibling() ;
-		  if (previous->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE) {
-		    type = xercesc_3_0::DOMNode::ELEMENT_NODE ;
+		  if (previous->getNodeType()==DOMNode::TEXT_NODE) {
+		    type = DOMNode::ELEMENT_NODE ;
 			  }
       else {
 			// will it have a 'next' brother ?
-		    if ((position !=1+node->getChildNodes()->getLength())&&(previous->getNextSibling()->getNodeType()==xercesc_3_0::DOMNode::TEXT_NODE)) {
-		      type = xercesc_3_0::DOMNode::ELEMENT_NODE ;
+		    if ((position !=1+node->getChildNodes()->getLength())&&(previous->getNextSibling()->getNodeType()==DOMNode::TEXT_NODE)) {
+		      type = DOMNode::ELEMENT_NODE ;
 					}
 				}
 			}
@@ -364,13 +365,13 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 	
 	// Create the new Node
 	
-  xercesc_3_0::DOMNode* insertedNode = 0;
+  DOMNode* insertedNode = 0;
 
 	// Try to transform (delete,insert) into (move)
 	if (frand()<0.5) {
           std::cout << " transform (delete,insert) into (move)" << std::endl;
 		
-		xercesc_3_0::DOMNode* dataNode = deletedData->getDocumentElement()->getLastChild() ;
+		DOMNode* dataNode = deletedData->getDocumentElement()->getLastChild() ;
 		while ( (dataNode!=NULL)
 		      &&(dataNode->getFirstChild()->getNodeType()!=type))
 		  {
@@ -378,7 +379,7 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 			}
 
 		if (dataNode!=NULL) {
-			xercesc_3_0::DOMNode* content = dataNode->getFirstChild() ;
+			DOMNode* content = dataNode->getFirstChild() ;
 			insertedNode = resultingDocument->importNode( content, true );
 			resultingDocument->getXidMap().mapSubtree( deletedData->getXidMap().String( content ).c_str(), insertedNode );
 			deletedData->getDocumentElement()->removeChild( dataNode );
@@ -391,18 +392,18 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 
 	if (insertedNode==NULL) {
           std::cout << "create original content " << std::endl;
-		if (type==xercesc_3_0::DOMNode::ELEMENT_NODE) {
-			xercesc_3_0::DOMNode* copyFrom = node->getLastChild() ;
-			while ((copyFrom!=NULL)&&(copyFrom->getNodeType()!=xercesc_3_0::DOMNode::ELEMENT_NODE)) {
+		if (type==DOMNode::ELEMENT_NODE) {
+			DOMNode* copyFrom = node->getLastChild() ;
+			while ((copyFrom!=NULL)&&(copyFrom->getNodeType()!=DOMNode::ELEMENT_NODE)) {
 				copyFrom=copyFrom->getPreviousSibling() ;
 				}
 			if (copyFrom==NULL) {
-				xercesc_3_0::DOMNode* uncle = node->getNextSibling() ;
+				DOMNode* uncle = node->getNextSibling() ;
 				if (uncle!=NULL) uncle = uncle->getFirstChild() ;
 				if (uncle!=NULL) {
 					// printf("I am gonna be like my cousin!\n");
 					copyFrom = uncle ;
-					while ((copyFrom!=NULL)&&(copyFrom->getNodeType()!=xercesc_3_0::DOMNode::ELEMENT_NODE)) {
+					while ((copyFrom!=NULL)&&(copyFrom->getNodeType()!=DOMNode::ELEMENT_NODE)) {
 						copyFrom=copyFrom->getNextSibling() ;
 						}
 					}
@@ -429,15 +430,15 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 
 	/* ---- Create corresponding delta operation ---- */
 	
-	xercesc_3_0::DOMElement* elem      = deltaDoc->createElement(xercesc_3_0::XMLString::transcode("i"));
+	DOMElement* elem      = deltaDoc->createElement(XMLString::transcode("i"));
 	
 	char parent_str[10];
 	sprintf(parent_str,   "%d", (int)nodeXID);
 	char position_str[10];
 	sprintf(position_str, "%d", position );
 
-	elem->setAttribute(    xercesc_3_0::XMLString::transcode("par"), XyLatinStr(parent_str) );
-	elem->setAttribute(    xercesc_3_0::XMLString::transcode("pos"), XyLatinStr(position_str)  );
+	elem->setAttribute(    XMLString::transcode("par"), XyLatinStr(parent_str) );
+	elem->setAttribute(    XMLString::transcode("pos"), XyLatinStr(position_str)  );
         if (move== true)
           std::cout << "move == true" << std::endl;
         else
@@ -453,27 +454,27 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 	if (move) {
 		char xidStr[10];
 		sprintf(xidStr,"(%d)", (int)resultingDocument->getXidMap().getXIDbyNode(insertedNode));
-		elem->setAttribute(xercesc_3_0::XMLString::transcode("move"),xercesc_3_0::XMLString::transcode("yes"));
-		xercesc_3_0::DOMNode* deleteOp=deltaElement->getFirstChild();
+		elem->setAttribute(XMLString::transcode("move"),XMLString::transcode("yes"));
+		DOMNode* deleteOp=deltaElement->getFirstChild();
 		int count=0;
 		while(deleteOp!=NULL) {
                   std::cout << "deleteOp!=NULL" << std::endl;
-                  if ( xercesc_3_0::XMLString::equals(deleteOp->getNodeName(), xercesc_3_0::XMLString::transcode("d"))) {
-                    if ( xercesc_3_0::XMLString::equals(deleteOp->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xm"))->getNodeValue(), XyLatinStr(myXm.c_str()))) {
+                  if ( XMLString::equals(deleteOp->getNodeName(), XMLString::transcode("d"))) {
+                    if ( XMLString::equals(deleteOp->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue(), XyLatinStr(myXm.c_str()))) {
 					printf("   found corresponding delete operation\n");
 
-                                        std::cout << "getNodeValue()) = " << XyLatinStr(deleteOp->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xm"))->getNodeValue()).localForm() << std::endl;
+                                        std::cout << "getNodeValue()) = " << XyLatinStr(deleteOp->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue()).localForm() << std::endl;
                                         std::cout << "myXm = " << myXm << std::endl;
 
 					count++;
-					xercesc_3_0::DOMElement *deleteElem=(xercesc_3_0::DOMElement*)deleteOp;
-					deleteElem->setAttribute(xercesc_3_0::XMLString::transcode("move"), xercesc_3_0::XMLString::transcode("yes"));
-					deleteOp->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xm"))->setNodeValue(XyLatinStr(xidStr));
+					DOMElement *deleteElem=(DOMElement*)deleteOp;
+					deleteElem->setAttribute(XMLString::transcode("move"), XMLString::transcode("yes"));
+					deleteOp->getAttributes()->getNamedItem(XMLString::transcode("xm"))->setNodeValue(XyLatinStr(xidStr));
 					}
                                 else
                                   {
                                     std::cout << "not found corresponding delete operation" << std::endl;
-                                    std::cout << "failed : " << XyLatinStr(deleteOp->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("xm"))->getNodeValue()).localForm() << std::endl;
+                                    std::cout << "failed : " << XyLatinStr(deleteOp->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue()).localForm() << std::endl;
                                     std::cout << " with " << myXm.c_str() << std::endl;
                                   }
 				}
@@ -485,14 +486,14 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 			}
                 std::cout << "deleteOp==NULL" << std::endl;
 		if (count!=1) THROW_AWAY(("we've found %d delete operations when looking for one!", count));
-		elem->setAttribute(    xercesc_3_0::XMLString::transcode("xm"), XyLatinStr(xidStr) );
+		elem->setAttribute(    XMLString::transcode("xm"), XyLatinStr(xidStr) );
 		}
 	else {
 		// For real insert: describe the Xidmap for the subtree
-		elem->setAttribute(    xercesc_3_0::XMLString::transcode("xm"), XyLatinStr(myXm.c_str()) );
+		elem->setAttribute(    XMLString::transcode("xm"), XyLatinStr(myXm.c_str()) );
 		}
 		
-	xercesc_3_0::DOMNode* contentNode  = deltaDoc->importNode(insertedNode, true );
+	DOMNode* contentNode  = deltaDoc->importNode(insertedNode, true );
 	elem->appendChild (contentNode) ;
 	deltaElement->appendChild( elem );
 
@@ -507,7 +508,7 @@ void ChangeSimulator::INSERT( xercesc_3_0::DOMNode *node ) {
 		node->appendChild(insertedNode);
 		}
 	else {
-	  xercesc_3_0::DOMNode* next = node->getFirstChild();
+	  DOMNode* next = node->getFirstChild();
 		for(unsigned int i=1; i<position; i++) next=next->getNextSibling();
 		//node.insertBefore( newNode, next );
 		node->insertBefore(insertedNode, next);
@@ -557,11 +558,11 @@ XID_DOMDocument* AtomicCreateRandomScript(XID_DOMDocument *sourceDoc, const char
 		
 	printf("create 'delete' operations...\n");
 	for(unsigned int i=0; i< changeSimulator->textNodes.size() ; i++) {
-		xercesc_3_0::DOMNode* node = changeSimulator->textNodes[i] ;
+		DOMNode* node = changeSimulator->textNodes[i] ;
 	  if (frand()<deleteProb) changeSimulator->DELETE(node);
 		}
 	for(unsigned int i=0; i< changeSimulator->elementNodes.size() ; i++) {
-		xercesc_3_0::DOMNode* node = changeSimulator->elementNodes[i];
+		DOMNode* node = changeSimulator->elementNodes[i];
 		long size = changeSimulator->resultingDocument->getSubtreeNodeCount ( node ) ;
 		if (frand()<(deleteProb/(double)size)) changeSimulator->DELETE( node );
 		if (changeSimulator->elementNodes.size()<10) THROW_AWAY(("The sequence of documents that has just been created is not good enough for testing. Please try again."));
@@ -581,7 +582,7 @@ XID_DOMDocument* AtomicCreateRandomScript(XID_DOMDocument *sourceDoc, const char
 	printf("create 'update' operations...\n");
 	for(unsigned int i=0; i< changeSimulator->textNodes.size() ; i++) {
 	  if (frand()<updateProb) {
-			xercesc_3_0::DOMNode* node = changeSimulator->textNodes[i] ;
+			DOMNode* node = changeSimulator->textNodes[i] ;
 			changeSimulator->UPDATE ( node );
 			}
 		}
@@ -593,7 +594,7 @@ XID_DOMDocument* AtomicCreateRandomScript(XID_DOMDocument *sourceDoc, const char
 	printf("create 'insert' operations...\n");
 	for(unsigned int i=0; i< changeSimulator->elementNodes.size() ; i++) {
 		if (frand()<insertProb) {
-			xercesc_3_0::DOMNode* node = changeSimulator->elementNodes[i] ;
+			DOMNode* node = changeSimulator->elementNodes[i] ;
 			changeSimulator->INSERT( node );
 			}
 		}
@@ -687,10 +688,10 @@ int main(int argc, char* argv[])
 	/* ---- Init Xerces ---- */
 		
 	try {
-		xercesc_3_0::XMLPlatformUtils::Initialize();
+		XMLPlatformUtils::Initialize();
 		}
 
-  catch(const xercesc_3_0::XMLException& toCatch) {
+  catch(const XMLException& toCatch) {
     std::cerr << "Error during Xerces-c Initialization.\n"
 		     << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
     }
@@ -750,7 +751,7 @@ int main(int argc, char* argv[])
 	  std::cerr << "DeltaException catched. Exit program..." << std::endl ;
 		exit(-1);
 		}
-	catch( const xercesc_3_0::DOMException &e ) {
+	catch( const DOMException &e ) {
 	  std::cerr << "DOMException, code=" << e.code << std::endl ;
 		std::cerr << "DOMException, message=" << e.msg << std::endl ;
 		exit(-1);

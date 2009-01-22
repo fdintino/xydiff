@@ -11,6 +11,8 @@
 //#include <stdio.h>
 //#include <string>
 
+XERCES_CPP_NAMESPACE_USE
+
 int main(int argc, const char **argv) {
  
 	bool showUsage= false; 
@@ -28,9 +30,9 @@ int main(int argc, const char **argv) {
  
 	try {
 		std::cout << "XMLPlatformUtils::Initialize()" << std::endl ;
-		xercesc_3_0::XMLPlatformUtils::Initialize();
+		XMLPlatformUtils::Initialize();
     }
-	catch(const xercesc_3_0::XMLException& toCatch) {
+	catch(const XMLException& toCatch) {
 		std::cerr << "Error during Xerces-c Initialization.\n"
 			 << "  Exception message:" << toCatch.getMessage() << std::endl;
     }
@@ -57,12 +59,12 @@ int main(int argc, const char **argv) {
 		std::cerr << e << std::endl ;
 		exit(-1);
 	}
-	catch( const xercesc_3_0::DOMException &e ) {
+	catch( const DOMException &e ) {
 		std::cerr << "*** DOMException, code=" << e.code << std::endl ;
 		std::cerr << "    DOMException, message=" << e.msg << std::endl ;
 		exit(-1);
 	}	
-	catch(const xercesc_3_0::XMLException& toCatch) {
+	catch(const XMLException& toCatch) {
 		std::cerr << "*** XML Exception message:" << toCatch.getMessage() << std::endl;
 		exit(-1);
 	}

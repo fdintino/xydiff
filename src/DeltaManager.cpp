@@ -18,39 +18,40 @@
 #include <stdio.h>
 #include <set>
 
-static const XMLCh gLS[] = { xercesc_3_0::chLatin_L, xercesc_3_0::chLatin_S, xercesc_3_0::chNull };
+XERCES_CPP_NAMESPACE_USE
 
+static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 using namespace std;
 
-DeltaHeader::DeltaHeader(xercesc_3_0::DOMNode *deltaElement) {
-	if (deltaElement->getNodeType() != xercesc_3_0::DOMNode::ELEMENT_NODE) {
+DeltaHeader::DeltaHeader(DOMNode *deltaElement) {
+	if (deltaElement->getNodeType() != DOMNode::ELEMENT_NODE) {
 		throw VersionManagerException("Data Error", "DeltaHeader -> DeltaHeader()", "the argument (deltaElement) is not a DOM_Element");
 	}
 
-        //xercesc_3_0::DOMString domstr;
-	xercesc_3_0::DOMNode* node;
+        //DOMString domstr;
+	DOMNode* node;
 	 
-	node = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("fromVersionId"));
+	node = deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromVersionId"));
 	if (node == NULL)
 		throw VersionManagerException("Data Error", "DeltaHeader -> DeltaHeader()", "the element node doesn't have the attribute <fromVersionId>");
 
         fromVersionId = watoi(node->getNodeValue());
 	
-	node = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("toVersionId"));
+	node = deltaElement->getAttributes()->getNamedItem(XMLString::transcode("toVersionId"));
 
 	if (node == NULL) 
 		throw VersionManagerException("Data Error", "DeltaHeader -> DeltaHeader()", "the element node doesn't have the attribute <toVersionId>");
 
         toVersionId = watoi(node->getNodeValue());
 
-	node = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("fromDate"));
+	node = deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromDate"));
 	
 	if (node == NULL) 
 		throw VersionManagerException("Data Error", "DeltaHeader -> DeltaHeader()", "the element node doesn't have the attribute <fromDate>");
 
         fromDate = XyLatinStr(node->getNodeValue());
     
-	node = deltaElement->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("toDate"));
+	node = deltaElement->getAttributes()->getNamedItem(XMLString::transcode("toDate"));
 	if (node == NULL) 
 		throw VersionManagerException("Data Error", "DeltaHeader -> DeltaHeader()", "the element node doesn't have the attribute <toDate>");
 
@@ -92,26 +93,26 @@ DeltaManager::DeltaManager(const char *fileName) {
 	setFileName(fileName);
 	deltaDocument = new XID_DOMDocument(fileName, false) ;
 	
-	xercesc_3_0::DOMElement* deltaRoot = deltaDocument->getDocumentElement() ;
+	DOMElement* deltaRoot = deltaDocument->getDocumentElement() ;
     if (deltaRoot==NULL) 
 		throw VersionManagerException("Data Error", "DeltaManager", "deltaRoot is NULL");
 	if (!deltaRoot->hasChildNodes())
 		throw VersionManagerException("Data Error", "DeltaManager", "deltaRoot has no child nodes");
 	
 	// verify if the child nodes are element nodes
-	xercesc_3_0::DOMNode* node = deltaRoot->getFirstChild();
+	DOMNode* node = deltaRoot->getFirstChild();
 	//cout << XyLatinStr(node.getNodeName())<< " " <<  XyLatinStr(node.getNodeValue()) << endl;
-	if ((node->getNodeType() != xercesc_3_0::DOMNode::ELEMENT_NODE) || (node->getNodeName() != xercesc_3_0::XMLString::transcode("info")) ) 
+	if ((node->getNodeType() != DOMNode::ELEMENT_NODE) || (node->getNodeName() != XMLString::transcode("info")) ) 
 		throw VersionManagerException("Data error", "DeltaManager", "incorrect input delta document: info tag missing");
 
 	for ( node = node->getNextSibling(); node != NULL; node = node->getNextSibling()) {
 		// cout << XyLatinStr(node->getNodeName()) << " " <<  XyLatinStr(node->getNodeValue()) << endl;
-		if ((node->getNodeType() != xercesc_3_0::DOMNode::ELEMENT_NODE) || (!xercesc_3_0::XMLString::equals(node->getNodeName(),xercesc_3_0::XMLString::transcode("t")))) 
+		if ((node->getNodeType() != DOMNode::ELEMENT_NODE) || (!XMLString::equals(node->getNodeName(),XMLString::transcode("t")))) 
 			throw VersionManagerException("Data error", "DeltaManager", "incorrect input delta document: tags");
 		headerList.insert(headerList.begin(), DeltaHeader(node));
 	}
 	
-	node = deltaRoot->getFirstChild()->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("firstAvailableVersionId")); 
+	node = deltaRoot->getFirstChild()->getAttributes()->getNamedItem(XMLString::transcode("firstAvailableVersionId")); 
 	if (node == NULL) {
 		throw VersionManagerException("Data error", "DeltaManager", "incorrect input delta document: firstAvailableVersionId missing");
 	}
@@ -120,7 +121,7 @@ DeltaManager::DeltaManager(const char *fileName) {
 
 	cout << "firstAvailableVersionId = " << firstAvailableVersionId << endl;
 
-	node = deltaRoot->getFirstChild()->getAttributes()->getNamedItem(xercesc_3_0::XMLString::transcode("currentVersionFileName")); 
+	node = deltaRoot->getFirstChild()->getAttributes()->getNamedItem(XMLString::transcode("currentVersionFileName")); 
 	if (node == NULL) {
 		throw VersionManagerException("Data error", "DeltaManager", "incorrect input delta document: currentVersionFileName missing");
 	}
@@ -138,19 +139,19 @@ DeltaManager::DeltaManager(const char *deltaFileName, const char *newVersionFile
 
 	setFileName(deltaFileName);
 
-        xercesc_3_0::DOMImplementation* impl =  xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(gLS);
+        DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
         
 	deltaDocument = new XID_DOMDocument(impl->createDocument(
 			0,                    // root element namespace URI.
-			xercesc_3_0::XMLString::transcode("unit_delta"),            // root element name
+			XMLString::transcode("unit_delta"),            // root element name
 			0));  // document type object (DTD)
 
-	xercesc_3_0::DOMElement* deltaRoot = deltaDocument->getDocumentElement();
-	xercesc_3_0::DOMElement*  infoElem = deltaDocument->createElement(xercesc_3_0::XMLString::transcode("info"));
+	DOMElement* deltaRoot = deltaDocument->getDocumentElement();
+	DOMElement*  infoElem = deltaDocument->createElement(XMLString::transcode("info"));
     deltaRoot->appendChild(infoElem);
 
-	infoElem->setAttribute(xercesc_3_0::XMLString::transcode("firstAvailableVersionId"), xercesc_3_0::XMLString::transcode("1"));
-	infoElem->setAttribute(xercesc_3_0::XMLString::transcode("currentVersionFileName"), XyLatinStr(newVersionFileName));
+	infoElem->setAttribute(XMLString::transcode("firstAvailableVersionId"), XMLString::transcode("1"));
+	infoElem->setAttribute(XMLString::transcode("currentVersionFileName"), XyLatinStr(newVersionFileName));
 
 	firstAvailableVersionId = 1;
 	currentVersionFileName = newVersionFileName;
@@ -160,11 +161,11 @@ DeltaManager::DeltaManager(const char *deltaFileName, const char *newVersionFile
 
 
 // add a delta element to a delta document. The version ID's are found inside the delta. Return 0 if ok, negative code if not.
-int DeltaManager::addDeltaElement(xercesc_3_0::DOMNode *deltaElement, const char *versionFile) {
-	xercesc_3_0::DOMNode* deltaroot = deltaDocument->getDocumentElement(); // unit_delta
+int DeltaManager::addDeltaElement(DOMNode *deltaElement, const char *versionFile) {
+	DOMNode* deltaroot = deltaDocument->getDocumentElement(); // unit_delta
     
 	//  verify if the argument is an element node
-	if (deltaElement->getNodeType()!=xercesc_3_0::DOMNode::ELEMENT_NODE) { 
+	if (deltaElement->getNodeType()!=DOMNode::ELEMENT_NODE) { 
 		cout << "Error: wrong node type" << endl;
 		return(-1);
 	}
@@ -172,20 +173,20 @@ int DeltaManager::addDeltaElement(xercesc_3_0::DOMNode *deltaElement, const char
     
 	// adds attributes fromVersionId and toVersionId
 	// and also fromDate and toDate
-    xercesc_3_0::DOMElement* element = (xercesc_3_0::DOMElement*) deltaElement; 
+    DOMElement* element = (DOMElement*) deltaElement; 
     char buf[32];
 	sprintf(buf, "%d", firstAvailableVersionId++); 
-	element->setAttribute(xercesc_3_0::XMLString::transcode("fromVersionId"), XyLatinStr(buf) );
+	element->setAttribute(XMLString::transcode("fromVersionId"), XyLatinStr(buf) );
 	sprintf(buf, "%d", firstAvailableVersionId); 
-    element->setAttribute(xercesc_3_0::XMLString::transcode("toVersionId"), XyLatinStr(buf) );
+    element->setAttribute(XMLString::transcode("toVersionId"), XyLatinStr(buf) );
 
 	// **************** provizoriu 
-	element->setAttribute(xercesc_3_0::XMLString::transcode("fromDate"), xercesc_3_0::XMLString::transcode(" "));
-	element->setAttribute(xercesc_3_0::XMLString::transcode("toDate"), xercesc_3_0::XMLString::transcode(" "));
+	element->setAttribute(XMLString::transcode("fromDate"), XMLString::transcode(" "));
+	element->setAttribute(XMLString::transcode("toDate"), XMLString::transcode(" "));
 
 
 	// adds the delta element to the delta document
-	xercesc_3_0::DOMNode* node = deltaDocument->importNode(element,true);
+	DOMNode* node = deltaDocument->importNode(element,true);
 	deltaroot->appendChild(node);
 	
 	headerList.insert(headerList.begin(), DeltaHeader(node));
@@ -199,24 +200,24 @@ int DeltaManager::addDeltaElement(xercesc_3_0::DOMNode *deltaElement, const char
 		//DOM_Element *pElem = (DOM_Element*) pNode;
 		//DOM_Element elem = *pElem;
 		// sau asa:
-    xercesc_3_0::DOMElement* elem = (xercesc_3_0::DOMElement*)node ;
+    DOMElement* elem = (DOMElement*)node ;
 
 	char id[32];
 	sprintf(id, "%d", firstAvailableVersionId);
-	elem->setAttribute(xercesc_3_0::XMLString::transcode("firstAvailableVersionId"), XyLatinStr(id));
-	elem->setAttribute(xercesc_3_0::XMLString::transcode("currentVersionFileName"), XyLatinStr(versionFile));
+	elem->setAttribute(XMLString::transcode("firstAvailableVersionId"), XyLatinStr(id));
+	elem->setAttribute(XMLString::transcode("currentVersionFileName"), XyLatinStr(versionFile));
 
 	return(0);
 }
 
 
 // returns NULL if that delta element does not exist
-xercesc_3_0::DOMNode* DeltaManager::getDeltaElement(DeltaHeader::VersionId_t fromVersionId, DeltaHeader::VersionId_t toVersionId) {
-	xercesc_3_0::DOMNode* deltaroot = deltaDocument->getDocumentElement();
+DOMNode* DeltaManager::getDeltaElement(DeltaHeader::VersionId_t fromVersionId, DeltaHeader::VersionId_t toVersionId) {
+	DOMNode* deltaroot = deltaDocument->getDocumentElement();
 	if (toVersionId == -1) {
 		toVersionId = fromVersionId + 1;
 	}
-	xercesc_3_0::DOMNode* node ;
+	DOMNode* node ;
 	for (node = deltaroot->getFirstChild(); node != NULL; node = node->getNextSibling()) {
 		DeltaHeader dh = DeltaHeader(node);
 		if ( (dh.getFromVersionId() == fromVersionId) && 
@@ -234,7 +235,7 @@ const std::vector<DeltaHeader>& DeltaManager::getDeltaList(){
 }
 
 
-xercesc_3_0::DOMDocument* DeltaManager::getDeltaDocument() {
+DOMDocument* DeltaManager::getDeltaDocument() {
 	return deltaDocument;
 }
 
@@ -261,8 +262,8 @@ void DeltaManager::listAllDocumentVersions() {
 
 		
 void DeltaManager::listAllDeltas() {
-	xercesc_3_0::DOMNode* deltaroot = deltaDocument->getDocumentElement();
-    xercesc_3_0::DOMNode* node ;
+	DOMNode* deltaroot = deltaDocument->getDocumentElement();
+    DOMNode* node ;
 	for (node = deltaroot->getFirstChild(); node != NULL; node = node->getNextSibling()) {
         cout << node << endl;
 	}
