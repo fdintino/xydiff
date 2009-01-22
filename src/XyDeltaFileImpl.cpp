@@ -182,7 +182,7 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	if (f!=NULL) {
 		fclose(f);
 		THROW_AWAY(("xidmap file already exists for file <%s>", v1filename.c_str()));
-		}
+	}
 
 	XID_DOMDocument* v1XML = new XID_DOMDocument( v1filename.c_str(), false ) ;
 	v1XML->getXidMap().initFirstAvailableXID(v0XML->getXidMap().getFirstAvailableXID());
@@ -213,8 +213,8 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(tempStr);
 	xercesc_3_0::DOMLSSerializer* theSerializer = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSSerializer();
 
-	if (theSerializer->getDomConfig()->canSetParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, false))
-		theSerializer->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, false);
+	if (theSerializer->getDomConfig()->canSetParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, true))
+		theSerializer->getDomConfig()->setParameter(xercesc_3_0::XMLUni::fgDOMWRTFormatPrettyPrint, true);
 	
 	
 	try {

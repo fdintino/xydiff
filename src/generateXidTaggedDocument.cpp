@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 		}
 	catch( const xercesc_3_0::DOMException &e ) {
 	  std::cerr << "DOM_DOMException, code=" << e.code << std::endl ;
-		std::cerr << "DOM_DOMException, message=" << e.msg << std::endl ;
+		std::cerr << "DOM_DOMException, message=" << xercesc_3_0::XMLString::transcode(e.msg) << std::endl ;
 		}	
 	std::cout << "Terminated." << std::endl ;
 	}

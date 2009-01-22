@@ -418,7 +418,18 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, xercesc_3_0::DOMNode* node)
 		sprintf(xidStr, "%d", (int)myXid);
 		xercesc_3_0::DOMNamedNodeMap* attr = node->getAttributes();
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
-		xercesc_3_0::DOMAttr* attrNode = doc->createAttribute(xercesc_3_0::XMLString::transcode("XyXid"));
+		// If we are dealing with the root node
+		//if (doc->getDocumentNode()->isEqualNode(node)) {
+		if (node->isEqualNode((xercesc_3_0::DOMNode*)doc->getDocumentElement())) {
+			xercesc_3_0::DOMAttr* attrNodeNS = doc->createAttributeNS(
+				xercesc_3_0::XMLString::transcode("http://www.w3.org/2000/xmlns/"),
+				xercesc_3_0::XMLString::transcode("xmlns:xyd"));
+				attrNodeNS->setValue(xercesc_3_0::XMLString::transcode("urn:schemas-xydiff:xydelta"));
+				attr->setNamedItem(attrNodeNS);
+		}
+		xercesc_3_0::DOMAttr* attrNode = doc->createAttributeNS(
+			xercesc_3_0::XMLString::transcode("urn:schemas-xydiff:xydelta"),
+			xercesc_3_0::XMLString::transcode("xyd:XyXid"));
 		attrNode->setValue(XyLatinStr(xidStr).wideForm());
 		attr->setNamedItem(attrNode);
 		}

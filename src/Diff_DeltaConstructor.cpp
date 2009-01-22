@@ -64,6 +64,10 @@ DeltaConstructor::DeltaConstructor(
 
 	xercesc_3_0::XMLString::transcode("unit_delta", tempStr, 99);
 	xercesc_3_0::DOMElement* deltaRoot = deltaDoc->createElement(tempStr);
+	deltaRoot->setAttributeNS(
+		xercesc_3_0::XMLString::transcode("http://www.w3.org/2000/xmlns/"),
+		xercesc_3_0::XMLString::transcode("xmlns:xyd"),
+		xercesc_3_0::XMLString::transcode("http://www.nflc.org/schema/xydiff/"));
 	deltaDoc->appendChild( (xercesc_3_0::DOMNode*) deltaRoot );
 
 	xercesc_3_0::XMLString::transcode("t", tempStr, 99);	
