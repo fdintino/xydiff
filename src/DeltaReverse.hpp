@@ -4,6 +4,6 @@
 #include "xercesc/dom/DOMNode.hpp"
 #include "include/XID_DOMDocument.hpp"
 
-xercesc_3_0::DOMNode* DeltaReverse( xercesc_3_0::DOMNode* deltaElement , xercesc_3_0::DOMDocument *reversedDoc);
+xercesc::DOMNode* DeltaReverse( xercesc::DOMNode* deltaElement , xercesc::DOMDocument *reversedDoc);
 
 #endif

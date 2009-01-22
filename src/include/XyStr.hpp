@@ -95,9 +95,9 @@ class XyStr {
 
 		int theFastOptions ;
 		
-		class xercesc_3_0::XMLTranscoder * getTranscoder(const char *encoding);
+		class xercesc::XMLTranscoder * getTranscoder(const char *encoding);
 		
-		static std::map<std::string,xercesc_3_0::XMLTranscoder*> staticTranscoder ; 
+		static std::map<std::string,xercesc::XMLTranscoder*> staticTranscoder ; 
 	} ;
 
 #endif

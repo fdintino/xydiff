@@ -36,8 +36,8 @@ class XID_map {
 
 		/* Create XID map that maps the XID-String to the given subtree */
 
-		XID_map(const char *str , xercesc_3_0::DOMNode *IncDocRoot);
-		void SetRootElement( xercesc_3_0::DOMNode *IncDocRoot );
+		XID_map(const char *str , xercesc::DOMNode *IncDocRoot);
+		void SetRootElement( xercesc::DOMNode *IncDocRoot );
 
 		/* Destructor */
 
@@ -59,17 +59,17 @@ class XID_map {
 		   option: add next available XID information at the end of the String 
 		 */
 		
-		std::string String(xercesc_3_0::DOMNode *node, bool printFirstAvailXID=false) ;
+		std::string String(xercesc::DOMNode *node, bool printFirstAvailXID=false) ;
 
 		/* Functions that manage XID-2-Node mappings
 		 */
 		
-		void     registerNode( xercesc_3_0::DOMNode *node, XID_t xid );
-		void     removeNode( xercesc_3_0::DOMNode *node ) ;
+		void     registerNode( xercesc::DOMNode *node, XID_t xid );
+		void     removeNode( xercesc::DOMNode *node ) ;
 		
-		xercesc_3_0::DOMNode* getNodeWithXID(const XID_t xid);
+		xercesc::DOMNode* getNodeWithXID(const XID_t xid);
 		bool     findNodeWithXID(const XID_t xid);
-		XID_t    getXIDbyNode(xercesc_3_0::DOMNode *node);
+		XID_t    getXIDbyNode(xercesc::DOMNode *node);
 		
 		XID_t    allocateNewXID(void);
 		XID_t    getFirstAvailableXID(void);
@@ -78,29 +78,29 @@ class XID_map {
 		/* Functions that manage XID-2-Node mappings at the subtree level
 		 */
 		
-		void mapSubtree   ( const char *str, xercesc_3_0::DOMNode *node ) ;
-		void removeSubtree( xercesc_3_0::DOMNode *node ) ;
+		void mapSubtree   ( const char *str, xercesc::DOMNode *node ) ;
+		void removeSubtree( xercesc::DOMNode *node ) ;
 
 		/* PRIVATE */
 		
 		std::string StringFromList( std::vector<XID_t> xidList, bool writeFirstAvail = false ) ;
 
-		static XID_t getXidFromAttribute(xercesc_3_0::DOMNode* elem, const XMLCh *attrName, bool parenthesis=false);
+		static XID_t getXidFromAttribute(xercesc::DOMNode* elem, const XMLCh *attrName, bool parenthesis=false);
 
 	private:
 
-		void _internal_TraceTree( std::vector<XID_t> &xidList, xercesc_3_0::DOMNode *node ) ;
+		void _internal_TraceTree( std::vector<XID_t> &xidList, xercesc::DOMNode *node ) ;
 		static std::string xidString(XID_t x) ;
 
-		void registerSubtree( XidMap_Parser &parse, xercesc_3_0::DOMNode *node ) ;
-		void _internal_registerSubtree( XidMap_Parser &parse, xercesc_3_0::DOMNode *node );
+		void registerSubtree( XidMap_Parser &parse, xercesc::DOMNode *node ) ;
+		void _internal_registerSubtree( XidMap_Parser &parse, xercesc::DOMNode *node );
 		
 		int                    referenceCount ;
-		std::map<XID_t, xercesc_3_0::DOMNode*> *nodeByXid ;
-		std::map<xercesc_3_0::DOMNode*, XID_t> *xidByNode ;
+		std::map<XID_t, xercesc::DOMNode*> *nodeByXid ;
+		std::map<xercesc::DOMNode*, XID_t> *xidByNode ;
 		XID_t                  firstAvailableXID ;
 
-		xercesc_3_0::DOMNode*               docRoot ;
+		xercesc::DOMNode*               docRoot ;
 		
 		// No default copy or equal operator
 		XID_map( const XID_map &other );

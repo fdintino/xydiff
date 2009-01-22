@@ -20,7 +20,7 @@
 
 class DeltaHeader {
 	public:
-		DeltaHeader(xercesc_3_0::DOMNode *deltaElement);
+		DeltaHeader(xercesc::DOMNode *deltaElement);
 		
 		typedef int VersionId_t;
 
@@ -42,11 +42,11 @@ class DeltaManager {
 		
 		typedef int VersionId_t ;
 
-		int addDeltaElement(xercesc_3_0::DOMNode *deltaElement, const char *versionFile); // add a delta. The version ID's are found inside the delta. Return 0 if ok, negative code if not.
-		xercesc_3_0::DOMNode* getDeltaElement(DeltaHeader::VersionId_t fromVersionId, DeltaHeader::VersionId_t toVersionId = -1); // finds the delta from <i> to <j>. If <j> is not specified, <j> will be considered to be j=i+1
+		int addDeltaElement(xercesc::DOMNode *deltaElement, const char *versionFile); // add a delta. The version ID's are found inside the delta. Return 0 if ok, negative code if not.
+		xercesc::DOMNode* getDeltaElement(DeltaHeader::VersionId_t fromVersionId, DeltaHeader::VersionId_t toVersionId = -1); // finds the delta from <i> to <j>. If <j> is not specified, <j> will be considered to be j=i+1
 
 		const std::vector<DeltaHeader> & getDeltaList();
-		xercesc_3_0::DOMDocument* getDeltaDocument(); // get the entire deltadocument
+		xercesc::DOMDocument* getDeltaDocument(); // get the entire deltadocument
 		std::string getCurrentVersionFileName(); 
 		
 		void listAllDeltas();

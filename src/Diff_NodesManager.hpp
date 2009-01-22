@@ -80,8 +80,8 @@ class NodesManager {
 	  unsigned int sourceNumberOfNodes ;
 		unsigned int resultNumberOfNodes ;
 
-		std::vector<xercesc_3_0::DOMNode*> v0nodeByDID ;
-		std::vector<xercesc_3_0::DOMNode*> v1nodeByDID ;
+		std::vector<xercesc::DOMNode*> v0nodeByDID ;
+		std::vector<xercesc::DOMNode*> v1nodeByDID ;
 		//multimap<unsigned long, int> v0nodeByHash ;
 		std::vector<indexToCandidates> listOfCandidatesByParentLevelByHash;
 		
@@ -93,7 +93,7 @@ class NodesManager {
 		void PrintStats(void);
 		
 	private:
-		int registerSubtree(xercesc_3_0::DOMNode *node, bool isSource);
+		int registerSubtree(xercesc::DOMNode *node, bool isSource);
 		void computeCandidateIndexTables(int v0nodeID);
 		class UniqueIdHandler *myUniqueIdHandler;
 

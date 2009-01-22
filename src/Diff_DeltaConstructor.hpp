@@ -29,7 +29,7 @@ class DeltaConstructor {
 		void ConstructDeleteScript( int v0nodeID, bool ancestorDeleted ) ;
 		void ConstructInsertScript( int v1nodeID, bool ancestorInserted ) ;
 		void AddAttributeOperations( int v1nodeID ) ;
-		xercesc_3_0::DOMNode* deltaDoc_ImportInsertTree( int v1nodeID, std::vector<XID_t> &xidList );
+		xercesc::DOMNode* deltaDoc_ImportInsertTree( int v1nodeID, std::vector<XID_t> &xidList );
 
 		XID_DOMDocument *v0XML, *v1XML ;
 		std::string v0filename, v1filename ;
@@ -39,7 +39,7 @@ class DeltaConstructor {
 		int moveCount, updateCount ;
 
 		XID_DOMDocument* deltaDoc ;
-		xercesc_3_0::DOMNode*        scriptRoot ;
+		xercesc::DOMNode*        scriptRoot ;
 	
 		bool ignoreUnimportantData ;
 	} ;
