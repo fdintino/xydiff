@@ -426,15 +426,9 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 				attrNodeNS->setValue(XMLString::transcode("urn:schemas-xydiff:xydelta"));
 				attr->setNamedItem(attrNodeNS);
 		}
-<<<<<<< .working
-		xercesc_3_0::DOMAttr* attrNode = doc->createAttributeNS(
-			xercesc_3_0::XMLString::transcode("urn:schemas-xydiff:xydelta"),
-			xercesc_3_0::XMLString::transcode("xyd:XyXid"));
-=======
 		DOMAttr* attrNode = doc->createAttributeNS(
 			XMLString::transcode("urn:schemas-xydiff:xydelta"),
 			XMLString::transcode("xyd:xid"));
->>>>>>> .merge-right.r20
 		attrNode->setValue(XyLatinStr(xidStr).wideForm());
 		attr->setNamedItem(attrNode);
 		}
