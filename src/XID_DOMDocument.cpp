@@ -6,6 +6,7 @@
 
 
 #include "xercesc/framework/MemBufInputSource.hpp"
+#include "xercesc/framework/LocalFileFormatTarget.hpp"
 #include "xercesc/dom/DOMImplementation.hpp"
 #include "xercesc/dom/DOMImplementationLS.hpp"
 #include "xercesc/dom/DOMImplementationRegistry.hpp"
@@ -165,12 +166,13 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 	
 	// Saves XML file
 	
-	std::ofstream xmlfile(xml_filename);
+	//xercesc_3_0::LocalFileFormatTarget xmlfile(xml_filename);
+	xercesc_3_0::LocalFileFormatTarget *xmlfile = new xercesc_3_0::LocalFileFormatTarget(xml_filename);
 	if (!xmlfile) {
-		cerr << "Error: could not open <" << xmlfile << "> for output" << endl ;
+		cerr << "Error: could not open <" << xml_filename << "> for output" << endl ;
 		return ;
-		}
-
+	}
+	
 	if (saveXidMap) {
 		if (xidmap==NULL) throw VersionManagerException("Runtime Error", "XID_DOMDocument::SaveAs", "Cannot save XidMap as there is no XidMap");
 		
@@ -193,14 +195,15 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 	xercesc_3_0::XMLString::transcode("LS", tempStr, 99);
 	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(tempStr);
 	xercesc_3_0::DOMLSSerializer* theSerializer = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSSerializer();
-
+	xercesc_3_0::DOMLSOutput *theOutput = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSOutput();
+	theOutput->setByteStream(xmlfile);
 	try {
           // do the serialization through DOMLSSerializer::writeToString();
-		//DOMNode *rootNode = this->getDocumentElement();
-		XMLCh * serializedString = theSerializer->writeToString((xercesc_3_0::DOMNode*)this);
-		char *xmlstring = xercesc_3_0::XMLString::transcode(serializedString);
-		xmlfile << xmlstring;
-		xercesc_3_0::XMLString::release(&xmlstring);
+		theSerializer->write((xercesc_3_0::DOMDocument*)this, theOutput);
+		//XMLCh * serializedString = theSerializer->writeToString((xercesc_3_0::DOMNode*)this);
+		//char *xmlstring = xercesc_3_0::XMLString::transcode(serializedString);
+		//xmlfile << xmlstring;
+		//xercesc_3_0::XMLString::release(&xmlstring);
       }
       catch (const xercesc_3_0::XMLException& toCatch) {
           char* message = xercesc_3_0::XMLString::transcode(toCatch.getMessage());
@@ -217,7 +220,7 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
       catch (...) {
           std::cout << "Unexpected Exception \n" ;
       }
-
+	theOutput->release();
 	theSerializer->release();
 
 	}
