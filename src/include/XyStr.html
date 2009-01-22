@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>Transcoding : using XyStr</title>
+</head>
+<body>
+<h1 style="text-align: center;">Transcoding: using XyStr</h1>
+<br>
+<h3>Foreword:</h3>
+Letters and number are represented using ASCII codes.<br>
+However, for accentuated characters, and exotic letters (greek, thai,
+...), the ASCII standard is not sufficient.<br>
+<br>
+Thus, there are standard <span style="text-decoration: underline;">'encoding'</span>
+which define the set of common characters and letters.<br>
+<br>
+<span style="text-decoration: underline;">1. Unicode<br>
+<br>
+</span>Unicode is the reference, it defines *all* characters.<br>
+Unicode strings can be represented using 1, 2 or 4 bytes encoding.<br>
+<br>
+In Xyleme, we use UTF32 (4 bytes encoding), which is the type wchar_t<br>
+It is used in Xerces (named XMLCh) and in CORBA (e.g.
+CORBA::wstring_dup()).<br>
+<br>
+We also use UTF8 which is more space efficient since most usual letters
+are now encoded in 1 byte instead of 4.<br>
+<br>
+It is possible to transcode *all* characters to/from UTF32/UTF8.<br>
+<br>
+<span style="text-decoration: underline;">2. ISO-Latin, ISO-8859-15</span><br>
+<br>
+ISO-Latin, the most commonly use on our Linux workstations, is
+restricted to western european languages.<br>
+However, some Unicode characters can *not* be transcoded in Latin.<br>
+Until recently we used to put question marks '?' at the place of these
+characters.<br>
+No, we support the XML standard use of character entity, where a XMLCh
+character is described by an ASCII string representing its numerical
+encoding.<br>
+For example: &amp;#x00004433;<br>
+<br>
+<h3>Xyleme Tools: XyStr</h3>
+When you need to transcode, please use common tools. There are many
+difficulties which occur to transcode:<br>
+<ul>
+  <li>memory allocation, deallocation<br>
+  </li>
+  <li>working by buffers of fixed size</li>
+  <li>handling unrepresentable characters</li>
+  <li>...<br>
+  </li>
+</ul>
+<span style="text-decoration: underline; color: rgb(153, 0, 0);">So it
+is very important that we use the same common tools. If they miss
+features and/or performance improvements, please ask before coding your
+own tool.</span><br>
+<br>
+<br>
+<br>
+<h3>Using XyStr: The simple way</h3>
+In you file, you just need to include the header corresponding to the
+encoding you want to use.<br>
+<br>
+<pre>#include "XyDiff/include/XyLatinStr.hpp"<br>#include "XyDiff/include/XyUTF8Str.hpp"</pre>
+<br>
+Now the class has implicit constructors, destructors and pointer
+operators.<br>
+So it is very easy to use:<br>
+<br>
+<pre>XMLCh myWideString = L"test";<br>printf("%s", XyLatinStr(myWideString)); // This converts automatically the UTF32 string to ISO-Latin<br>printf("%s", XyUTF8Str (myWideString)); // This converts automatically the UTF32 string to UTF8</pre>
+All results are NULL terminated, and we know their precise size using
+getLocalFormSize() and getWideFormSize()<br>
+<br>
+If a size is specified in the constructor, the work is based on the
+specified size and so we support string containing null characters.<br>
+<br>
+<br>
+<span style="color: rgb(153, 102, 51); text-decoration: underline;">Warning:
+do not do</span><br>
+<pre>char * s = "test";<br>XMLCh *myWideString = XyLatinStr(s);</pre>
+<br>
+Because the object is destructed after being used, and thus the XMLCh
+pointer that it returned is immediatly invalid.<br>
+So if you want to keep a copy, please do:<br>
+<br>
+<pre>XMLCh *myWideString = XyLatinStr(s).getWideFormOwnership();</pre>
+<br>
+<h3>XyStr: How does it work?</h3>
+What happens when you write:<br>
+<pre>std::string s = XyLatinStr(myWideString);<br></pre>
+<ol>
+  <li>the XyLatinStr object is constructed based on the wide string
+parameter</li>
+  <li>the object makes a copy of the wide string, it case the pointers
+becomes invalid later in the program</li>
+  <li>the print function requires a char* from the object, so the
+transcodes the widestring to char*. This is done in several steps<br>
+  </li>
+  <ol>
+    <li>a large temporary buffer is allocated (we don't know the size
+of the result string)</li>
+    <li>a new Transcoder object is created, for use by the current
+object<br>
+    </li>
+    <li>the string is transcoded. Note that this is 'on-demand'
+transcoding, since transcoding was not done before.<br>
+    </li>
+    <li>if some character are not representable, we use character
+entities. When this occurs, the transcoding is slightly slower</li>
+    <li>a copy is made of the useful part of the temporary buffer, and
+this copy is kept in the object as a 'local form'<br>
+    </li>
+  </ol>
+  <li>the pointer to the object 'local form' is given to printf()</li>
+</ol>
+Now if you want to keep your own copy of the local form, you want to use<br>
+<pre>XyStr::newCopyOf(char*)<br>XyStr::newCopyOf(XMLCh*)</pre>
+<br>
+<h3>XyStr: Faster</h3>
+In some cases, some of the previous steps are not necessary. The are
+options to disable them and thus transcode faster.<br>
+<br>
+<tt>NO_SOURCE_COPY<br>
+</tt>
+<p>Do not copy the source string. Transcoding is then done immediatly,
+and only the transcoded version is kept.<br>
+</p>
+<tt>NO_BUFFER_ADJUST<br>
+</tt>
+<p>When a XMLCh string contains 1.000 characters, we allocated a buffer
+of 2.000 chars, in case some of the letter require multibyte encoding.<br>
+In most cases, the result string will be for example 1.135 characters
+long. The default behaviour is to copy those 1.135 characters and
+delete the big 2.000 bytes buffer.<br>
+This saves memory. This is called 'Buffer_Adjust'.<br>
+</p>
+<p>With 'no_buffer_adjust', we keep the large buffer. This does not
+affect the result (it is null terminated and we know it's precise
+size).
+This is faster this we avoid a copy of the buffer, we it uses more
+memory. You can do this is the object is not alive during a long time.<br>
+</p>
+<tt>USE_STATIC_TRANSCODER<br>
+</tt>
+<p>For monothreaded applications only, or when you know exactly what
+you are doing. This forces to share the transcoder between all object
+instances.<br>
+</p>
+<pre>NO_CHARACTER_ENTITY</pre>
+Replace unrepresentable characters by a questionmark '?' instead of
+their character entity. This makes transcoding faster *only* if there
+are unrepresentable characters.<br>
+<br>
+<pre>getLocalFormOwnership(), getWideFormOwnership()</pre>
+When you use the char* and XMLCh* operators, or their explicit
+localForm() or wideForm() variants, you have a pointer to the buffer
+that is owned by the transcoding object.<br>
+If you want to keep the buffer, you need to make your own copy. <br>
+In many cases, this is useless because you want to keep the buffer, and
+the object will be destructed afterwards.<br>
+So it is possible to get ownership of the buffer. The buffer was
+allocated by 'new', so use 'delete []' to delete it when you finished
+using it.<br>
+<br>
+<h3>Transcoding Documents: <br>
+</h3>
+<p>You will find also XyLatinDocument.hpp and
+XyUTF8Document.hpp <br>
+</p>
+<p>When you use these objects, they look at the beginning of the string
+of an XML header that matches *exactly*<br>
+<tt><br>
+&lt;?xml version='1.0' encoding='UTF-32' ?&gt;<br>
+</tt></p>
+<p>If such a header is found, the transcoded version is updated so that
+the correct encoding appears in the header. For example:<br>
+</p>
+<tt>&lt;?xml version='1.0' encoding='ISO-8859-1' ?&gt;<br>
+</tt>
+<p></p>
+or<br>
+<p><tt>&lt;?xml version='1.0' encoding='UTF-8' ?&gt;<br>
+</tt>
+</p>
+<br>
+&nbsp;
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-15" ?>
+<Groupe>
+
+<personne confirmDelete="yes">
+<tel>5662</tel>
+</personne>
+
+<personne delete="no">
+<name>Cobéna</name>
+<first>Grégory</first>
+<email>cobena@email.enst.fr</email>
+</personne>
+
+<personne away="no">
+<name>Marian</name>
+<first>Amélie</first>
+<email>Amelie.Marian@inria.fr</email>
+<com>thesarde a VERSO</com>
+<tel>01.40.29.44.95</tel>
+</personne>
+
+<personne away="yes">
+<name>Jacqmin</name>
+<first>Sandrine</first>
+<email>sjacqmin@sinorg.fr</email>
+</personne>
+
+<personne>
+<name>Mignet</name>
+<first>Laurent</first>
+<email>Laurent.Mignet@inria.fr</email>
+<tel>5722</tel>
+<note>gründ</note>
+</personne>
+
+<personne>
+<name>Kasbi</name>
+<first>Jacques</first>
+<note>On peut même écrire avec des umlaut comme ça ü et hop!</note>
+</personne>
+
+</Groupe>

@@ -1,0 +1,17 @@
+default install: be sure to have Xerces installed.
+
+-Fix the Xerces, ICU and GCC path in the following files:
+      -Make.xydiff 
+      -AUTOTEST_AFTER_BUILD.sh
+-Make sure that Xerces and Icu have been compiled with the same version of gcc (gcc2 vs gcc3) that you use for XyDiff
+      -The lib&include directories must be found in the Xercesc and ICU path
+      -The bin, lib and include directories for gcc must be accessible
+
+Then just type:
+
+gmake all
+
+Good luck!
+
+PS: Please do not hesitate to report problem or success to Gregory.Cobena@inria.fr
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<Alexandria xyurl="xyl://www.xyleme.com/alexandria.xml">
+   <alexian>
+      <name>
+          Ferran 
+      </name>
+      <firstname>
+          Guy 
+      </firstname>
+      <email>
+          Guy.Ferran@xyleme.com 
+      </email>
+      <resume>
+         <detail>
+            <formerly>
+                 VP. Engineering for O2 with Ardent Software
+in Versailles. 
+            </formerly>
+            <now>
+                Xyleme VP Engineering 
+            </now>
+            
+         </detail>
+      </resume>
+      <tel>
+          01 55544466
+      </tel>
+      <web-page id="my_page" xmlns:xlink="http://www.w3.org/1999/xlink">
+         <goto xlink:href="http://www-rocq.inria.fr/~ferran/" xyref="2134899955025"/>
+         
+		 aller voir ma page!
+	
+      </web-page>
+   </alexian>
+</Alexandria>
+

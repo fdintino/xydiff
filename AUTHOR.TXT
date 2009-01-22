@@ -1,0 +1,7 @@
+This program is owned by INRIA
+http://www.inria.fr/
+
+The authors are:
+Grégory Cobena
+Serge Abiteboul
+Amélie Marian

@@ -1,0 +1,618 @@
+<?xml version='1.0' encoding='ISO-8859-15' ?>
+<Alexandria xyurl="xyl://www.xyleme.com/alexandria.xml">
+   <alexian>
+      <name>
+          Vosdilav
+      </name>
+      <firstname>
+          Dan
+      </firstname>
+      <email>
+          vodislav@cnam.cnam.fr 
+      </email>
+      <web-page/>
+      <resume>
+          Ici j'écris un cv en français, pour tester les accents : être ou ne pas être,
+après moi le déluge! 
+      </resume>
+   </alexian>
+   <alexian>
+      <name>
+          Wattez
+      </name>
+      <firstname>
+          Fanny 
+      </firstname>
+      <email>
+          Fanny.Wattez@inria.fr
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~wattez
+      </web-page>
+      <resume>
+          Engineering school: Institut d'Informatique d'Entreprise
+(obtained in 1997) Phd student (University of Paris 1; at Verso since
+1997)
+      </resume>
+      <tel>
+          01 39 63 51 46 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Fundulaki
+      </name>
+      <firstname>
+          Irini 
+      </firstname>
+      <email>
+          Irini.Fundulaki@inria.fr 
+      </email>
+      <web-page/>
+      <resume/>
+   </alexian>
+   <alexian>
+      <name>
+          Delobel
+      </name>
+      <firstname>
+          Claude 
+      </firstname>
+      <email>
+          Claude.Delobel@inria.fr 
+      </email>
+      <web-page/>
+      <resume/>
+   </alexian>
+   <alexian>
+      <name>
+          Aguilera 
+      </name>
+      <firstname>
+          Vincent 
+      </firstname>
+      <email>
+          vincent.aguilera@inria.fr 
+      </email>
+      <web-page>
+         
+ http://www.inria.fr/cermics/dbteam/Vincent.Aguilera
+
+      </web-page>
+      <studies>
+         
+ Phd Student .Director : Serge Abiteboul
+ ActiveViews team member
+ Master Degree University Jean Monnet, Saint Etienne,
+ "Informatique, algorithmique et images"
+ Ingenieur des Travaux Publics de l'Etat
+
+      </studies>
+      <tel>
+           + 33 4 92 38 76 30 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Ailleret 
+      </name>
+      <firstname>
+          Sébastien 
+      </firstname>
+      <email>
+          sebastien.ailleret@inria.fr 
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~ailleret 
+      </web-page>
+      <studies>
+          ActiveViews team member, Ingeneer of Ecole Polytechnique
+
+      </studies>
+      <tel>
+          + 33 1 39 63 56 79 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Amann
+      </name>
+      <firstname>
+          Bernd
+      </firstname>
+      <email>
+          amann@cnam.fr
+      </email>
+      <web-page>
+          www-rocq.inria.fr/~amann
+      </web-page>
+      <interests>
+         Web data integration, description models and languages
+for the Web, semantic query mediation, XML, RDF
+      </interests>
+      <studies>
+         <graduate xmlns:date="date.dtd">
+            <grade>
+               <date:value>
+                  1994
+               </date:value>
+                PhD "Interrogation d'Hypertextes"
+	    
+            </grade>
+            <institution>
+               CEDRIC-CNAM Paris, France 
+            </institution>
+         </graduate>
+      </studies>
+      <current-position>
+          Assistant Professor (MdC), CNAM,
+Paris
+      </current-position>
+      <tel>
+          00 33 (1) 40 27 25 58 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Banatre
+      </name>
+      <firstname>
+          Jean-Pierre
+      </firstname>
+      <email>
+          Jean-Pierre.Banatre@inria.fr 
+      </email>
+      <web-page>
+          t 
+      </web-page>
+      <studies>
+          e 
+      </studies>
+      <tel>
+          + 33 1 39 63 53 79
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Bancilhon
+      </name>
+      <firstname>
+          Francois
+      </firstname>
+      <email>
+          Francois.Bancilhon@benelynx.com  
+      </email>
+      <web-page/>
+      <resume/>
+      <tel/>
+   </alexian>
+   <alexian>
+      <name>
+          Christophides
+      </name>
+      <firstname>
+          Vassilis
+      </firstname>
+      <email>
+          christop@ics.forth.gr
+      </email>
+      <web-page>
+          www.ics.forth.gr/~christop 
+      </web-page>
+      <interests>
+          Object Database Management Systems, Electronic Documents
+Management Systems, Wide-area Distributed Systems, Models and Query
+Languages for semi-structured data, Optimization and Indexing techniques
+
+      </interests>
+      <studies>
+         <graduate xmlns:date="date.dtd">
+            <grade>
+               <date:value>
+                   1996 
+               </date:value>
+               
+   PhD "Structured Documents and Object Bases"
+  
+            </grade>
+            <institution>
+                CEDRIC-CNAM Paris, France 
+            </institution>
+            <grade>
+               <date:value>
+                   1992
+               </date:value>
+                D.E.A. "Information Systems 
+   
+            </grade>
+            <institution>
+                MASI-PARIS VI Paris, France 
+            </institution>
+            <grade>
+               <date:value>
+                   1988 
+               </date:value>
+               
+        Diploma of Electrical Engineer,specialized in Computer Science
+   
+            </grade>
+            <institution>
+                National Technical University ``MESTOVION'' Athens, Greece
+
+            </institution>
+         </graduate>
+      </studies>
+      <current-position>
+          Asistent Researcher at ICS FORTH 
+      </current-position>
+      <tel>
+          30 (81) 39 16 28 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Cluet
+      </name>
+      <firstname>
+          Sophie
+      </firstname>
+      <email>
+          Sophie.Cluet@inria.fr 
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~cluet
+      </web-page>
+      <resume>
+         I am a researcher in the Verso group at INRIA. I hold a PhD in
+Computer Science from the University of Paris-Sud. My initial research was
+on the design and optimization of query languages for object-oriented
+database systems. My current interests also include data integration,
+structured documents, bulk loading. 
+      </resume>
+      <tel>
+          33 1 39 63 58 20 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Ferran 
+      </name>
+      <firstname>
+          Guy 
+      </firstname>
+      <email>
+          Guy.Ferran@inria.fr 
+      </email>
+      <resume>
+         <detail>
+            <formerly>
+                 VP. Engineering for O2 with Ardent Software
+in Versailles. 
+            </formerly>
+            <now>
+                Alexandria manager 
+            </now>
+            <diploma>
+                ENPC, Paris and  MSc Computer Sciences,
+Montreal 
+            </diploma>
+         </detail>
+      </resume>
+      <tel>
+          01 39635679 
+      </tel>
+      <web-page id="my_page" xmlns:xlink="http://www.w3.org/1999/xlink">
+         <goto xlink:href="http://www-rocq.inria.fr/~ferran/" xyref="2134899955025"/>
+         
+		 aller voir ma page!
+	
+      </web-page>
+   </alexian>
+   <alexian>
+      <name>
+         Grumbach
+      </name>
+      <firstname>
+         Stephane
+      </firstname>
+      <email>
+         Stephane.Grumbach@inria.fr
+      </email>
+      <web-page>
+         http://www-rocq.inria.fr/~grumbach
+      </web-page>
+      <resume>
+         
+Researcher in the Verso group at INRIA. Main interests: databases,
+especially language-related issues.
+
+      </resume>
+      <tel>
+          +33 1 39 63 54 46 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Issarny
+      </name>
+      <firstname>
+          Valerie 
+      </firstname>
+      <email>
+          Valerie.Issarny@inria.fr 
+      </email>
+      <web-page>
+          http://www.irisa.fr/solidor/members/issarny.html
+
+      </web-page>
+      <resume>
+         
+ I got my PhD and my habilitation in computer
+science from the University of Rennes I in 1991 and 1997, respectively.
+Since 1993, I am an INRIA researcher within the Solidor research group,
+examining solutions to the construction of robust and efficient distributed
+systems. Since summer 1999, I am working at INRIA Rocquencourt and I am vice
+chair of the ACM SIGOPS .
+
+      </resume>
+      <tel>
+          +33 (0)1 39 63 57 17 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+         Kanne
+      </name>
+      <firstname>
+          Carl-Christian
+      </firstname>
+      <email>
+          cc@pi3.informatik.uni-mannheim.de
+      </email>
+      <web-page>
+          http://pi3.informatik.uni-mannheim.de/~cc
+      </web-page>
+      <resume>
+          1992-1998 Computer Science diploma at RWTH Aachen, Germany
+since 1998 Ph.D. student/research assistant at Uni Mannheim, Germany (tutor:
+G. Moerkotte) 
+      </resume>
+      <tel>
+          +49-621-181-2586 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+         Libkin
+      </name>
+      <firstname>
+         Leonid
+      </firstname>
+      <email>
+         libkin@research.bell-labs.com
+      </email>
+      <web-page>
+         http://www.cs.bell-labs.com/~libkin
+      </web-page>
+      <resume>
+         
+Researcher at the Computing Sciences Center at Bell Labs, Murray Hill
+and visitor at the Verso group at INRIA. Main interests: databases,
+especially language-related issues, and logic in CS.
+
+      </resume>
+      <tel>
+          33 1 39 63 52 83 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Marian
+      </name>
+      <firstname>
+          Amelie 
+      </firstname>
+      <email>
+          Amelie.Marian@inria.fr
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~marian 
+      </web-page>
+      <studies>
+          ActiveViews team member Master's degree Paris IX
+"Informatique : Systemes Intelligents" IUP MIAGE Paris IX Deug GEA Paris IX
+
+      </studies>
+      <tel>
+          + 33 1 40 29 44 95 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Mignet
+      </name>
+      <firstname>
+          Laurent
+      </firstname>
+      <email>
+          laurent.mignet@inria.fr 
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~mignet 
+      </web-page>
+      <studies>
+          Phd Student .Director : Michel School &amp; Sophie Cluet
+ActiveViews team member Master Degree Paris VI "Systemes Informatiques"
+Maitrise &amp; Licence Informatique a Montpellier II Deug A MP' Montpellier
+II         
+      </studies>
+      <tel>
+          + 33 1 39 63 57 22 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Moerkotte
+      </name>
+      <firstname>
+          Guido
+      </firstname>
+      <email>
+          moerkotte@informatik.uni-mannheim.de
+      </email>
+      <web-page>
+         
+http://pi3.informatik.uni-mannheim.de/staff/mitarbeiter/moer/myself.html
+      </web-page>
+      <resume>
+          1987 Diploma in Computer Science (University of Karlsruhe)
+1989 Doctoral Degree in Computer Science (University of Karlsruhe) 1994
+Habiliation (University of Karlsruhe) 1994 Associate Professor at RWTH
+Aachen 1996 Full Professor at University of Mannheim  diploma &amp; Full
+Professor at University of Mannheim 
+      </resume>
+      <tel>
+          +49 181 2582
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Rousset
+      </name>
+      <firstname>
+          Marie-Christine
+      </firstname>
+      <email>
+          mcr@lri.fr 
+      </email>
+      <web-page>
+         http://www.lri.fr/~mcr
+      </web-page>
+      <resume>
+          I am a Professor od Computer Science at Paris-Sud University and a
+member of the "Institut Universitaire de France". After studies of
+Mathematics at Ecole Normale Superieure (Fontenay aux Roses), I received my
+PhD and "These d'Etat" diploma in Computer Science at Paris-Sud University
+in 1982 and 1988. Since 1989, I have been leading the Artificial
+Intelligence and Inference Systems (IASI) group in the Computer Science
+Research Laboratory (L.R.I) at Paris-Sud University. My research area is
+knowledge representation. Currently, I am involved in the PICSEL and GAEL
+projects that combine knowledge representation and database techniques for
+information integration and electronic commerce. 
+      </resume>
+      <tel>
+          33 1 69 15 61 97 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+         Scholl
+      </name>
+      <firstname>
+         Michel
+      </firstname>
+      <email>
+         Michel.Scholl@inria.fr 
+      </email>
+      <web-page/>
+      <resume>
+          I 
+      </resume>
+      <tel>
+          33 1 39 63 53 29
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Segoufin 
+      </name>
+      <firstname>
+          Luc 
+      </firstname>
+      <web-page>
+          http://www-rocq.inria.fr/~segoufin 
+      </web-page>
+      <email>
+          Luc.Segoufin@inria.fr 
+      </email>
+      <resume>
+          INRIA researcher, VERSO group. Phd from Universite d'Orsay.
+
+      </resume>
+      <tel>
+          +33 1 39635809 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Vercoustre
+      </name>
+      <firstname>
+          Anne-Marie
+      </firstname>
+      <email>
+          Anne-marie.vercoustre@inria.fr
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~vercoust/ 
+      </web-page>
+      <resume>
+          Anne-Marie Vercoustre is a Senior Research at
+Inria-Rocquencourt, where she has joined the Verso project two years ago. In
+1996-1997 she has also been responsible for the Text-Base Information
+Management group at CSIRO-DMIS in Melbourne for 18 months. Her main research
+interest is in structured document management (SGML-like), XML storage,
+virtual documents specification, and the reuse of information from
+heterogeneous and distributed sources. She is also interested in the
+definition and use of metadata for resource discovery.
+        
+      </resume>
+      <tel>
+          01 39 63 56 62
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Vianu
+      </name>
+      <firstname>
+          Victor
+      </firstname>
+      <email>
+          Victor.Vianu@inria.fr 
+      </email>
+      <web-page>
+          http://www-rocq.inria.fr/~vianu
+      </web-page>
+      <resume/>
+      <tel>
+          01 39 63 55 37 
+      </tel>
+   </alexian>
+   <alexian>
+      <name>
+          Bellosta 
+      </name>
+      <firstname>
+          Marie-Jo 
+      </firstname>
+      <email>
+          bellosta@lamsade.dauphine.fr 
+      </email>
+      <web-page/>
+      <resume/>
+   </alexian>
+   <alexian>
+      <name>
+          Veltri 
+      </name>
+      <firstname>
+          Pierangel  
+      </firstname>
+      <email>
+           Pierangelo.Veltri@inria.fr 
+      </email>
+      <web-page/>
+      <resume/>
+   </alexian>
+</Alexandria>
