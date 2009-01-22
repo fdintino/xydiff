@@ -121,9 +121,11 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 		case AtomicInfo::UPDATE_OLD:
 
 			if ((myAtomicInfo.myEvent==AtomicInfo::DELETED)&&(ancestorDeleted)) {
-				vddprintf(("skipping op 'delete node %d' because subtree is deleted starting from one of its ancestor\n", myAtomicInfo.myID));
-				}
-
+				vddprintf((
+					"skipping op 'delete node %d' because subtree is deleted starting from one of its ancestor\n",
+					myAtomicInfo.myID
+				));
+			}
 			else {
 				DOMNode* parentNode = node->getParentNode() ;
 				std::string myXidMap ;
@@ -170,7 +172,11 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 						}
 						break;
 					default:
-						throw VersionManagerException("Internal Error", "ConstructDeleteScript", "Program can't possibly be here");
+						throw VersionManagerException(
+							"Internal Error",
+							"ConstructDeleteScript",
+							"Program can't possibly be here"
+						);
 					}
 				
 				vddprintf(("<d xm=""%s"" par=""%d"" pos=""%d"" %s%s%s/>\n",
@@ -247,7 +253,10 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 		case AtomicInfo::UPDATE_NEW:
 
 			if ((myAtomicInfo.myEvent==AtomicInfo::INSERTED)&&(ancestorInserted)) {
-				vddprintf(("skipping op 'insert node %d' because subtree is inserted starting from one of its ancestor\n", myAtomicInfo.myID));
+				vddprintf((
+					"skipping op 'insert node %d' because subtree is inserted starting from one of its ancestor\n",
+					myAtomicInfo.myID
+				));
 				}
 
 			else {
@@ -270,7 +279,9 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						std::vector<XID_t> xidList ;
 						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
-						elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
+						elem->setAttribute(
+							XMLString::transcode("xm"),
+							XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
 						}
 						break;
 					case AtomicInfo::STRONGMOVE:
@@ -290,13 +301,19 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						std::vector<XID_t> xidList ;
 						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
-						elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
+						elem->setAttribute(
+							XMLString::transcode("xm"),
+							XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
 						elem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
 						updateCount-- ;
 						}
 						break;
 					default:
-						throw VersionManagerException("Internal Error", "ConstructDeleteScript", "Program can't possibly be here");
+						throw VersionManagerException(
+							"Internal Error",
+							"ConstructDeleteScript",
+							"Program can't possibly be here"
+						);
 					}
 
 #if 0
