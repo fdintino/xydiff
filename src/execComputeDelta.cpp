@@ -110,7 +110,8 @@ int main(int argc, char **argv) {
   // Open source document, and create DELTA
 
 	try {
-		if (defaultDeltafile) deltafile=file1+".forwardDelta.xml";
+		//if (defaultDeltafile) deltafile=file1+".forwardDelta.xml";
+		if (defaultDeltafile) deltafile="stdout";
 		/* Compute Delta over FILE1.XML and FILE2.XML */
 		XyDelta::XyDiff(file1.c_str(), file2.c_str(), deltafile.c_str(), ignoreSpacesFlag);
 

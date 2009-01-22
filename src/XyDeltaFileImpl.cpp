@@ -204,7 +204,7 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 
 
 	{
-	std::ofstream flux(deltafilename); 
+	
 	
 	// Old:flux << *delta << std::endl;
 	// Start changes
@@ -220,7 +220,13 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	try {
           // do the serialization through DOMLSSerializer::writeToString();
 		XMLCh * serializedString = theSerializer->writeToString((xercesc_3_0::DOMNode*)delta->getDocumentElement());
-		flux << xercesc_3_0::XMLString::transcode(serializedString) << std::endl;
+		const char *stdoutString = "stdout";
+		if (strcmp(deltafilename, stdoutString) != 0) {
+			std::ofstream flux(deltafilename);
+			flux << xercesc_3_0::XMLString::transcode(serializedString) << std::endl;
+		} else {
+			std::cout << xercesc_3_0::XMLString::transcode(serializedString) << "\n";
+		}
       }
       catch (const xercesc_3_0::XMLException& toCatch) {
           char* message = xercesc_3_0::XMLString::transcode(toCatch.getMessage());
