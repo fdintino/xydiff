@@ -25,6 +25,8 @@
 #include "xercesc/dom/DOMImplementationRegistry.hpp"
 #include "xercesc/dom/DOMException.hpp"
 #include "xercesc/validators/DTD/DTDValidator.hpp"
+#include "xercesc/framework/LocalFileFormatTarget.hpp"
+#include "xercesc/framework/StdOutFormatTarget.hpp"
 
 
 #include <stdio.h>
@@ -154,6 +156,7 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 
 void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const char *deltafilename, bool ignoreSpacesFlag, bool verbose) {
 
+
 	std::string v0filename = incV0filename ;
 	std::string v1filename = incV1filename ;
 	
@@ -207,28 +210,35 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 
 	{
 	
-	
-	// Old:flux << *delta << std::endl;
-	// Start changes
-	XMLCh tempStr[100];
-	XMLString::transcode("LS", tempStr, 99);
-	DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(tempStr);
-	DOMLSSerializer* theSerializer = ((DOMImplementationLS*)impl)->createLSSerializer();
 
-	if (theSerializer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true))
-		theSerializer->getDomConfig()->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-	
+	DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
+	DOMLSSerializer* theSerializer = ((DOMImplementationLS*)impl)->createLSSerializer();
+	DOMLSOutput *theOutput = ((DOMImplementationLS*)impl)->createLSOutput();
+
+	const char *stdoutString = "stdout";
+	if (strcmp(deltafilename, stdoutString) != 0) {	std::cout << "Outputting to file " << deltafilename << std::endl;
+		LocalFileFormatTarget *myFormatTarget = new LocalFileFormatTarget(deltafilename);
+		if (!myFormatTarget) {
+			std::cerr << "Error: could not open <" << deltafilename << "> for output" << std::endl ;
+			return;
+		}
+		theOutput->setByteStream(myFormatTarget);
+	} else {
+		std::cout << "Outputting to stdout" << std::endl;
+		XMLFormatTarget *myFormatTarget = new StdOutFormatTarget();
+		theOutput->setByteStream(myFormatTarget);
+	}		
 	
 	try {
-          // do the serialization through DOMLSSerializer::writeToString();
-		XMLCh * serializedString = theSerializer->writeToString((DOMNode*)delta->getDocumentElement());
-		const char *stdoutString = "stdout";
-		if (strcmp(deltafilename, stdoutString) != 0) {
-			std::ofstream flux(deltafilename);
-			flux << XMLString::transcode(serializedString) << std::endl;
-		} else {
-			std::cout << XMLString::transcode(serializedString) << "\n";
-		}
+		if (theSerializer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true))
+			theSerializer->getDomConfig()->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
+		if (theSerializer->getDomConfig()->canSetParameter(XMLUni::fgDOMXMLDeclaration, true)) 
+		    theSerializer->getDomConfig()->setParameter(XMLUni::fgDOMXMLDeclaration, true);
+		// do the serialization through DOMLSSerializer::write();
+		// If output file is "stdout," send output to stdout and not a file.
+	
+		
+		theSerializer->write((DOMDocument*)delta, theOutput);
       }
       catch (const XMLException& toCatch) {
           char* message = XMLString::transcode(toCatch.getMessage());
@@ -246,6 +256,7 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
           std::cout << "Unexpected Exception \n" ;
       }
 
+		theOutput->release();
 	theSerializer->release();
 	
 	// End changes

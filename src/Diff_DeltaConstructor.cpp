@@ -171,18 +171,18 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 						// Erase moved subtree so that any parent deleted operation won't take it
                                           //DOMNode* movedNode = parentNode->removeChild( node );
                                           parentNode->removeChild( node );
-						XMLString::transcode("move", tempStrA, 99);
-						XMLString::transcode("yes", tempStrB, 99);
-						elem->setAttribute(tempStrA, tempStrB);
+						// XMLString::transcode("move", tempStrA, 99);
+						// XMLString::transcode("yes", tempStrB, 99);
+						elem->setAttribute(XMLString::transcode("move"), XMLString::transcode("yes"));
 						moveCount++ ;
 						}
 						break;
 					case AtomicInfo::UPDATE_OLD: {
 						DOMNode* contentNode = deltaDoc->importNode( node, true );
 						elem->appendChild ( contentNode );
-						XMLString::transcode("update", tempStrA, 99);
-						XMLString::transcode("yes", tempStrB, 99);
-						elem->setAttribute(tempStrA, tempStrB);
+//						XMLString::transcode("update", tempStrA, 99);
+//						XMLString::transcode("yes", tempStrB, 99);
+						elem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
 						updateCount++ ;
 						}
 						break;
