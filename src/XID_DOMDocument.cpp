@@ -191,19 +191,14 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 		xidmapfile << xidString ;
 	}
 
-	XMLCh tempStr[100];
-	xercesc_3_0::XMLString::transcode("LS", tempStr, 99);
-	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(tempStr);
+	xercesc_3_0::DOMImplementation *impl = xercesc_3_0::DOMImplementationRegistry::getDOMImplementation(xercesc_3_0::XMLString::transcode("LS"));
 	xercesc_3_0::DOMLSSerializer* theSerializer = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSSerializer();
 	xercesc_3_0::DOMLSOutput *theOutput = ((xercesc_3_0::DOMImplementationLS*)impl)->createLSOutput();
-	theOutput->setByteStream(xmlfile);
+	
 	try {
-          // do the serialization through DOMLSSerializer::writeToString();
+          // do the serialization through DOMLSSerializer::write();
+		theOutput->setByteStream(xmlfile);
 		theSerializer->write((xercesc_3_0::DOMDocument*)this, theOutput);
-		//XMLCh * serializedString = theSerializer->writeToString((xercesc_3_0::DOMNode*)this);
-		//char *xmlstring = xercesc_3_0::XMLString::transcode(serializedString);
-		//xmlfile << xmlstring;
-		//xercesc_3_0::XMLString::release(&xmlstring);
       }
       catch (const xercesc_3_0::XMLException& toCatch) {
           char* message = xercesc_3_0::XMLString::transcode(toCatch.getMessage());
