@@ -186,7 +186,8 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	FILE *f=fopen(v1xidmapFilename.c_str(), "r");
 	if (f!=NULL) {
 		fclose(f);
-		THROW_AWAY(("xidmap file already exists for file <%s>", v1filename.c_str()));
+		remove(v1xidmapFilename.c_str());
+		// THROW_AWAY(("xidmap file already exists for file <%s>", v1filename.c_str()));
 	}
 
 	XID_DOMDocument* v1XML = new XID_DOMDocument( v1filename.c_str(), false ) ;
