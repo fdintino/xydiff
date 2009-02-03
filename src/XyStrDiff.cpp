@@ -46,15 +46,16 @@ XyStrDiff::XyStrDiff(const char* strX, const char *strY, int sizeXStr, int sizeY
 	memcpy(y, strY, sizey*sizeof(char));
 	y[sizey]='\0';
 	
-//	s1 = new char[max(sizex,sizey)+1];
-//	s2 = new char[max(sizex,sizey)+1];
 	n = sizex;
 	m = sizey;
+
+	int malloclen = (sizeof(int))*(sizex+1)*(sizey+1);
 	// c = LCS Length matrix
-	c = (int*) malloc((sizeof(int))*(sizex+1)*(sizey+1));
+
+	c = (int*) malloc(malloclen);
 	// d = Levenshtein Distance matrix
-	d = (int*) malloc((sizeof(int))*(sizex+1)*(sizey+1));
-	t = (int*) malloc((sizeof(char))*(sizex+1)*(sizey+1));
+	d = (int*) malloc(malloclen);
+	t = (int*) malloc(malloclen);
 	
 	currop = -1;
 }
@@ -68,6 +69,9 @@ XyStrDiff::~XyStrDiff(void)
 	free(t);
 	free(c);
 	free(d);
+	delete [] x;
+	delete [] y;
+	
 }
 
 int XyStrDiff::LevenshteinDistance()
@@ -152,7 +156,6 @@ void XyStrDiff::getPath(int i, int j)
 			this->alterText(i, j, STRDIFF_DEL, x[i-1]);
 		}
 	}
-	//if (i == 0 && j==0) this->flushBuffers();
 }
 
 
@@ -213,35 +216,30 @@ void XyStrDiff::flushBuffers()
 		outstr.append("<d>"+delbuf+"</d>");
 		delbuf = "";
 	}
-	
-
-//	currop = 
 }
 
 
-std::string itoa (int n) {
-	
+std::string itoa (int n)
+{	
 	char * s = new char[17];
 	std::string u;
 	
-	if (n < 0) { //turns n positive
+	if (n < 0) {         //turns n positive
 		n = (-1 * n); 
-		u = "-"; //adds '-' on result string
+		u = "-";         //adds '-' on result string
 	}
 	
-	int i=0; //s counter
+	int i = 0;  // s counter
 	
 	do {
-		s[i++]= n%10 + '0'; //conversion of each digit of n to char
-		n -= n%10; //update n value
-	}
-	
-	while ((n /= 10) > 0);
+		s[i++] = n % 10 + '0'; //conversion of each digit of n to char
+		n -= n % 10;           //update n value
+	} while ((n /= 10) > 0);
 	
 	for (int j = i-1; j >= 0; j--) { 
-		u += s[j]; //building our string number
+		u += s[j];    //building our string number
 	}
 	
-	delete[] s; //free-up the memory!
+	delete[] s;       //free-up the memory!
 	return u;
 }
