@@ -19,14 +19,6 @@
 #include <iostream>
 
 /*****************************************************/
-/*Function prototypes and libraries needed to compile*/
-/*****************************************************/
-
-
-int levenshtein_distance(char *s,char*t);
-int minimum(int a,int b,int c);
-
-/*****************************************************/
 /*                     XyStrDiff                     */
 /*****************************************************/
 
