@@ -177,7 +177,6 @@ void XyStrDiff::alterText(int i, int j, int optype, char chr)
 		} else {
 			this->flushBuffers();
 			currop = optype;
-			noopbuf += chr;
 		}
 	}
 	else if (optype == STRDIFF_DEL) {
@@ -189,7 +188,6 @@ void XyStrDiff::alterText(int i, int j, int optype, char chr)
 		insbuf += chr;
 	}
 	else if (optype == STRDIFF_NOOP) {
-		noopbuf += chr;
 		this->flushBuffers();
 		currop = optype;
 	}
@@ -199,10 +197,9 @@ void XyStrDiff::flushBuffers()
 {
 	int startpos, len;
 	if (currop == STRDIFF_NOOP) {
-		//outstr.append(noopbuf);
-		noopbuf = "";
+		return;
 	} else if (currop == STRDIFF_SUB) {
-		startpos = xpos - delbuf.length()-1;
+		startpos = xpos - delbuf.length() - 1;
 		len = delbuf.length();
 		outstr.append("<r st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		delbuf = "";
@@ -213,8 +210,8 @@ void XyStrDiff::flushBuffers()
 		insbuf = "";
 	} else if (currop == STRDIFF_DEL) {
 		startpos = xpos - delbuf.length() - 1;
-		int len = delbuf.length();
-		outstr.append("<d st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">"+delbuf+"</d>\n");
+		len = delbuf.length();
+		outstr.append("<d st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\" />\n");
 		delbuf = "";
 	}
 }

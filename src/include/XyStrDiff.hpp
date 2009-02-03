@@ -39,7 +39,7 @@ private :
 	int *d;
 	int *t;
 	int currop; // Current operation in alterText()
-	std::string wordbuf, subbuf, insbuf, delbuf, noopbuf, outstr;
+	std::string wordbuf, subbuf, insbuf, delbuf, outstr;
 	std::string s1;
 	std::string s2;
 	int sizex, sizey, m, n;
