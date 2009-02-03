@@ -158,8 +158,6 @@ void XyStrDiff::getPath(int i, int j)
 	}
 }
 
-
-
 void XyStrDiff::alterText(int i, int j, int optype, char chr)
 {
 	if (wordbuf.empty()) {
@@ -197,23 +195,26 @@ void XyStrDiff::alterText(int i, int j, int optype, char chr)
 	}
 }
 
-
-
 void XyStrDiff::flushBuffers()
 {
+	int startpos, len;
 	if (currop == STRDIFF_NOOP) {
-		outstr.append(noopbuf);
+		//outstr.append(noopbuf);
 		noopbuf = "";
 	} else if (currop == STRDIFF_SUB) {
-		int start = xpos - insbuf.length();
-		outstr.append("<r st=\"" + itoa(start) + "\" len=\"" + itoa(delbuf.length()) + " repl=\"" + insbuf + "\"\"/>");
+		startpos = xpos - delbuf.length()-1;
+		len = delbuf.length();
+		outstr.append("<r st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		delbuf = "";
 		insbuf = "";
 	} else if (currop == STRDIFF_INS) {
-		outstr.append("<i>"+insbuf+"</i>");
+		startpos = xpos - 1;
+		outstr.append("<i st=\"" + itoa(startpos) + "\">"+insbuf+"</i>\n");
 		insbuf = "";
 	} else if (currop == STRDIFF_DEL) {
-		outstr.append("<d>"+delbuf+"</d>");
+		startpos = xpos - delbuf.length() - 1;
+		int len = delbuf.length();
+		outstr.append("<d st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">"+delbuf+"</d>\n");
 		delbuf = "";
 	}
 }
