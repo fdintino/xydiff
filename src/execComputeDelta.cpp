@@ -92,22 +92,22 @@ int main(int argc, char **argv) {
 		std::cerr << "example     : exec -o ex_delta.xml example1.xml example1bis.xml" << std::endl ;
 		std::cerr << "description : " << std::endl ;
 		std::cerr << "              file1.xml, file2.xml : XyDiff creates a delta representing changes\n"
-		     << "                                     that transform <file1.xml> into <file2.xml>" << std::endl;
+		          << "                                     that transform <file1.xml> into <file2.xml>" << std::endl;
 		std::cerr << "              -v                   : verbose\n" << std::endl ;
 		std::cerr << "              --ignore-spaces      : ignore some differences between documents\n"
-		     << "                                     if they only concern blank text parts\n"
-				 << "                                     (e.g. white spaces used for indentation)" << std::endl;
+				  << "                                     if they only concern blank text parts\n"
+				  << "                                     (e.g. white spaces used for indentation)" << std::endl;
 		std::cerr << "              -o deltafile.xml     : file to store the delta.\n"
-		     << "                                     by default <file1.xml.forwardDelta.xml>" << std::endl ;
+				  << "                                     by default <file1.xml.forwardDelta.xml>" << std::endl ;
 		exit(-2);
 		}
 	
 	try {
-    XMLPlatformUtils::Initialize();
-    }
-  catch(const XMLException& toCatch) {
-    std::cerr << "Error during Xerces-c Initialization.\n" << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
-    }
+		XMLPlatformUtils::Initialize();
+	}
+	catch(const XMLException& toCatch) {
+		std::cerr << "Error during Xerces-c Initialization.\n" << "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
+	}
 
   // Open source document, and create DELTA
 
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 			unsigned long dataSize = getFileSize(v0filename)+getFileSize(v1filename) ;
 			fprintf(timeFile, "%7d %7d %7d %7d %7d\n",
 								(int)dataSize,
-						    (int)(phase2/(CLOCKRATE/1000000)),
+								(int)(phase2/(CLOCKRATE/1000000)),
 								(int)(phase3/(CLOCKRATE/1000000)),
 								(int)(phase4/(CLOCKRATE/1000000)),
 								(int)(phase5/(CLOCKRATE/1000000))
