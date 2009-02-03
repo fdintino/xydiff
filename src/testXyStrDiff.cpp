@@ -23,6 +23,6 @@ int main(int argc, char *argv[]) {
 	XyStrDiff *strdiff = new XyStrDiff(str1, str2);
 	int distance = strdiff->LevenshteinDistance();
 	std::cout << "Distance: " << distance << std::endl;
-
+	
 	return 0;
 }
