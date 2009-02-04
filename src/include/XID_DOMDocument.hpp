@@ -135,6 +135,7 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		xercesc::DOMDocument* theDocument;
 		xercesc::DOMLSParser*  theParser;
 		bool                      doReleaseTheDocument;
+		void XID_DOMDocument::removeIgnorableWhitespace(DOMNode *node);
 		void parseDOM_Document(const char* xmlfile, bool doValidation);
 
 } ;

@@ -4,6 +4,8 @@
 
 #include "xercesc/framework/MemBufInputSource.hpp"
 #include "xercesc/framework/LocalFileFormatTarget.hpp"
+#include "xercesc/framework/LocalFileInputSource.hpp"
+#include "xercesc/framework/Wrapper4InputSource.hpp"
 #include "xercesc/dom/DOMImplementation.hpp"
 #include "xercesc/dom/DOMImplementationLS.hpp"
 #include "xercesc/dom/DOMImplementationRegistry.hpp"
@@ -296,6 +298,29 @@ void xydeltaParseHandler::warning(const SAXParseException& e) {
 	     << "): " << XyLatinStr(e.getMessage()).localForm() << endl;
 	}
   
+void XID_DOMDocument::removeIgnorableWhitespace(DOMNode *node) {
+	if ( node->hasChildNodes() ) {
+		DOMNode* child = node->getFirstChild();
+		DOMNode *nextChild;
+		while(child!=NULL) {
+			if (child->hasChildNodes()) {
+				removeIgnorableWhitespace(child);
+			}
+			nextChild = child->getNextSibling();
+			if ( child->getNodeType() == DOMNode::TEXT_NODE ) {
+				XMLCh *childContent = XMLString::replicate(child->getNodeValue());
+				XMLString::trim(childContent);
+				if (XMLString::stringLen(childContent) == 0) {
+					if (child->getNextSibling() != NULL || child->getPreviousSibling() != NULL) {
+						node->removeChild(child);
+					}
+				}
+			}
+			child = nextChild;
+		}
+	}
+}
+
 void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) {
 	if (theDocument || theParser) {
 		cerr << "current doc is not initialized, can not parse" << endl;
@@ -333,7 +358,12 @@ void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) 
 		if (theParser->getDomConfig()->canSetParameter(XMLUni::fgDOMElementContentWhitespace, false))
 			theParser->getDomConfig()->setParameter(XMLUni::fgDOMElementContentWhitespace, false);
 		theParser->getDomConfig()->setParameter(XMLUni::fgDOMErrorHandler, handler);
-		theDocument = theParser->parseURI(xmlfile);
+		LocalFileInputSource *fileIS = new LocalFileInputSource(XMLString::transcode(xmlfile));
+		Wrapper4InputSource *wrapper = new Wrapper4InputSource(fileIS, false);
+		theDocument = theParser->parse((DOMLSInput *)wrapper);
+		// Remove text nodes within mixed content elements that are comprised
+		// only of whitespace from DOMDocument
+		removeIgnorableWhitespace((DOMNode*)theDocument);
 	} catch (const XMLException& e) {
 		cerr << "XMLException: An error occured during parsing\n   Message: "
 		     << XyLatinStr(e.getMessage()).localForm() << endl;
