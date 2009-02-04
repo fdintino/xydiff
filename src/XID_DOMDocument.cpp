@@ -315,6 +315,7 @@ void XID_DOMDocument::removeIgnorableWhitespace(DOMNode *node) {
 						node->removeChild(child);
 					}
 				}
+				XMLString::release(&childContent);
 			}
 			child = nextChild;
 		}
