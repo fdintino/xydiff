@@ -1,16 +1,12 @@
 #include "infra/general/Log.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"
-//#include "xercesc/dom/deprecated/DOM_NamedNodeMap.hpp"
-//#include "xercesc/dom/deprecated/DOMParser.hpp"
-
 
 #include "xercesc/framework/MemBufInputSource.hpp"
 #include "xercesc/framework/LocalFileFormatTarget.hpp"
 #include "xercesc/dom/DOMImplementation.hpp"
 #include "xercesc/dom/DOMImplementationLS.hpp"
 #include "xercesc/dom/DOMImplementationRegistry.hpp"
-// #include "xercesc/dom/DOMBuilder.hpp"
 #include "xercesc/dom/DOMException.hpp"
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xercesc/dom/DOMElement.hpp"
@@ -167,7 +163,6 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 	
 	// Saves XML file
 	
-	//LocalFileFormatTarget xmlfile(xml_filename);
 	LocalFileFormatTarget *xmlfile = new LocalFileFormatTarget(xml_filename);
 	if (!xmlfile) {
 		cerr << "Error: could not open <" << xml_filename << "> for output" << endl ;
@@ -241,7 +236,6 @@ XID_DOMDocument* XID_DOMDocument::copy(const XID_DOMDocument *doc, bool withXID)
 
 	if (withXID) {
 		if ( doc->xidmap==NULL ) throw VersionManagerException("Program Error", "XID_DOMDocument::copy()", "Option 'withXID' used but source has NULL xidmap");
-		//result.xidmap = XID_map::addReference( new XID_map( resultRoot, doc.xidmap->getFirstAvailableXID() ) );
 		result->xidmap = XID_map::addReference(new XID_map(doc->xidmap->String().c_str(), resultRoot));
 		std::cout << "copy xidmap ok" << std::endl;
 	}
@@ -324,26 +318,22 @@ void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) 
 	//  discovers errors during the course of parsing the XML document.
 	//  Then parse the XML file, catching any XML exceptions that might propogate out of it.
    
-        // The parser owns the Validator, so we don't have to free it
+	// The parser owns the Validator, so we don't have to free it
   	// The parser also owns the DOMDocument
 	
 	static DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
 	theParser = ((DOMImplementationLS*)impl)->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-	//bool ignoresWhitespace = theParser->getIncludeIgnorableWhitespace();
 	
 	bool errorsOccured = false;
   
 	try {
-		// theParser->setFeature(XMLUni::fgDOMValidation, doValidation);
-		//theParser->setDoValidation(doValidation);
 		DOMErrorHandler * handler = new xydeltaParseHandler();
 		if (theParser->getDomConfig()->canSetParameter(XMLUni::fgDOMValidate, doValidation))
 			theParser->getDomConfig()->setParameter(XMLUni::fgDOMValidate, doValidation);
 		if (theParser->getDomConfig()->canSetParameter(XMLUni::fgDOMElementContentWhitespace, false))
 			theParser->getDomConfig()->setParameter(XMLUni::fgDOMElementContentWhitespace, false);
 		theParser->getDomConfig()->setParameter(XMLUni::fgDOMErrorHandler, handler);
-	//	theParser->setErrorHandler(handler);
-                theDocument = theParser->parseURI(xmlfile);
+		theDocument = theParser->parseURI(xmlfile);
 	} catch (const XMLException& e) {
 		cerr << "XMLException: An error occured during parsing\n   Message: "
 		     << XyLatinStr(e.getMessage()).localForm() << endl;
@@ -423,7 +413,6 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 		DOMNamedNodeMap* attr = node->getAttributes();
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
 		// If we are dealing with the root node
-		//if (doc->getDocumentNode()->isEqualNode(node)) {
 		if (node->isEqualNode((DOMNode*)doc->getDocumentElement())) {
 			DOMAttr* attrNodeNS = doc->createAttributeNS(
 				XMLString::transcode("http://www.w3.org/2000/xmlns/"),
@@ -639,11 +628,6 @@ const XMLCh * XID_DOMDocument::getBaseURI() const
   return theDocument->getBaseURI();
 }
 
-// short int XID_DOMDocument::compareTreePosition(const DOMNode *node) const
-// {
-//   return theDocument->compareTreePosition(node);
-// }
-
 const XMLCh * XID_DOMDocument::getTextContent() const
 {
   return theDocument->getTextContent();
@@ -654,11 +638,6 @@ void XID_DOMDocument::setTextContent(const XMLCh *textContent)
   return theDocument->setTextContent(textContent);
 }
 
-// const XMLCh * XID_DOMDocument::lookupNamespacePrefix(const XMLCh *namespaceURI, bool useDefault) const
-// {
-//   return theDocument->lookupNamespacePrefix(namespaceURI, useDefault);
-// }
-
 bool XID_DOMDocument::isDefaultNamespace(const XMLCh *namespaceURI) const
 {
   return theDocument->isDefaultNamespace(namespaceURI);
@@ -668,11 +647,6 @@ const XMLCh * XID_DOMDocument::lookupNamespaceURI(const XMLCh *prefix) const
 {
   return theDocument->lookupNamespaceURI(prefix);
 }
-// 
-// DOMNode * XID_DOMDocument::getInterface(const XMLCh *feature)
-// {
-//   return theDocument->getInterface(feature);
-// }
 
 void XID_DOMDocument::release() {
 	if (theParser) {
@@ -814,46 +788,6 @@ DOMElement * XID_DOMDocument::getElementById(const XMLCh *elementId) const
   return theDocument->getElementById(elementId);
 }
 
-// const XMLCh * XID_DOMDocument::getActualEncoding() const
-// {
-//   return theDocument->getActualEncoding();
-// }
-// 
-// void XID_DOMDocument::setActualEncoding(const XMLCh *actualEncoding)
-// {
-//   return theDocument->setActualEncoding(actualEncoding);
-// }
-
-// const XMLCh * XID_DOMDocument::getEncoding() const
-// {
-//   return theDocument->getEncoding();
-// }
-// 
-// void XID_DOMDocument::setEncoding(const XMLCh *encoding)
-// {
-//   return theDocument->setEncoding(encoding);
-// }
-
-// bool XID_DOMDocument::getStandalone() const
-// {
-//   return theDocument->getStandalone();
-// }
-
-// void XID_DOMDocument::setStandalone(bool standalone)
-// {
-//   return theDocument->setStandalone(standalone);
-// }
-
-// const XMLCh * XID_DOMDocument::getVersion() const
-// {
-//   return theDocument->getVersion();
-// }
-// 
-// void XID_DOMDocument::setVersion(const XMLCh *version)
-// {
-//   return theDocument->setVersion(version);
-// }
-
 const XMLCh * XID_DOMDocument::getDocumentURI() const
 {
   return theDocument->getDocumentURI();
@@ -865,9 +799,6 @@ void XID_DOMDocument::setDocumentURI(const XMLCh *documentURI)
 }
 
 
-
-
-
 bool XID_DOMDocument::getStrictErrorChecking() const
 {
   return theDocument->getStrictErrorChecking();
@@ -877,19 +808,6 @@ void XID_DOMDocument::setStrictErrorChecking(bool strictErrorChecking)
 {
   return theDocument->setStrictErrorChecking(strictErrorChecking);
 }
-
-// 
-// DOMErrorHandler * XID_DOMDocument::getErrorHandler() const
-// {
-//   return theDocument->getErrorHandler();
-// }
-// 
-// 
-// void XID_DOMDocument::setErrorHandler(DOMErrorHandler *handler)
-// {
-//   return theDocument->setErrorHandler(handler);
-// }
-
 
 DOMNode * XID_DOMDocument::renameNode(DOMNode *n, const XMLCh *namespaceURI, const XMLCh *name)
 {
@@ -907,25 +825,6 @@ void XID_DOMDocument::normalizeDocument()
 {
   return theDocument->normalizeDocument();
 }
-
-
-// bool XID_DOMDocument::canSetNormalizationFeature(const XMLCh *name, bool state) const
-// {
-//   return theDocument->canSetNormalizationFeature(name, state);
-// }
-// 
-// 
-// void XID_DOMDocument::setNormalizationFeature(const XMLCh *name, bool state)
-// {
-//   return theDocument->setNormalizationFeature(name, state);
-// }
-// 
-// 
-// bool XID_DOMDocument::getNormalizationFeature(const XMLCh *name) const
-// {
-//   return theDocument->getNormalizationFeature(name);
-// }
-
 
 DOMEntity * XID_DOMDocument::createEntity(const XMLCh *name)
 {

@@ -51,7 +51,6 @@ XyStrDiff::XyStrDiff(const char* strX, const char *strY, int sizeXStr, int sizeY
 
 	int malloclen = (sizeof(int))*(sizex+1)*(sizey+1);
 	// c = LCS Length matrix
-
 	c = (int*) malloc(malloclen);
 	// d = Levenshtein Distance matrix
 	d = (int*) malloc(malloclen);
@@ -98,7 +97,6 @@ int XyStrDiff::LevenshteinDistance()
 			for(j = 1; j < m; j++) {
 				// Step 5
 				if (x[i-1] == y[j-1]) {
-					
 					cost = 0;
 					c[j*n+i] = c[(j-1)*n + i-1] + 1;
 				} else {

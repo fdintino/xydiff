@@ -5,15 +5,12 @@
 
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xercesc/dom/DOMConfiguration.hpp"
-//#include "xercesc/dom/DOMBuilder.hpp"
 #include "xercesc/dom/DOMError.hpp"
 #include "xercesc/dom/DOMErrorHandler.hpp"
 #include "xercesc/dom/DOMLSParser.hpp"
-//DLN#include "xercesc/dom/deprecated/DOMParser.hpp"
 #include <iostream>
 
 class DTDValidator;
-//class DOMParser;
 
 class XID_DOMDocument : public xercesc::DOMDocument {
 	private:
@@ -30,10 +27,6 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		XID_DOMDocument(xercesc::DOMDocument *doc, const char *xidmapStr=NULL, bool adoptDocument=false);
 		XID_DOMDocument(const char* xmlfile, bool useXidMap=true, bool doValidation=false);
 		
-		//XID_DOMDocument();
-		//XID_DOMDocument(const XID_DOMDocument& doc, bool withXID=true );
-		//XID_DOMDocument & operator = (const XID_DOMDocument &other);
-
 		void SaveAs(const char *xml_filename, bool saveXidMap=true);
 		~XID_DOMDocument();
 
@@ -52,12 +45,6 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		static bool isRealData(xercesc::DOMNode *node);
   
 		xercesc::DOMNodeIterator * createNodeIterator(xercesc::DOMNode *root, long unsigned int whatToShow, xercesc::DOMNodeFilter *filter, bool entityReferenceExpansion);
-		/*
-		  {
-			return xercesc::DOMDocumentTraversal::createNodeIterator 
-			(root, whatToShow, filter, entityReferenceExpansion);
-		  }
-		*/
   
 		const XMLCh * getNodeName() const;
 		const XMLCh * getNodeValue() const;
@@ -89,13 +76,10 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		void * setUserData(const XMLCh *key, void *data, xercesc::DOMUserDataHandler *handler);
 		void * getUserData(const XMLCh *key) const;
 		const XMLCh * getBaseURI() const;
-		// short int compareTreePosition(const xercesc::DOMNode *node) const;
 		const XMLCh * getTextContent() const;
 		void setTextContent(const XMLCh *textContent);
-		// const XMLCh * lookupNamespacePrefix(const XMLCh *namespaceURI, bool useDefault) const;
 		bool isDefaultNamespace(const XMLCh *namespaceURI) const;
 		const XMLCh * lookupNamespaceURI(const XMLCh *prefix) const;
-		// class xercesc::DOMNode * getInterface(const XMLCh *feature);
 		void release();
 		xercesc::DOMXPathExpression * createExpression(const XMLCh *xpath, const xercesc::DOMXPathNSResolver *resolver);
 		xercesc::DOMXPathNSResolver * createNSResolver(const xercesc::DOMNode *node);
@@ -112,7 +96,6 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		void setXmlVersion(const XMLCh *version);
 		xercesc::DOMConfiguration * getDOMConfig() const;
 		xercesc::DOMElement * createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, XMLFileLoc fileLoc1, XMLFileLoc fileLoc2);
-		//xercesc::DOMNode * compareDocumentPosition(const xercesc::DOMNode *node);
 		xercesc::DOMRange * createRange();
 		xercesc::DOMElement * createElement(const XMLCh *tagName);
 		xercesc::DOMDocumentFragment * createDocumentFragment();
@@ -126,32 +109,19 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		xercesc::DOMImplementation *getImplementation() const;
 		xercesc::DOMElement * getDocumentElement() const;
 		xercesc::DOMNodeList * getElementsByTagName(const XMLCh *tagName) const;
-		//xercesc::DOMNode * importNode(xercesc::DOMNode *importNode, bool deep);
 		xercesc::DOMElement * createElementNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName);
 		xercesc::DOMAttr * createAttributeNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName);
 		xercesc::DOMNodeList * getElementsByTagNameNS(const XMLCh *namespaceURI, const XMLCh *localName) const;
 		xercesc::DOMElement * getElementById(const XMLCh *elementId) const;
-		// const XMLCh * getActualEncoding() const;
-		// void setActualEncoding(const XMLCh *actualEncoding);
-		// const XMLCh * getEncoding() const;
-		// void setEncoding(const XMLCh *encoding);
-//		bool getStandalone() const;
-//		void setStandalone(bool standalone);
-		// const XMLCh * getVersion() const;
-		// void setVersion(const XMLCh *version);
+
 		const XMLCh * getDocumentURI() const;
 		void setDocumentURI(const XMLCh *documentURI);
 
 		bool getStrictErrorChecking() const;
 		void setStrictErrorChecking(bool strictErrorChecking);
-		// xercesc::DOMErrorHandler * getErrorHandler() const;
-		// void setErrorHandler(xercesc::DOMErrorHandler *handler);
 		xercesc::DOMNode * renameNode(xercesc::DOMNode *n, const XMLCh *namespaceURI, const XMLCh *name);
 		xercesc::DOMNode * adoptNode(xercesc::DOMNode *node);
 		void normalizeDocument();
-		// bool canSetNormalizationFeature(const XMLCh *name, bool state) const;
-		// void setNormalizationFeature(const XMLCh *name, bool state);
-		// bool getNormalizationFeature(const XMLCh *name) const;
 		xercesc::DOMEntity * createEntity(const XMLCh *name);
 		xercesc::DOMDocumentType * createDocumentType(const XMLCh *name);
 		xercesc::DOMNotation * createNotation(const XMLCh *name);
