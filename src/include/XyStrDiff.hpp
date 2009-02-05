@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include "xercesc/dom/DOMDocument.hpp"
+#include "xercesc/dom/DOMElement.hpp"
 
 /*****************************************************/
 /*                     XyStrDiff                     */
@@ -25,13 +27,16 @@
 
 class XyStrDiff {
 public:
-	XyStrDiff(const char* x, const char *y, int sizex=-1, int sizey=-1);
+	XyStrDiff(xercesc::DOMDocument *myDoc, xercesc::DOMElement *elem, const char* x, const char *y, int sizex=-1, int sizey=-1);
 	~XyStrDiff();
 	int LevenshteinDistance();
 	void getPath(int i=-1, int j=-1);
 	void XyStrDiff::alterText(int i, int j, int optype, char chr);
 	void XyStrDiff::flushBuffers();
 private :
+	xercesc::DOMImplementation* impl;
+	xercesc::DOMDocument *doc;
+	xercesc::DOMElement *root;
 	int xpos, ypos;
 	char *x;
 	char *y;
