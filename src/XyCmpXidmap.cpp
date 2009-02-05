@@ -20,10 +20,7 @@ std::string getPureXidmap(const char *filename) {
 	fclose(fd);
 	std::string xidmap(s);
 	unsigned int pos = xidmap.find('|',0);
-	if (pos == std::string::npos) {
-		fprintf(stderr, "error: not a valid xidmap file");
-		exit(-1);
-	}
+
 	//cout << xidmap << endl << "pos=" << pos << endl;
 	std::string pureXidmap = xidmap.substr(0,pos) + ")";
 	return pureXidmap;
