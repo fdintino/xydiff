@@ -105,12 +105,44 @@ void DeltaApplyEngine::Subtree_Insert( DOMNode *insertSubtreeRoot, XID_t parentX
 
 /* ---- UPDATE the text value of a given node ---- */
 
-void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, const XMLCh* newValue ) {
+void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) {
 	vddprintf(("        update xid=%d\n",(int)nodeXID));
-	DOMNode* updateNode = xiddoc->getXidMap().getNodeWithXID( nodeXID );
-	if (updateNode==NULL) THROW_AWAY(("node with XID=%d not found",(int)nodeXID));
-
-	updateNode->setNodeValue( newValue ) ;
+	DOMNode* upNode = xiddoc->getXidMap().getNodeWithXID( nodeXID );
+	if (upNode==NULL) THROW_AWAY(("node with XID=%d not found",(int)nodeXID));
+	std::string currentValue = XMLString::transcode(upNode->getNodeValue());
+	
+	DOMNodeList *opNodes = operationNode->getChildNodes();
+	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));
+	
+	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
+		DOMNode *op = opNodes->item(i);
+		char *optype = XMLString::transcode(op->getNodeName());
+		vddprintf(("item %d = %s\n", i, optype));
+		// Replace operation
+		if (strcmp(optype, "tr") == 0) {
+			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
+			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
+			std::string repl ( XMLString::transcode(op->getTextContent()) );
+			vddprintf(("pos=%s, len=%s, repl=%s\n", pos, len, repl.c_str()));
+			currentValue.replace(atoi(pos), atoi(len), repl);
+			XMLString::release(&pos);
+			XMLString::release(&len);			
+		}
+		// Delete operation
+		else if (strcmp(optype, "td") == 0) {
+			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
+			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
+			currentValue.erase(atoi(pos), atoi(len));
+		}
+		// Insert operation
+		else if (strcmp(optype, "ti") == 0) {
+			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
+			std::string ins( XMLString::transcode(op->getTextContent()) );
+			currentValue.insert(atoi(pos), ins);
+		}
+		XMLString::release(&optype);
+	}
+	upNode->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
 	}
 
 /* ---- ATTRIBUTE Operations ---- */
@@ -212,18 +244,10 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 
 	else if (XMLString::equals(operationNode->getNodeName(), uStr)) {
 		vddprintf(("        u(pdate)\n"));
-
-		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(XMLString::transcode("xid"))->getNodeValue());
-		DOMNode* value = operationNode->getFirstChild() ; // Old Value node
-		
-		if (value==NULL) THROW_AWAY(("update operator contains no data"));
-
-		if (!XMLString::equals(value->getNodeName(), XMLString::transcode("nv"))) value = value->getNextSibling();
-		if ((value==NULL)||(!XMLString::equals(value->getNodeName(),XMLString::transcode("nv")))) THROW_AWAY(("new-value <nv> data not found"));
-		value = value->getFirstChild() ; // New Value Text node
-		if ((value==NULL)||(value->getNodeType()!=DOMNode::TEXT_NODE)) THROW_AWAY(("element <nv> does not contain text data"));
-
-		TextNode_Update( nodeXID, value->getNodeValue() );
+		XyLatinStr xidmapStr(operationNode->getAttributes()->getNamedItem(XMLString::transcode("oldxm"))->getNodeValue()) ;		
+		XidMap_Parser parse(xidmapStr) ;
+		XID_t nodeXID = parse.getRootXID();
+		TextNode_Update( nodeXID, operationNode);
 		}
 
 	else if (XMLString::equals(operationNode->getNodeName(), adStr)) {

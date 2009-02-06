@@ -35,12 +35,12 @@ int main(int argc, char *argv[]) {
 	static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 	DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
 	DOMDocument *doc = impl->createDocument(0, XMLString::transcode("root"), 0);
-	DOMElement *root = doc->getDocumentElement();
 	
+	DOMElement *root = doc->getDocumentElement();
 	XyStrDiff *strdiff = new XyStrDiff(doc, root, str1, str2);
 	
-	int distance = strdiff->LevenshteinDistance();
-	std::cout << "Distance: " << distance << std::endl;
+	strdiff->LevenshteinDistance();
+
 	
 	DOMLSSerializer* theSerializer = ((DOMImplementationLS*)impl)->createLSSerializer();
 	DOMLSOutput *theOutput = ((DOMImplementationLS*)impl)->createLSOutput();

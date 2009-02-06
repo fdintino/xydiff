@@ -6,8 +6,11 @@
 #include "Tools.hpp"
 #include "include/XID_map.hpp"
 #include "Diff_NodesManager.hpp"
+#include "include/XyStrDiff.hpp"
+#include "DeltaException.hpp"
 
 #include "xercesc/dom/DOMNode.hpp"
+#include "xercesc/dom/DOMNodeList.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMAttr.hpp"
@@ -148,7 +151,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 				elem->setAttribute(XMLString::transcode("par"), XyLatinStr( parXID_str) );
 				elem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str) );
 				elem->setAttribute(XMLString::transcode("xm"),  XyLatinStr( myXidMap.c_str()) );
-
+				DOMElement *upElem;
 				switch(myAtomicInfo.myEvent) {
 					case AtomicInfo::DELETED: {
 						DOMNode* contentNode = deltaDoc->importNode( node, true );
@@ -158,8 +161,8 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 					case AtomicInfo::STRONGMOVE:
 					case AtomicInfo::WEAKMOVE: {
 						// Erase moved subtree so that any parent deleted operation won't take it
-                                          //DOMNode* movedNode = parentNode->removeChild( node );
-                                          parentNode->removeChild( node );
+						//DOMNode* movedNode = parentNode->removeChild( node );
+						parentNode->removeChild( node );
 						elem->setAttribute(XMLString::transcode("move"), XMLString::transcode("yes"));
 						moveCount++ ;
 						}
@@ -169,6 +172,13 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 						elem->appendChild ( contentNode );
 						elem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
 						updateCount++ ;
+						// Add update tag
+						upElem = deltaDoc->createElement(XMLString::transcode("u"));
+						upElem->setAttribute(XMLString::transcode("par"), XyLatinStr( parXID_str) );
+						upElem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str) );
+						upElem->setAttribute(XMLString::transcode("oldxm"), XyLatinStr( myXidMap.c_str()));
+						upElem->appendChild(elem);
+						
 						}
 						break;
 					default:
@@ -189,7 +199,12 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 					));
 
 				if ((!ignoreUnimportantData)||(!myAtomicInfo.isUnimportant)) {
-					scriptRoot->appendChild( elem );
+					if (myAtomicInfo.myEvent == AtomicInfo::UPDATE_OLD) {
+						scriptRoot->appendChild( upElem );
+					} else {
+						scriptRoot->appendChild( elem );
+					}
+					
 					}
 				}
 			break ;
@@ -273,6 +288,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 				elem->setAttribute(XMLString::transcode("par"), XyLatinStr(parXID_str) );
 				elem->setAttribute(XMLString::transcode("pos"), XyLatinStr(pos_str) );
 
+				DOMNode *upElem;
 				switch(myAtomicInfo.myEvent) {
 					case AtomicInfo::INSERTED: {
 						// DOM_Node contentNode = deltaDoc.importNode( node, true );
@@ -297,7 +313,20 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						}
 						break;
 					case AtomicInfo::UPDATE_NEW: {
-						// DOM_Node contentNode = deltaDoc.importNode( node, true );
+						// Find associated update element created in ConstructDeleteScript()
+						DOMNodeList *upNodes = ((DOMElement *)scriptRoot)->getElementsByTagName(XMLString::transcode("u"));
+						if (upNodes->getLength() ==0) {
+							THROW_AWAY(("Could not find any matching <up> elements for insert\n"));
+						}
+						for (int i = 0; i < upNodes->getLength(); i++) {
+							DOMNode *tmpUpNode = upNodes->item(i);
+							if (XMLString::equals(XyLatinStr(parXID_str), ((DOMElement*)tmpUpNode)->getAttribute(XMLString::transcode("par")))
+							    && XMLString::equals(XyLatinStr(pos_str), ((DOMElement*)tmpUpNode)->getAttribute(XMLString::transcode("pos")))
+							) {
+								upElem = tmpUpNode;
+							}
+						}
+
 						std::vector<XID_t> xidList ;
 						DOMNode* contentNode = deltaDoc_ImportInsertTree( v1nodeID, xidList );
 						elem->appendChild ( contentNode );
@@ -305,6 +334,36 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 							XMLString::transcode("xm"),
 							XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
 						elem->setAttribute(XMLString::transcode("update"), XMLString::transcode("yes"));
+						
+						
+						vddprintf(("found %i matching update nodes\n", upNodes->getLength()));
+						if (upElem != NULL) {
+							DOMNode *delElem = upElem->getFirstChild();
+							if (XMLString::compareString(
+								 delElem->getNodeName(),
+								 XMLString::transcode("d")
+							  ) != 0)
+							{
+								THROW_AWAY((
+									"<up> element has incorrect first child <%s>, should be <d>\n",
+									XMLString::transcode(delElem->getNodeName())));
+							}
+
+							char *oldValue = XMLString::transcode(delElem->getFirstChild()->getNodeValue());
+							char *newValue = XMLString::transcode(contentNode->getNodeValue());
+
+							if (oldValue != NULL && newValue != NULL) {
+								XyStrDiff *strdiff = new XyStrDiff(deltaDoc, (DOMElement *)upElem, oldValue, newValue);
+								strdiff->LevenshteinDistance();
+							}
+
+							((DOMElement*)upElem)->setAttribute(
+							   XMLString::transcode("newxm"),
+							   XyLatinStr(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str()) );
+							upElem->removeChild(delElem);
+							delElem->release();
+						}
+						
 						updateCount-- ;
 						}
 						break;
@@ -326,11 +385,15 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 					(myAtomicInfo.myEvent==AtomicInfo::UPDATE_NEW)?"update":""
 					));
 #endif
-
+				
 				if ((!ignoreUnimportantData)||(!myAtomicInfo.isUnimportant)) {
-					scriptRoot->appendChild( elem );
+					// Update elements function differently, they have already been
+					// appended in DeltaConstructor::ConstructDeleteScript()
+					if (myAtomicInfo.myEvent != AtomicInfo::UPDATE_NEW) {
+						scriptRoot->appendChild( elem );
 					}
 				}
+			}
 			break ;
 			
 		case AtomicInfo::DELETED:

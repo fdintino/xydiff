@@ -10,7 +10,7 @@
 #include "xercesc/util/PlatformUtils.hpp"
 
 
-
+#include "include/Tools.hpp"
 #include "include/XyLatinStr.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
@@ -47,17 +47,14 @@
 
 XERCES_CPP_NAMESPACE_USE 
 
-#define STRDIFF_NOOP 0
-#define STRDIFF_SUB 1
-#define STRDIFF_INS 2
-#define STRDIFF_DEL 3
+
 
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const char* strX, const char *strY, int sizeXStr, int sizeYStr)
 {	
-	root = elem;
 	doc = myDoc;
+	root = elem;
 	sizex = sizeXStr;
 	sizey = sizeYStr;
 	
@@ -84,16 +81,6 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const char* strX, con
 	t = (int*) malloc(malloclen);
 	
 	currop = -1;
-	
-	try {
-		XMLPlatformUtils::Initialize();
-	}
-	catch(const XMLException& toCatch) {
-		std::cerr << "Error during Xerces-c Initialization.\n"
-		<< "  Exception message:" << XyLatinStr(toCatch.getMessage()).localForm() << std::endl;
-		exit(-1);
-	}
-	
 
 }
 
@@ -108,16 +95,15 @@ XyStrDiff::~XyStrDiff(void)
 	free(d);
 	delete [] x;
 	delete [] y;
-
-	
 }
 
-int XyStrDiff::LevenshteinDistance()
+void XyStrDiff::LevenshteinDistance()
 {
 	// Step 1
 	int k, i, j, cost, distance;
 	n = strlen(x);
 	m = strlen(y);
+
 	if (n != 0 && m != 0) {
 		m++;
 		n++;
@@ -159,47 +145,34 @@ int XyStrDiff::LevenshteinDistance()
 			}
 		}
 		distance = d[n*m-1];
-		this->getPath();
-		std::cout << s1 << std::endl;
-		std::cout << s2 << std::endl;
+		this->calculatePath();
 		this->flushBuffers();
-		std::cout << "outstr: " << outstr << std::endl;
 		
-		
-
-		
-		return distance;
-	} else  {
-		return -1; //a negative return value means that one or both strings are empty.
+		vddprintf(("debugstr=%s\n", debugstr.c_str()));
 	}
+	//return root;
 }
 
-void XyStrDiff::getPath(int i, int j)
+void XyStrDiff::calculatePath(int i, int j)
 {
 	if (i == -1) i = sizex;
 	if (j == -1) j = sizey;
 	
 	if (i > 0 && j > 0 && (x[i-1] == y[j-1])) {
-		this->getPath(i-1, j-1);
-		s1.append(" ");
-		s2 += x[i-1];
-		this->alterText(i, j, STRDIFF_NOOP, x[i-1]);
+		this->calculatePath(i-1, j-1);
+		this->registerBuffer(i, j, STRDIFF_NOOP, x[i-1]);
 	} else {
 		if (j > 0 && (i == 0 || c[(j-1)*n+i] >= c[j*n+i-1])) {
-			this->getPath(i, j-1);
-			s1.append("+");
-			s2 += y[j-1];
-			this->alterText(i, j, STRDIFF_INS, y[j-1]);
+			this->calculatePath(i, j-1);
+			this->registerBuffer(i, j, STRDIFF_INS, y[j-1]);
 		} else if (i > 0 && (j == 0 || c[(j-1)*n+i] < c[j*n+i-1])) {
-			this->getPath(i-1, j);
-			s1.append("-");
-			s2 += x[i-1];
-			this->alterText(i, j, STRDIFF_DEL, x[i-1]);
+			this->calculatePath(i-1, j);
+			this->registerBuffer(i, j, STRDIFF_DEL, x[i-1]);
 		}
 	}
 }
 
-void XyStrDiff::alterText(int i, int j, int optype, char chr)
+void XyStrDiff::registerBuffer(int i, int j, int optype, char chr)
 {
 	if (wordbuf.empty()) {
 		wordbuf = chr;
@@ -242,11 +215,11 @@ void XyStrDiff::flushBuffers()
 	} else if (currop == STRDIFF_SUB) {
 		startpos = xpos - delbuf.length() - 1;
 		len = delbuf.length();
-		outstr.append("<r st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
+		debugstr.append("<tr pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		
 		try {
-			DOMElement *r = doc->createElement(XMLString::transcode("r"));
-			r->setAttribute(XMLString::transcode("st"), XMLString::transcode((itoa(startpos)).c_str()));
+			DOMElement *r = doc->createElement(XMLString::transcode("tr"));
+			r->setAttribute(XMLString::transcode("pos"), XMLString::transcode((itoa(startpos)).c_str()));
 			r->setAttribute(XMLString::transcode("len"), XMLString::transcode((itoa(len)).c_str()));		
 			DOMText *textNode = doc->createTextNode(XMLString::transcode(insbuf.c_str()));
 			r->appendChild((DOMNode *)textNode);
@@ -266,16 +239,15 @@ void XyStrDiff::flushBuffers()
 			std::cout << "Unexpected Exception" << std::endl;
 		}
 		
-
 		delbuf = "";
 		insbuf = "";
 	} else if (currop == STRDIFF_INS) {
 		startpos = xpos - 1;
-		outstr.append("<i st=\"" + itoa(startpos) + "\">"+insbuf+"</i>\n");
+		debugstr.append("<ti pos=\"" + itoa(startpos) + "\">"+insbuf+"</i>\n");
 		
 		try {
-			DOMElement *r = doc->createElement(XMLString::transcode("i"));
-			r->setAttribute(XMLString::transcode("st"), XMLString::transcode((itoa(startpos)).c_str()));
+			DOMElement *r = doc->createElement(XMLString::transcode("ti"));
+			r->setAttribute(XMLString::transcode("pos"), XMLString::transcode((itoa(startpos)).c_str()));
 			DOMText *textNode = doc->createTextNode(XMLString::transcode(insbuf.c_str()));
 			r->appendChild((DOMNode *)textNode);
 			root->appendChild((DOMNode *)r);
@@ -299,10 +271,10 @@ void XyStrDiff::flushBuffers()
 	} else if (currop == STRDIFF_DEL) {
 		startpos = xpos - delbuf.length() - 1;
 		len = delbuf.length();
-		outstr.append("<d st=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\" />\n");
+		debugstr.append("<td pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\" />\n");
 		try {
-			DOMElement *r = doc->createElement(XMLString::transcode("d"));
-			r->setAttribute(XMLString::transcode("st"), XMLString::transcode((itoa(startpos)).c_str()));
+			DOMElement *r = doc->createElement(XMLString::transcode("td"));
+			r->setAttribute(XMLString::transcode("pos"), XMLString::transcode((itoa(startpos)).c_str()));
 			r->setAttribute(XMLString::transcode("len"), XMLString::transcode((itoa(len)).c_str()));		
 			root->appendChild((DOMNode *)r);
 		}

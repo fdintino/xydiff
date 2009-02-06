@@ -21,6 +21,11 @@
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 
+#define STRDIFF_NOOP 0
+#define STRDIFF_SUB 1
+#define STRDIFF_INS 2
+#define STRDIFF_DEL 3
+
 /*****************************************************/
 /*                     XyStrDiff                     */
 /*****************************************************/
@@ -29,9 +34,9 @@ class XyStrDiff {
 public:
 	XyStrDiff(xercesc::DOMDocument *myDoc, xercesc::DOMElement *elem, const char* x, const char *y, int sizex=-1, int sizey=-1);
 	~XyStrDiff();
-	int LevenshteinDistance();
-	void getPath(int i=-1, int j=-1);
-	void XyStrDiff::alterText(int i, int j, int optype, char chr);
+	void LevenshteinDistance();
+	void calculatePath(int i=-1, int j=-1);
+	void XyStrDiff::registerBuffer(int i, int j, int optype, char chr);
 	void XyStrDiff::flushBuffers();
 private :
 	xercesc::DOMImplementation* impl;
@@ -44,9 +49,7 @@ private :
 	int *d;
 	int *t;
 	int currop; // Current operation in alterText()
-	std::string wordbuf, subbuf, insbuf, delbuf, outstr;
-	std::string s1;
-	std::string s2;
+	std::string wordbuf, subbuf, insbuf, delbuf, debugstr;
 	int sizex, sizey, m, n;
 };
 

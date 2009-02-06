@@ -16,7 +16,7 @@ class VersionManagerException {
 		std::string message ;
 	} ;
 
-//#define VERBOSE
+// #define VERBOSE
 //#define DONT_SAVE_RESULT
 //#define DISABLE_POSITION_MOVING
 //#define DISABLE_PRIORITY_FIFO
