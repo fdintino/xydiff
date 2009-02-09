@@ -237,8 +237,8 @@ XID_t XID_map::getXIDbyNode(DOMNode *node) {
 	if (xidByNode->find( node ) != xidByNode->end()) {
 		return (*xidByNode)[ node] ;
 	} else {
-		if (node->getNodeType()==DOMNode::TEXT_NODE) std::cerr << "CONTEXT:: text_node=" << node->getNodeValue() << std::endl ;
-		else if (node->getNodeType()==DOMNode::ELEMENT_NODE) std::cerr << "CONTEXT:: element_node name=" << node->getNodeName() << std::endl ;
+		if (node->getNodeType()==DOMNode::TEXT_NODE) std::cerr << "CONTEXT:: text_node=" << XMLString::transcode(node->getNodeValue()) << std::endl ;
+		else if (node->getNodeType()==DOMNode::ELEMENT_NODE) std::cerr << "CONTEXT:: element_node name=" << XMLString::transcode(node->getNodeName()) << std::endl ;
 		else std::cerr << "Node type="<<node->getNodeType()<<std::endl;
 		THROW_AWAY(("Node(Impl) not found"));
 	}

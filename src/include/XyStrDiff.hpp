@@ -13,6 +13,7 @@
 /* Class to do diffs on strings character-by-character */
 
 #include "include/XyStr.hpp"
+#include "include/XID_DOMDocument.hpp"
 
 // #include "xercesc/dom/deprecated/DOMString.hpp"
 #include <stdio.h>
@@ -60,5 +61,24 @@ template <class T> const T& max ( const T& a, const T& b ) {
 }
 
 std::string itoa (int n);
+
+class XyDOMText {
+public:
+	XyDOMText(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, bool applyAnnotations=0);
+	~XyDOMText();
+	void XyDOMText::remove(int pos, int len);
+	void XyDOMText::insert(int pos, const XMLCh *ins);
+	void XyDOMText::replace(int pos, int len, const XMLCh *repl);
+	void XyDOMText::complete();
+private :
+	XID_DOMDocument *doc;
+	xercesc::DOMNode *node;
+	xercesc::DOMText *txt;
+	std::string currentValue;
+	bool applyAnnotations;
+	bool XyDOMText::textNodeHasNoWhitespace(xercesc::DOMText *t);
+	bool XyDOMText::mergeNodes(xercesc::DOMNode *node1, xercesc::DOMNode *node2, xercesc::DOMNode *node3);
+};
+
 
 #endif

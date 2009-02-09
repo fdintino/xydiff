@@ -3,14 +3,14 @@
  *  xydiff
  *
  *  Created by Frankie Dintino on 2/3/09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
  *
  */
 
 #include "xercesc/util/PlatformUtils.hpp"
 
 
-#include "include/Tools.hpp"
+#include "Tools.hpp"
+#include "DeltaException.hpp"
 #include "include/XyLatinStr.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
@@ -21,6 +21,7 @@
 #include "xercesc/dom/DOMException.hpp"
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xercesc/dom/DOMElement.hpp"
+#include "xercesc/dom/DOMText.hpp"
 
 #include "xercesc/dom/DOMNodeList.hpp"
 
@@ -226,14 +227,10 @@ void XyStrDiff::flushBuffers()
 			root->appendChild((DOMNode *)r);
 		}
 		catch (const XMLException& toCatch) {
-			char* message = XMLString::transcode(toCatch.getMessage());
-			std::cout << "Exception message is: \n" << message << std::endl;
-			XMLString::release(&message);
+			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (const DOMException& toCatch) {
-			char* message = XMLString::transcode(toCatch.msg);
-			std::cout << "Exception message is: \n" << message << std::endl;
-			XMLString::release(&message);
+			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (...) {
 			std::cout << "Unexpected Exception" << std::endl;
@@ -253,14 +250,10 @@ void XyStrDiff::flushBuffers()
 			root->appendChild((DOMNode *)r);
 		}
 		catch (const XMLException& toCatch) {
-			char* message = XMLString::transcode(toCatch.getMessage());
-			std::cout << "Exception message is: \n" << message << std::endl;
-			XMLString::release(&message);
+			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (const DOMException& toCatch) {
-			char* message = XMLString::transcode(toCatch.msg);
-			std::cout << "Exception message is: \n" << message << std::endl;
-			XMLString::release(&message);
+			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (...) {
 			std::cout << "Unexpected Exception" << std::endl;
@@ -279,14 +272,10 @@ void XyStrDiff::flushBuffers()
 			root->appendChild((DOMNode *)r);
 		}
 		catch (const XMLException& toCatch) {
-			char* message = XMLString::transcode(toCatch.getMessage());
-			std::cout << "Exception message is: \n" << message << std::endl;
-			XMLString::release(&message);
+			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (const DOMException& toCatch) {
-			char* message = XMLString::transcode(toCatch.msg);
-			std::cout << "Exception message is: \n" << message << std::endl;
-			XMLString::release(&message);
+			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (...) {
 			std::cout << "Unexpected Exception" << std::endl;
@@ -295,6 +284,254 @@ void XyStrDiff::flushBuffers()
 	}
 }
 
+
+XyDOMText::XyDOMText(XID_DOMDocument *pDoc, DOMNode *upNode, bool applyAnnotations)
+{
+	doc = pDoc;
+	node = upNode->getParentNode();
+
+	for (int i = node->getChildNodes()->getLength() - 1; i >= 0; i--) {
+		DOMNode *tmpNode = node->getChildNodes()->item(i);
+		char *nodeName = XMLString::transcode(tmpNode->getNodeName());
+		XMLString::release(&nodeName);
+	}
+	if (node->getChildNodes()->getLength() != 1) {
+		THROW_AWAY(("XyDOMText must be passed elements with only one DOMText node"));
+	}
+	DOMNode *txtNode = node->getFirstChild();
+	
+	if (txtNode->getNodeType() != DOMNode::TEXT_NODE) {
+		THROW_AWAY(("XyDOMText must be passed elements with only one DOMText node"));
+	}
+	txt = (DOMText *)txtNode;
+	currentValue = XMLString::transcode(upNode->getNodeValue());
+}
+
+void XyDOMText::remove(int pos, int len)
+{
+	if (!applyAnnotations) {
+		currentValue.erase(pos, len);
+		return;
+	}
+	DOMText *deletedText;
+	DOMText *endText;
+	DOMNode *nextNode;
+
+	endText = txt->splitText(pos+len);
+	if (pos == 0) {
+		deletedText = (DOMText *)node->removeChild((DOMNode *)txt);
+		doc->getXidMap().removeNode(txt);
+		nextNode = node->getFirstChild();
+	} else {
+		deletedText = txt->splitText(pos);
+		nextNode = txt->getNextSibling();
+	}
+
+	node->insertBefore((DOMNode *)endText, nextNode);
+	doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
+	
+	DOMNode *delNode = doc->createElement(XMLString::transcode("del"));
+	node->insertBefore(delNode, endText);
+	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
+	
+	delNode->appendChild(deletedText);
+	doc->getXidMap().registerNode(deletedText, doc->getXidMap().allocateNewXID());
+}
+
+void XyDOMText::insert(int pos, const XMLCh *ins)
+{
+	if (!applyAnnotations) {
+		std::string insString( XMLString::transcode(ins) );
+		currentValue.insert(pos, insString);
+		return;
+	}
+	DOMNode *insNode;
+	DOMText *insText;
+	DOMNode *endText;
+	
+	insNode = doc->createElement(XMLString::transcode("ins"));
+	
+	
+	if (pos == 0) {
+		node->insertBefore(insNode, txt);
+		doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
+	} else {
+		endText = txt->splitText(pos);
+		node->insertBefore(insNode, txt->getNextSibling());
+		doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
+		node->insertBefore(endText, insNode->getNextSibling());
+		doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
+	}
+	
+	insText = doc->createTextNode(ins);
+	insNode->appendChild(insText);
+	doc->getXidMap().registerNode(insText, doc->getXidMap().allocateNewXID());
+}
+
+void XyDOMText::replace(int pos, int len, const XMLCh *repl)
+{
+	if (!applyAnnotations) {
+		std::string replString( XMLString::transcode(repl) );
+		currentValue.replace(pos, len, replString);
+		return;
+	}
+	
+	DOMText *replacedText;
+	DOMText *endText;
+	DOMNode *nextNode;
+
+	vddprintf(("pos=%d, len=%d, repl=(%s)\n", pos, len, XMLString::transcode(repl)));
+	endText = txt->splitText(pos+len);
+	if (pos == 0) {
+		replacedText = (DOMText *)node->removeChild((DOMNode *)txt);
+		doc->getXidMap().removeNode(txt);
+		nextNode = node->getFirstChild();
+	} else {
+		replacedText = txt->splitText(pos);
+		nextNode = txt->getNextSibling();
+	}
+	
+
+	DOMNode *replNode = doc->createElement(XMLString::transcode("repl"));
+
+	node->insertBefore((DOMNode *)endText, nextNode);
+	doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
+	node->insertBefore(replNode, endText);
+
+	doc->getXidMap().registerNode(replNode, doc->getXidMap().allocateNewXID());
+
+	DOMNode *insNode = doc->createElement(XMLString::transcode("ins"));
+	replNode->appendChild(insNode);
+	doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
+
+	DOMNode *delNode = doc->createElement(XMLString::transcode("del"));
+	replNode->appendChild(delNode);
+	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
+	
+	DOMText *replText = doc->createTextNode(repl);
+	insNode->appendChild(replText);
+	doc->getXidMap().registerNode(replText, doc->getXidMap().allocateNewXID());
+
+	delNode->appendChild(replacedText);
+	doc->getXidMap().registerNode(replacedText, doc->getXidMap().allocateNewXID());
+	
+	if (pos != 0) {
+		txt = (DOMText *) node->getFirstChild();
+	}
+}
+
+XyDOMText::~XyDOMText()
+{
+	
+}
+
+void XyDOMText::complete()
+{
+	if (!applyAnnotations) {
+		std::cout << currentValue << std::endl;
+		txt->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
+	}
+	// If a word in the previous document is replaced with another word that shares some characters,
+	// we end up with a situation where there are multiple edits in a single word, which can look
+	// confusing and isn't particularly helpful. Here we search for replace, insert, or delete operations
+	// that surround a text node with no whitespace, and then merge the three into a single replace operation.
+	DOMNodeList *childNodes = node->getChildNodes();
+	for (int i = 0; i < childNodes->getLength(); i++) {
+		DOMNode *node1 = childNodes->item(i);
+		if (node1 == NULL) return;
+		if (node1->getNodeType() == DOMNode::ELEMENT_NODE) {
+			DOMNode *node2 = node1->getNextSibling();
+			if (node2 == NULL) return;
+			DOMNode *node3 = node2->getNextSibling();
+			if (node3 == NULL) return;
+			if (textNodeHasNoWhitespace((DOMText *)node2)) {
+				if (node3->getNodeType() == DOMNode::ELEMENT_NODE) {
+					if (mergeNodes(node1, node2, node3)) {
+						// Move the increment back to retest our new node to see if it
+						// can be merged in the same way with the nodes that follow it
+						i--;
+					}
+				}
+			} 
+		}
+	}
+}
+
+bool XyDOMText::textNodeHasNoWhitespace(DOMText *t)
+{
+	// Make sure we're dealing with a text node
+	if (((DOMNode *)t)->getNodeType() != DOMNode::TEXT_NODE) {
+		return 0;
+	}
+	std::string nodeText = std::string ( XMLString::transcode(t->getNodeValue()) );
+	std::cout << nodeText << std::endl;
+	return (nodeText.find("		\n") == std::string::npos);
+}
+
+bool XyDOMText::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
+{
+	DOMNode *replNode, *insNode, *delNode, *parent;
+	DOMText *insTextNode, *delTextNode;
+	std::string instext, deltext;
+
+	if ( XMLString::compareString(node1->getNodeName(), XMLString::transcode("repl")) == 0) {
+		// @todo: Add check that these child nodes exist and are the proper tag names
+		if (!node1->hasChildNodes()) return 0;
+		instext += XMLString::transcode( node1->getChildNodes()->item(0)->getFirstChild()->getNodeValue() );
+		deltext += XMLString::transcode( node1->getChildNodes()->item(1)->getFirstChild()->getNodeValue() );
+	}
+	else if ( XMLString::compareString(node1->getNodeName(), XMLString::transcode("del")) == 0) {
+		deltext += XMLString::transcode( node1->getFirstChild()->getNodeValue() );
+	}
+	else if ( XMLString::compareString(node1->getNodeName(), XMLString::transcode("ins")) == 0) {
+		instext += XMLString::transcode( node1->getFirstChild()->getNodeValue() );
+	}
+	instext += XMLString::transcode( node2->getNodeValue() );
+	deltext += XMLString::transcode( node2->getNodeValue() );
+	
+	if ( XMLString::compareString(node3->getNodeName(), XMLString::transcode("repl")) == 0) {
+		// @todo: Add check that these child nodes exist and are the proper tag names
+		if (!node1->hasChildNodes()) return 0;
+		instext += XMLString::transcode( node3->getChildNodes()->item(0)->getFirstChild()->getNodeValue() );
+		deltext += XMLString::transcode( node3->getChildNodes()->item(1)->getFirstChild()->getNodeValue() );
+	}
+	else if ( XMLString::compareString(node3->getNodeName(), XMLString::transcode("del")) == 0) {
+		deltext += XMLString::transcode( node3->getFirstChild()->getNodeValue() );
+	}
+	else if ( XMLString::compareString(node3->getNodeName(), XMLString::transcode("ins")) == 0) {
+		instext += XMLString::transcode( node3->getFirstChild()->getNodeValue() );
+	}
+
+
+	replNode = doc->createElement(XMLString::transcode("repl"));
+	parent = node1->getParentNode();
+	parent->insertBefore(replNode, node1);
+	doc->getXidMap().registerNode(replNode, doc->getXidMap().allocateNewXID());
+	
+	insNode = doc->createElement(XMLString::transcode("ins"));
+	replNode->appendChild(insNode);
+	doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
+	
+	delNode = doc->createElement(XMLString::transcode("del"));
+	replNode->appendChild(delNode);
+	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
+	
+	insTextNode = doc->createTextNode( XMLString::transcode(instext.c_str()) );
+	insNode->appendChild(insTextNode);
+	doc->getXidMap().registerNode(insTextNode, doc->getXidMap().allocateNewXID());
+
+	delTextNode = doc->createTextNode( XMLString::transcode(deltext.c_str()) );
+	delNode->appendChild(delTextNode);
+	doc->getXidMap().registerNode(delTextNode, doc->getXidMap().allocateNewXID());
+
+	doc->getXidMap().removeNode(node1);
+	doc->getXidMap().removeNode(node2);
+	doc->getXidMap().removeNode(node3);
+	parent->removeChild(node1);
+	parent->removeChild(node2);
+	parent->removeChild(node3);
+	return 1;
+}
 
 std::string itoa (int n)
 {	

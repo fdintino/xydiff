@@ -55,7 +55,7 @@ int main(int argc, const char **argv) {
 	}
 	catch( const DOMException &e ) {
 		std::cerr << "*** DOMException, code=" << e.code << std::endl ;
-		std::cerr << "    DOMException, message=" << e.msg << std::endl ;
+		std::cerr << "    DOMException, message=" << XMLString::transcode(e.msg) << std::endl ;
 		exit(-1);
 	}	
 	catch(const XMLException& toCatch) {

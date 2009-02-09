@@ -14,6 +14,7 @@
 #include "include/XyLatinStr.hpp"
 #include "include/XyInt.hpp"
 #include "include/XyDelta_DOMInterface.hpp"
+#include "include/XyStrDiff.hpp"
 
 #include "Tools.hpp"
 #include "include/XID_map.hpp"
@@ -113,7 +114,7 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	
 	DOMNodeList *opNodes = operationNode->getChildNodes();
 	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));
-	
+	XyDOMText *xytext = new XyDOMText(xiddoc, upNode);
 	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
 		DOMNode *op = opNodes->item(i);
 		char *optype = XMLString::transcode(op->getNodeName());
@@ -123,6 +124,8 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
 			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
 			std::string repl ( XMLString::transcode(op->getTextContent()) );
+			xytext->replace(atoi(pos), atoi(len), op->getTextContent());
+			//return;
 			vddprintf(("pos=%s, len=%s, repl=%s\n", pos, len, repl.c_str()));
 			currentValue.replace(atoi(pos), atoi(len), repl);
 			XMLString::release(&pos);
@@ -133,17 +136,22 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
 			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
 			currentValue.erase(atoi(pos), atoi(len));
+			xytext->remove(atoi(pos), atoi(len));
 		}
 		// Insert operation
 		else if (strcmp(optype, "ti") == 0) {
 			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
 			std::string ins( XMLString::transcode(op->getTextContent()) );
 			currentValue.insert(atoi(pos), ins);
+			xytext->insert(atoi(pos), op->getTextContent());
 		}
 		XMLString::release(&optype);
 	}
-	upNode->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
+	xytext->complete();
+	// upNode->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
 	}
+
+
 
 /* ---- ATTRIBUTE Operations ---- */
 

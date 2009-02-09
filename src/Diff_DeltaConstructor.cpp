@@ -316,7 +316,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						// Find associated update element created in ConstructDeleteScript()
 						DOMNodeList *upNodes = ((DOMElement *)scriptRoot)->getElementsByTagName(XMLString::transcode("u"));
 						if (upNodes->getLength() ==0) {
-							THROW_AWAY(("Could not find any matching <up> elements for insert\n"));
+							THROW_AWAY(("Could not find any matching <u> elements for insert\n"));
 						}
 						for (int i = 0; i < upNodes->getLength(); i++) {
 							DOMNode *tmpUpNode = upNodes->item(i);
@@ -345,7 +345,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 							  ) != 0)
 							{
 								THROW_AWAY((
-									"<up> element has incorrect first child <%s>, should be <d>\n",
+									"<u> element has incorrect first child <%s>, should be <d>\n",
 									XMLString::transcode(delElem->getNodeName())));
 							}
 
