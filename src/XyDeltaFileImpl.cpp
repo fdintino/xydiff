@@ -355,7 +355,7 @@ void XyDelta::XyLoadAndDiff(const char *versionFile , const char *deltaFile){
 		/* --- DO IT ---- */
 
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), false, false);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), true, true);
 
 
 		/* ---- [[ Phase Terminal: ]] Save Result in a file ---- */

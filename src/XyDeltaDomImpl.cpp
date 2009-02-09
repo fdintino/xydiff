@@ -80,7 +80,7 @@ DOMDocument* XyDelta::XyDiff(DOMDocument* doc1, const char *doc1name,
 	
 	TRACE("Go XidXyDiff");
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, doc1name, v1XML, doc2name, false, false);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, doc1name, v1XML, doc2name, 1, 1);
 
         delete v0XML;
 	v0XML = NULL;

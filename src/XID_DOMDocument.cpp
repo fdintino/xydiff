@@ -258,14 +258,7 @@ XID_DOMDocument::~XID_DOMDocument() {
  ***                                                    ***
  ************************************************************************************************************************************/
 
-class xydeltaParseHandler : public DOMErrorHandler {
-public:
-  void warning(const SAXParseException& e);
-  void error(const SAXParseException& e);
-  void fatalError(const SAXParseException& e);
-  void resetErrors() {};
-  bool handleError(const DOMError& domError);
-} ;
+
 
 bool xydeltaParseHandler::handleError(const DOMError& domError)
 {

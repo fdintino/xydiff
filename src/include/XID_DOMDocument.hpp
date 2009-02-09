@@ -9,6 +9,9 @@
 #include "xercesc/dom/DOMErrorHandler.hpp"
 #include "xercesc/dom/DOMLSParser.hpp"
 #include <iostream>
+#include "xercesc/sax/ErrorHandler.hpp"
+#include "xercesc/sax/SAXException.hpp"
+#include "xercesc/sax/SAXParseException.hpp"
 
 class DTDValidator;
 
@@ -135,8 +138,8 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		xercesc::DOMDocument* theDocument;
 		xercesc::DOMLSParser*  theParser;
 		bool                      doReleaseTheDocument;
-		void XID_DOMDocument::removeIgnorableWhitespace(DOMNode *node);
 		void parseDOM_Document(const char* xmlfile, bool doValidation);
+		void XID_DOMDocument::removeIgnorableWhitespace(xercesc::DOMNode *node);
 
 } ;
 
@@ -152,5 +155,15 @@ extern bool PrintWithXID ;
 namespace Restricted {
 	void XidTagSubtree(XID_DOMDocument *doc, xercesc::DOMNode* node);
 } ;
-  
+ 
+
+class xydeltaParseHandler : public xercesc::DOMErrorHandler {
+public:
+	void warning(const xercesc::SAXParseException& e);
+  void error(const xercesc::SAXParseException& e);
+  void fatalError(const xercesc::SAXParseException& e);
+  void resetErrors() {};
+  bool handleError(const xercesc::DOMError& domError);
+} ;
+
 #endif
