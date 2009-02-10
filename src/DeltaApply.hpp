@@ -18,7 +18,8 @@ class DeltaApplyEngine {
 
 		static std::string getSourceURI(XID_DOMDocument *IncDeltaDoc);
 		static std::string getDestinationURI(XID_DOMDocument *IncDeltaDoc);
-
+		bool getApplyAnnotations();
+		void setApplyAnnotations(bool paramApplyAnnotations);
 	private:
 		XID_DOMDocument* xiddoc ;
 		XID_DOMDocument* deltaDoc ;
@@ -38,7 +39,7 @@ class DeltaApplyEngine {
 		void Attribute_Insert( XID_t nodeXID, const XMLCh* attr, const XMLCh* value ) ;
 		void Attribute_Update( XID_t nodeXID, const XMLCh* attr, const XMLCh* value ) ;
 		void Attribute_Delete( XID_t nodeXID, const XMLCh* attr ) ;
-
+		bool applyAnnotations;
 	} ;
 
 #endif

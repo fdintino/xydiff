@@ -80,7 +80,7 @@ DOMDocument* XyDelta::XyDiff(DOMDocument* doc1, const char *doc1name,
 	
 	TRACE("Go XidXyDiff");
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, doc1name, v1XML, doc2name, 1, 1);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, doc1name, v1XML, doc2name, 1, false);
 
         delete v0XML;
 	v0XML = NULL;
@@ -96,7 +96,7 @@ void XyDelta::SaveDomDocument(DOMDocument* d, const char *filename) {
         delete xd;
 }
 
-DOMDocument* XyDelta::ApplyDelta(DOMDocument* doc, DOMNode* deltaElement, bool CreateNewDocumentResult) {
+DOMDocument* XyDelta::ApplyDelta(DOMDocument* doc, DOMNode* deltaElement, bool CreateNewDocumentResult, bool applyAnnotations) {
 	XID_DOMDocument* xdoc = new XID_DOMDocument(doc);
 	XyLatinStr fromXidmap(deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromXidMap"))->getNodeValue());
 
@@ -104,6 +104,7 @@ DOMDocument* XyDelta::ApplyDelta(DOMDocument* doc, DOMNode* deltaElement, bool C
 		xdoc->addXidMap(fromXidmap);
 
 		DeltaApplyEngine appliqueDoc(xdoc);
+		appliqueDoc.setApplyAnnotations(applyAnnotations);
 		appliqueDoc.ApplyDeltaElement(deltaElement) ;
 	
 		doc = xdoc->getDOMDocumentOwnership();

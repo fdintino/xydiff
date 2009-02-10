@@ -63,7 +63,7 @@ void TimeStep(void);
  |*                                                                 *
  ********************************************************************/
 
-void XyDelta::ApplyDelta(const char *incDeltaName, const char *incSourceName, const char *incDestinationName) {
+void XyDelta::ApplyDelta(const char *incDeltaName, const char *incSourceName, const char *incDestinationName, bool applyAnnotations) {
 
 	std::string deltaName = incDeltaName ;
 	std::string sourceName ;
@@ -96,6 +96,7 @@ void XyDelta::ApplyDelta(const char *incDeltaName, const char *incSourceName, co
 
 	vddprintf(("Apply DELTA on Document\n"));
 	DeltaApplyEngine appliqueDoc(sourceXML);
+	appliqueDoc.setApplyAnnotations(applyAnnotations);
 	appliqueDoc.ApplyDelta(deltaXML) ;
 
 	vddprintf(("Saving Result to: %s\n", destinationName.c_str() ));
@@ -355,7 +356,7 @@ void XyDelta::XyLoadAndDiff(const char *versionFile , const char *deltaFile){
 		/* --- DO IT ---- */
 
 
-	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), true, true);
+	XID_DOMDocument* delta = XidXyDiff(v0XML, v0filename.c_str(), v1XML, v1filename.c_str(), true, false);
 
 
 		/* ---- [[ Phase Terminal: ]] Save Result in a file ---- */

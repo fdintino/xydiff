@@ -79,5 +79,8 @@ int watoi(const XMLCh* str);
 
 bool existsFile(const char *fileName);
  
-
+/*
+ * Converts int to std::string
+ */
+std::string itoa (int n);
 #endif

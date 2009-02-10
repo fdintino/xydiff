@@ -114,7 +114,8 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	
 	DOMNodeList *opNodes = operationNode->getChildNodes();
 	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));
-	XyDOMText *xytext = new XyDOMText(xiddoc, upNode);
+	XyStrDeltaApply *xytext = new XyStrDeltaApply(xiddoc, upNode);
+	xytext->setApplyAnnotations(applyAnnotations);
 	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
 		DOMNode *op = opNodes->item(i);
 		char *optype = XMLString::transcode(op->getNodeName());
@@ -123,27 +124,23 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 		if (strcmp(optype, "tr") == 0) {
 			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
 			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
-			std::string repl ( XMLString::transcode(op->getTextContent()) );
 			xytext->replace(atoi(pos), atoi(len), op->getTextContent());
-			//return;
-			vddprintf(("pos=%s, len=%s, repl=%s\n", pos, len, repl.c_str()));
-			currentValue.replace(atoi(pos), atoi(len), repl);
 			XMLString::release(&pos);
-			XMLString::release(&len);			
+			XMLString::release(&len);
 		}
 		// Delete operation
 		else if (strcmp(optype, "td") == 0) {
 			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
 			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
-			currentValue.erase(atoi(pos), atoi(len));
 			xytext->remove(atoi(pos), atoi(len));
+			XMLString::release(&pos);
+			XMLString::release(&len);
 		}
 		// Insert operation
 		else if (strcmp(optype, "ti") == 0) {
 			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
-			std::string ins( XMLString::transcode(op->getTextContent()) );
-			currentValue.insert(atoi(pos), ins);
 			xytext->insert(atoi(pos), op->getTextContent());
+			XMLString::release(&pos);
 		}
 		XMLString::release(&optype);
 	}
@@ -408,6 +405,7 @@ DeltaApplyEngine::DeltaApplyEngine(XID_DOMDocument *sourceDoc) {
 
 	DOMElement* moveRoot = moveDocument->createElement(XMLString::transcode("moveRoot")) ;
 	moveDocument->appendChild( moveRoot );
+	applyAnnotations = false;
 	}
 
 DOMNode* DeltaApplyEngine::getDeltaElement(XID_DOMDocument *IncDeltaDoc) {
@@ -447,4 +445,12 @@ std::string DeltaApplyEngine::getDestinationURI(XID_DOMDocument *IncDeltaDoc) {
         return std::string(XyLatinStr(toItem->getNodeValue()));
 	}
 
+void DeltaApplyEngine::setApplyAnnotations(bool paramApplyAnnotations)
+{
+	applyAnnotations = paramApplyAnnotations;
+}
 
+bool DeltaApplyEngine::getApplyAnnotations()
+{
+	return applyAnnotations;
+}

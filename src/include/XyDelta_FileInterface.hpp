@@ -6,7 +6,7 @@
 namespace XyDelta {
 	void XyDiff(const char *incV0filename, const char *incV1filename, const char *deltafilename, bool ignoreSpacesFlag=false, const bool verbose=false);
 	void XyLoadAndDiff(const char *versionFile , const char *deltaFile);
-	void ApplyDelta(const char *incDeltaName, const char *incSourceName=NULL, const char *incDestinationName=NULL);
+	void ApplyDelta(const char *incDeltaName, const char *incSourceName=NULL, const char *incDestinationName=NULL, bool applyAnnotations=false);
 	void ApplyDelta(const char *incDeltaName, unsigned int backwardNumber = 0);
 } ;
   

@@ -82,7 +82,6 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const char* strX, con
 	t = (int*) malloc(malloclen);
 	
 	currop = -1;
-
 }
 
 /*
@@ -285,7 +284,7 @@ void XyStrDiff::flushBuffers()
 }
 
 
-XyDOMText::XyDOMText(XID_DOMDocument *pDoc, DOMNode *upNode, bool applyAnnotations)
+XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, bool applyAnnotations)
 {
 	doc = pDoc;
 	node = upNode->getParentNode();
@@ -296,18 +295,19 @@ XyDOMText::XyDOMText(XID_DOMDocument *pDoc, DOMNode *upNode, bool applyAnnotatio
 		XMLString::release(&nodeName);
 	}
 	if (node->getChildNodes()->getLength() != 1) {
-		THROW_AWAY(("XyDOMText must be passed elements with only one DOMText node"));
+		THROW_AWAY(("XyStrDeltaApply must be passed elements with only one DOMText node"));
 	}
 	DOMNode *txtNode = node->getFirstChild();
 	
 	if (txtNode->getNodeType() != DOMNode::TEXT_NODE) {
-		THROW_AWAY(("XyDOMText must be passed elements with only one DOMText node"));
+		THROW_AWAY(("XyStrDeltaApply must be passed elements with only one DOMText node"));
 	}
 	txt = (DOMText *)txtNode;
 	currentValue = XMLString::transcode(upNode->getNodeValue());
+	applyAnnotations = false;
 }
 
-void XyDOMText::remove(int pos, int len)
+void XyStrDeltaApply::remove(int pos, int len)
 {
 	if (!applyAnnotations) {
 		currentValue.erase(pos, len);
@@ -338,7 +338,7 @@ void XyDOMText::remove(int pos, int len)
 	doc->getXidMap().registerNode(deletedText, doc->getXidMap().allocateNewXID());
 }
 
-void XyDOMText::insert(int pos, const XMLCh *ins)
+void XyStrDeltaApply::insert(int pos, const XMLCh *ins)
 {
 	if (!applyAnnotations) {
 		std::string insString( XMLString::transcode(ins) );
@@ -368,7 +368,7 @@ void XyDOMText::insert(int pos, const XMLCh *ins)
 	doc->getXidMap().registerNode(insText, doc->getXidMap().allocateNewXID());
 }
 
-void XyDOMText::replace(int pos, int len, const XMLCh *repl)
+void XyStrDeltaApply::replace(int pos, int len, const XMLCh *repl)
 {
 	if (!applyAnnotations) {
 		std::string replString( XMLString::transcode(repl) );
@@ -420,12 +420,12 @@ void XyDOMText::replace(int pos, int len, const XMLCh *repl)
 	}
 }
 
-XyDOMText::~XyDOMText()
+XyStrDeltaApply::~XyStrDeltaApply()
 {
 	
 }
 
-void XyDOMText::complete()
+void XyStrDeltaApply::complete()
 {
 	if (!applyAnnotations) {
 		std::cout << currentValue << std::endl;
@@ -457,7 +457,7 @@ void XyDOMText::complete()
 	}
 }
 
-bool XyDOMText::textNodeHasNoWhitespace(DOMText *t)
+bool XyStrDeltaApply::textNodeHasNoWhitespace(DOMText *t)
 {
 	// Make sure we're dealing with a text node
 	if (((DOMNode *)t)->getNodeType() != DOMNode::TEXT_NODE) {
@@ -468,7 +468,7 @@ bool XyDOMText::textNodeHasNoWhitespace(DOMText *t)
 	return (nodeText.find("		\n") == std::string::npos);
 }
 
-bool XyDOMText::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
+bool XyStrDeltaApply::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 {
 	DOMNode *replNode, *insNode, *delNode, *parent;
 	DOMText *insTextNode, *delTextNode;
@@ -533,27 +533,12 @@ bool XyDOMText::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 	return 1;
 }
 
-std::string itoa (int n)
-{	
-	char * s = new char[17];
-	std::string u;
-	
-	if (n < 0) {         //turns n positive
-		n = (-1 * n); 
-		u = "-";         //adds '-' on result string
-	}
-	
-	int i = 0;  // s counter
-	
-	do {
-		s[i++] = n % 10 + '0'; //conversion of each digit of n to char
-		n -= n % 10;           //update n value
-	} while ((n /= 10) > 0);
-	
-	for (int j = i-1; j >= 0; j--) { 
-		u += s[j];    //building our string number
-	}
-	
-	delete[] s;       //free-up the memory!
-	return u;
+void XyStrDeltaApply::setApplyAnnotations(bool paramApplyAnnotations)
+{
+	applyAnnotations = paramApplyAnnotations;
+}
+
+bool XyStrDeltaApply::getApplyAnnotations()
+{
+	return applyAnnotations;
 }
