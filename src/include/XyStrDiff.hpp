@@ -62,12 +62,14 @@ template <class T> const T& max ( const T& a, const T& b ) {
 
 class XyStrDeltaApply {
 public:
-	XyStrDeltaApply(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, bool applyAnnotations=0);
+	XyStrDeltaApply(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, int changeId=0);
 	~XyStrDeltaApply();
-	void XyStrDeltaApply::remove(int pos, int len);
-	void XyStrDeltaApply::insert(int pos, const XMLCh *ins);
-	void XyStrDeltaApply::replace(int pos, int len, const XMLCh *repl);
-	void XyStrDeltaApply::complete();
+	void removeFromNode(xercesc::DOMText *removeNode, int pos, int len);
+	void remove(int pos, int len);
+	void insert(int pos, const XMLCh *ins);
+	void replaceFromNode(xercesc::DOMText *replacedNode, int pos, int len, const XMLCh *repl);
+	void replace(int pos, int len, const XMLCh *repl);
+	void complete();
 	void setApplyAnnotations(bool paramApplyAnnotations);
 	bool getApplyAnnotations();
 private :
@@ -76,8 +78,9 @@ private :
 	xercesc::DOMText *txt;
 	std::string currentValue;
 	bool applyAnnotations;
-	bool XyStrDeltaApply::textNodeHasNoWhitespace(xercesc::DOMText *t);
-	bool XyStrDeltaApply::mergeNodes(xercesc::DOMNode *node1, xercesc::DOMNode *node2, xercesc::DOMNode *node3);
+	bool textNodeHasNoWhitespace(xercesc::DOMText *t);
+	bool mergeNodes(xercesc::DOMNode *node1, xercesc::DOMNode *node2, xercesc::DOMNode *node3);
+	int cid;
 };
 
 

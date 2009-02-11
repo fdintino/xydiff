@@ -114,7 +114,7 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	
 	DOMNodeList *opNodes = operationNode->getChildNodes();
 	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));
-	XyStrDeltaApply *xytext = new XyStrDeltaApply(xiddoc, upNode);
+	XyStrDeltaApply *xytext = new XyStrDeltaApply(xiddoc, upNode, 1);
 	xytext->setApplyAnnotations(applyAnnotations);
 	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
 		DOMNode *op = opNodes->item(i);
@@ -145,8 +145,7 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 		XMLString::release(&optype);
 	}
 	xytext->complete();
-	// upNode->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
-	}
+}
 
 
 

@@ -121,3 +121,8 @@ std::string itoa (int n)
 	delete[] s;       //free-up the memory!
 	return u;
 }
+
+int intmin(int x, int y)
+{
+	return (x < y) ? x : y;
+}

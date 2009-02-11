@@ -83,4 +83,6 @@ bool existsFile(const char *fileName);
  * Converts int to std::string
  */
 std::string itoa (int n);
+
+int intmin(int x, int y);
 #endif
