@@ -16,7 +16,7 @@
 #include <fstream>
 
 #include <sys/timeb.h>
-#include <sys/time.h>
+#include <time.h>
 
 
 /**** HEADERS ****/

@@ -38,7 +38,7 @@
 #include "infra/general/hash_map.hpp"
 
 #include <sys/timeb.h>
-#include <sys/time.h>
+#include <time.h>
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -172,8 +172,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	
 	/* ---- [[ Phase 0: ]] Read and Parse documents ---- */
 		
-	unsigned long long int start000 = rdtsc() ;
-	unsigned long long int start = rdtsc() ;
 		
 	vddprintf(("\n+++ Opening and Registration of XML Documents +++\n\n")) ;
 
@@ -194,8 +192,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	XID_DOMDocument* v1XML = new XID_DOMDocument( v1filename.c_str(), false ) ;
 	v1XML->getXidMap().initFirstAvailableXID(v0XML->getXidMap().getFirstAvailableXID());
 		
-	clocksReadDocuments += rdtsc() - start ;
-	TimeStep();
 
 	/* --- DO IT ---- */
 
@@ -207,7 +203,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	
 #ifndef DONT_SAVE_RESULT
 	vddprintf(("\n+++ Phase Inf-2: Save Result in a file +++\n\n")) ;
-	start = rdtsc() ;
 
 
 	{
@@ -264,7 +259,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	// End changes
 	}
 
-	clocksSaveDelta += rdtsc() - start ;
 #endif
 	
 	/* ---- [[ Phase Post: ]] Clean-up uses ressources ---- */
@@ -286,8 +280,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 
 	/* ---- [[ END ]] Program terminated ---- */
 
-	clocksComputeDelta += rdtsc() - start000 ;
-	TimeStep() ;
 
 #ifdef HW_PROF
 	if (verbose) {

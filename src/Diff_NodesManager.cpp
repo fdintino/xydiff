@@ -23,7 +23,7 @@
 #include "infra/general/hash_map.hpp"
 
 #include <sys/timeb.h>
-#include <sys/time.h>
+#include <time.h>
 
 #define MIN_CANDIDATEPARENT_LEVEL (3)
 
@@ -560,14 +560,12 @@ void NodesManager::topdownMatch( int v0rootID, int v1rootID ) {
 	while( toMatch.size() > 0 ) {
 
 		// get node to investigate
-		unsigned long long int localStart = rdtsc() ;
 #ifndef DISABLE_PRIORITY_FIFO	
 		int nodeID = toMatch.top() ;
 #else
 		int nodeID = toMatch.front() ;
 #endif
 		toMatch.pop();
-		clocksQueueOps += rdtsc() - localStart ;
 		
 		hash32 v1hash = v1node[nodeID].mySubtreeHash ;
 	  vddprintf(("Trying new node %d, hash=%08x\n", nodeID, (unsigned int)v1hash.value ));
@@ -589,26 +587,20 @@ void NodesManager::topdownMatch( int v0rootID, int v1rootID ) {
 				v1node[ v1rootID ].myMatchID = v0rootID ;
 				resultAssigned++ ;
 			} else {
-				unsigned long long int localStart = rdtsc() ;
 				matcher = getBestCandidate(nodeID, v1hash.value);
-				clocksGetBestCandidate += rdtsc() - localStart ;
 				}
 #if 0
 				candidatesPointer i=listOfCandidatesByHash.find(v1hash.value);
 				//if (i!=v0nodeByHash.end())
 				if (i!=listOfCandidatesByHash.end()) {
-		  		unsigned long long int localStart = rdtsc() ;
 					//matcher = getBestCandidate( v0nodeByHash.equal_range( v1hash.value ), nodeID );
 					matcher = getBestCandidate(i, nodeID, v1hash.value);
-					clocksGetBestCandidate += rdtsc() - localStart ;
 			  	}
 #endif
 			}
 			
 		if (matcher) {
-		  unsigned long long int localStart = rdtsc() ;
 			recursiveAssign( matcher, nodeID ) ;
-			clocksPropagateAssign += rdtsc() - localStart ;
 			}
 			
 		// If not found, children will have to be investigated
@@ -620,9 +612,7 @@ void NodesManager::topdownMatch( int v0rootID, int v1rootID ) {
 	
 			int childID = v1node[nodeID].firstChild ;
 			while(childID) {
-				unsigned long long int localStart = rdtsc() ;
 				toMatch.push( childID ) ;
-				clocksQueueOps += rdtsc() - localStart ;
 				childID = v1node[childID].nextSibling ;
 				}
 			}

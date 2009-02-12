@@ -14,10 +14,7 @@
 #include <fstream>
 #include <string.h>
 #include <string>
-
-#ifndef __Linux
-#include <strings.h>
-#endif
+#include <vector>
 
 XERCES_CPP_NAMESPACE_USE 
 
@@ -155,8 +152,8 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 			if (maxChars < 1) {
 				ERROR("Unexpected problem: destination buffer is full !");
 			} else {			
-				unsigned char charSizes[maxChars+1];
-				unsigned int addedThisTime = transcoder->transcodeFrom((XMLByte*)sourceBlock, (XMLSize_t)maxSourceChars, tmpResult+numberInBuf, (XMLSize_t)maxChars, (XMLSize_t&)eatenThisTime, charSizes);
+				std::vector<unsigned char> charSizes(maxChars+1);
+				unsigned int addedThisTime = transcoder->transcodeFrom((XMLByte*)sourceBlock, (XMLSize_t)maxSourceChars, tmpResult+numberInBuf, (XMLSize_t)maxChars, (XMLSize_t&)eatenThisTime, &charSizes[0]);
 				bytesEaten  += eatenThisTime ;
 				numberInBuf += addedThisTime ;
 			}

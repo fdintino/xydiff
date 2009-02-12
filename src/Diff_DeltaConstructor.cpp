@@ -49,8 +49,6 @@ DeltaConstructor::DeltaConstructor(
 		const char *to,
 		XID_DOMDocument* toXDD,
 		bool IncIgnoreUnimportantData) {
-		
-	unsigned long long int localStart = rdtsc() ;
 
 	v0XML        = fromXDD ;
 	v1XML        = toXDD ;
@@ -83,7 +81,6 @@ DeltaConstructor::DeltaConstructor(
 
 	scriptRoot = tElem ;
 	
-	clocksCDDinitDomDelta += rdtsc() - localStart ;
 	}
 
 /*****************************************************
@@ -508,7 +505,6 @@ void DeltaConstructor::constructDeltaDocument(void) {
 
 	/* ---- Clear Tables ---- */
 
-	unsigned long long int localStart = rdtsc() ;
 
 	int v0rootID = nodesManager->sourceNumberOfNodes ;
 	int v1rootID = nodesManager->resultNumberOfNodes ;
@@ -523,11 +519,9 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	vddprintf(("\nMark new tree:\n"));
 	nodesManager->MarkNewTree( v1rootID );
 		
-	clocksCDDprepareVectors += rdtsc() - localStart ;
 
 	/* ---- Save Resulting XID-map ---- */
 	
-	localStart = rdtsc() ;
 
 	DOMNode* v1rootElement = v1XML->getDocumentElement() ;
 	v1XML->getXidMap().SetRootElement( v1rootElement );
@@ -547,39 +541,31 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	tElem->getAttributes()->setNamedItem(v0XidMapNode);
 	tElem->getAttributes()->setNamedItem(v1XidMapNode);
 	
-	clocksCDDsaveXidMap += rdtsc() - localStart ;
 
 	/* ---- Compute WEAK MOVE Operations ---- */
 		
-	localStart = rdtsc() ;
 
 	vddprintf(("\nCompute children reordering move:\n"));
 	nodesManager->ComputeWeakMove( v0rootID );
 	
-	clocksCDDcomputeWeakMove += rdtsc() - localStart ;
 	
 	/* ---- Detect UPDATE Operations ---- */
 		
-	localStart = rdtsc() ;
 
 	vddprintf(("\nDetect Update operations\n"));
 	nodesManager->DetectUpdate( v0rootID );
 	
-	clocksCDDdetectUpdate += rdtsc() - localStart ;
 
 	/* ---- Add Attribute Operations ---- */
 	
-	localStart = rdtsc() ;
 
 	vddprintf(("\nAdd Attribute operations:\n"));
 	AddAttributeOperations( v1rootID );
 	
-	clocksCDDaddAttributeOps += rdtsc() - localStart ;
 	
 	/* ---- Add Delete & Insert operations to Delta ---- */
 	/* (Warning) here both DOM tree are modified during the process */
 		
-	localStart = rdtsc() ;
 
 	vddprintf(("\nConstruct 'delete' script:\n"));
 	ConstructDeleteScript( v0rootID, false );
@@ -601,7 +587,6 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	
 	/* --- Done --- */
 
-	clocksConstructDOMDelta += rdtsc() - localStart ;
 	
 	return ;
   }

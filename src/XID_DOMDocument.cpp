@@ -488,7 +488,7 @@ DOMConfiguration * XID_DOMDocument::getDOMConfig() const
 	return theDocument->getDOMConfig();
 }
 
-DOMElement * XID_DOMDocument::createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, XMLFileLoc fileLoc1, XMLFileLoc fileLoc2)
+DOMElement * XID_DOMDocument::createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, const XMLFileLoc fileLoc1, const XMLFileLoc fileLoc2)
 {
 	return theDocument->createElementNS(element, xmlNameSpace, fileLoc1, fileLoc2);
 }

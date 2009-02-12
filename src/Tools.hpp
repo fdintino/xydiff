@@ -48,23 +48,6 @@ int getPosition(xercesc::DOMNode *parent, xercesc::DOMNode *child) ;
 
 bool isDelta(const xercesc::DOMDocument *doc) ;
 
-/* Pentium Internal Timer */
-
-/* --- Pentium ONLY ---
- *                      
- * This function execute pentium operation RDTSC and gives the number of CPU clocks since last reboot
- * I guess this should be precise enough for profiling
- *
- */
-
-extern __inline__ unsigned long long int rdtsc() {
-	unsigned long long int x;
-	//__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
-	x= 0;
-	return x;
-	}
-
-
 /* 
  * it transforms a DOMString into an int; if it's error returns 0 
  * problem: how to know if 0 means error code or a valid value ???

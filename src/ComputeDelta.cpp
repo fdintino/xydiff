@@ -27,7 +27,7 @@
 #include "infra/general/hash_map.hpp"
 
 #include <sys/timeb.h>
-#include <sys/time.h>
+#include <time.h>
 
 //class DTDValidator;
 
@@ -120,7 +120,6 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 	class NodesManager xyMappingEngine;
 		
 	vddprintf(("\n+++ Phase 1: Compute signature and weight for subtrees on both documents +++\n\n")) ;
-	unsigned long long start = rdtsc() ;
 		
 	xyMappingEngine.setUniqueIdHandler( &myUniqueIdHandler );
 	TRACE("PHASE 1: Register version 1");
@@ -130,14 +129,10 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 		
 	int v0rootID = xyMappingEngine.sourceNumberOfNodes ;
 	int v1rootID = xyMappingEngine.resultNumberOfNodes ;
-		
-	clocksRegisterSubtree += rdtsc() - start ;
-	TimeStep();
-	
+			
 	/* ---- [[ Phase 2: ]] Apply Bottom-Up Lazy-Down Algorithm ---- */
 		
 	vddprintf(("\n+++ Phase 2: Apply BULD (Bottom-Up Lazy Down) matching algorithm starting from heaviest subtrees +++\n\n")) ;
-	start = rdtsc() ;
 		
 	TRACE("PHASE 2: Match by ID-Attributes");
 	vddprintf(("Match node which have ID attributes\n")) ;
@@ -151,7 +146,6 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 	vddprintf(("Top-down matching on new document\n")) ;
 	xyMappingEngine.topdownMatch( v0rootID, v1rootID );
 		
-	clocksTopDownMatch += rdtsc() - start ;
 	vddprintf(("\nAlgorithm Finished OK\n\n")) ;
 		
 	if (verbose) xyMappingEngine.PrintStats();
@@ -164,9 +158,7 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 	vddprintf(("\nskipping\n")) ;
 
 	TRACE("PHASE 3: Optimize matchings");
-	start = rdtsc() ;
 	xyMappingEngine.Optimize( v0rootID );
-	clocksOptimize += rdtsc() - start ;
 	
 #if 0
 	TimeStep();
@@ -178,15 +170,12 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 		
 	TimeStep();
 	vddprintf(("\n+++ Phase 4: Construct the Delta +++\n\n")) ;
-	start = rdtsc() ;
 		
 	TRACE("PHASE 4: Construct result delta");
 
 	class DeltaConstructor myDeltaConstructor(&xyMappingEngine, doc1name, v0XML, doc2name, v1XML, ignoreSpacesFlag) ;
 	myDeltaConstructor.constructDeltaDocument() ;
 		
-	clocksConstructDeltaDocument += rdtsc() - start ;
-
 	TRACE("PHASE 4: Return result delta");
 
 	return myDeltaConstructor.getDeltaDocument();

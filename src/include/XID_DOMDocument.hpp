@@ -98,7 +98,7 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		const XMLCh * getXmlVersion() const;
 		void setXmlVersion(const XMLCh *version);
 		xercesc::DOMConfiguration * getDOMConfig() const;
-		xercesc::DOMElement * createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, XMLFileLoc fileLoc1, XMLFileLoc fileLoc2);
+		xercesc::DOMElement * createElementNS(const XMLCh *element, const XMLCh *xmlNameSpace, const XMLFileLoc fileLoc1, const XMLFileLoc fileLoc2);
 		xercesc::DOMRange * createRange();
 		xercesc::DOMElement * createElement(const XMLCh *tagName);
 		xercesc::DOMDocumentFragment * createDocumentFragment();
