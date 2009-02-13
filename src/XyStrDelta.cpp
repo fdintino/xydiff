@@ -43,7 +43,9 @@
 
 XERCES_CPP_NAMESPACE_USE 
 
-XyStrDelta::OperationType XyStrDelta::getOperationType(DOMNode *node)
+using namespace XyStrDelta;
+
+XyStrOperationType XyStrDeltaApply::getOperationType(DOMNode *node)
 {
 	if ( XMLString::equals(node->getNodeName(),
 						   XMLString::transcode("xy:d")) ) {
@@ -120,20 +122,21 @@ void XyStrDeltaApply::remove(int startpos, int len)
 	currentNode = walker->firstChild();
 	do { // while (currentNode = walker->nextNode())
 		const XMLCh *currentNodeValue = currentNode->getNodeValue();
-		parentNode = (DOMElement *)currentNode->getParentNode();
-		
 		int currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
-		
+
+		parentNode = (DOMElement *)currentNode->getParentNode();
+
 		// Reached end of the loop
 		if (curpos > endpos) {
 			break;
 		}
-		
+
 		// If we haven't hit the start of the change, keep going.
 		if (curpos + currNodeValueStrLen <= startpos) {
 			curpos += currNodeValueStrLen;
 			continue;
 		}
+
 		// Since we're not normalizing the document at every step, empty text
 		// nodes will show up. We just remove them and move on.
 		if (currNodeValueStrLen == 0) {
@@ -143,16 +146,16 @@ void XyStrDeltaApply::remove(int startpos, int len)
 		}
 		
 		int startIndex = max(0, startpos - curpos);
-		int endIndex   = min( curpos + currNodeValueStrLen,  endpos ) - curpos;	
+		int endIndex   = min( currNodeValueStrLen,  endpos - curpos ) ;	
 		
 		// If the entire <xy:i> tag needs to be removed
 		if (startIndex == 0 && endIndex == currNodeValueStrLen) {
 			// This keeps the DOMTreeWalker from going haywire after our changes to the structure
 			walker->previousNode();
 			
-			switch( XyStrDelta::getOperationType(parentNode) ) {
+			switch( getOperationType(parentNode) ) {
 				// If under a <xy:r> tag, we need to move the <xy:d> tag up one level and delete the <xy:r>
-				case XyStrDelta::XYDIFF_TXT_REPL_INS:
+				case XYDIFF_TXT_REPL_INS:
 					replNode = (DOMElement *) parentNode->getParentNode();
 					// We move the <xy:d> element up one level, then delete the <xy:r> node
 					delNode = (DOMElement *) replNode->removeChild( replNode->getFirstChild() );
@@ -162,7 +165,7 @@ void XyStrDeltaApply::remove(int startpos, int len)
 					break;
 					
 				// <xy:i> tag by itself, we can just remove it
-				case XyStrDelta::XYDIFF_TXT_INS:
+				case XYDIFF_TXT_INS:
 					//parentNode = (DOMElement *)currentNode->getParentNode();
 					node->removeChild(parentNode);
 					doc->getXidMap().removeNode(parentNode);     // Remove <xy:i> from xidmap
@@ -170,10 +173,10 @@ void XyStrDeltaApply::remove(int startpos, int len)
 			}
 		
 		} else {
-			switch( XyStrDelta::getOperationType(parentNode) ) {
+			switch( getOperationType(parentNode) ) {
 				// Only a substring of the <xy:i> text needs to be removed
-				case XyStrDelta::XYDIFF_TXT_REPL_INS:
-				case XyStrDelta::XYDIFF_TXT_INS:
+				case XYDIFF_TXT_REPL_INS:
+				case XYDIFF_TXT_INS:
 					// Anything that had been inserted and then subsequently deleted in another
 					// change can just be removed, since we're only interested in annotating
 					// text that was changed from the first diffed revision
@@ -188,7 +191,7 @@ void XyStrDeltaApply::remove(int startpos, int len)
 					XMLString::release(&replaceString);
 				break;
 				
-				case XyStrDelta::XYDIFF_TXT_NOOP:
+				case XYDIFF_TXT_NOOP:
 					removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex);
 				break;
 			}

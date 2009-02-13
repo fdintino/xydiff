@@ -24,9 +24,9 @@
 
 #include <map>
 
-class XyStrDelta {
-public:
-	enum OperationType {
+namespace XyStrDelta {
+
+	enum XyStrOperationType {
 		XYDIFF_TXT_NOOP     = 0,
 		XYDIFF_TXT_INS      = 1,
 		XYDIFF_TXT_DEL      = 2,
@@ -34,7 +34,6 @@ public:
 		XYDIFF_TXT_REPL_INS = 4,
 		XYDIFF_TXT_REPL_DEL = 5
 	};
-	static OperationType getOperationType(xercesc::DOMNode *node);
 };
 
 typedef std::vector<xercesc::DOMNode *> domnode_vec_t;
@@ -61,8 +60,9 @@ public:
 	void complete();
 	void setApplyAnnotations(bool paramApplyAnnotations);
 	bool getApplyAnnotations();
+	XyStrDelta::XyStrOperationType getOperationType(xercesc::DOMNode *node);
 
-	private :
+private :
 	XID_DOMDocument *doc;
 	xercesc::DOMNode *node;
 	xercesc::DOMText *txt;
