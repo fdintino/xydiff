@@ -1,6 +1,13 @@
 #ifndef _CONVERTUTF_H_
 #define _CONVERTUTF_H_
 
+#if defined(_WIN32) || defined(_WIN64)
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#endif
+
 #include <string>
 
 /** the conversions methods below don't handle BOM (there must be no BOM).
