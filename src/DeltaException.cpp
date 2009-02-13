@@ -4,8 +4,7 @@
 
 #include "DeltaException.hpp"
 #include <errno.h>
-#include<time.h>
-#include<time.h>
+
 #include <stdarg.h>
 
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)

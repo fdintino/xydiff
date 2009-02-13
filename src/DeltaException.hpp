@@ -14,6 +14,12 @@
 #define strncasecmp _strnicmp
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#include<time.h>
+#else
+#include<sys/time.h>
+#endif
+
 class DeltaException {
 	public:
 		DeltaException(std::string msg) {
