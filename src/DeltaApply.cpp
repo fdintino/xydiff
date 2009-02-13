@@ -145,6 +145,15 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 		XMLString::release(&optype);
 	}
 	xytext->complete();
+//	printf("upNode (<%s>) = %s\n",
+//		   XMLString::transcode(upNode->getNodeName()),
+//		   XMLString::transcode(upNode->getNodeValue()));
+//	XyStrDeltaApply *xytext2 = new XyStrDeltaApply(xiddoc, upNode, 2);
+//	xytext2->setApplyAnnotations(applyAnnotations);
+//	xytext2->remove(2,3);
+//	xytext2->insert(3, XMLString::transcode("test"));
+	//xytext2->complete();
+	
 }
 
 
