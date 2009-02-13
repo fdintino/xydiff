@@ -67,5 +67,12 @@ bool existsFile(const char *fileName);
  */
 std::string itoa (int n);
 
-int intmin(int x, int y);
+template <class T> const T& max ( const T& a, const T& b ) {
+	return (b<a)?a:b;     // or: return comp(b,a)?a:b; for the comp version
+}
+
+template <class T> const T& min ( const T& a, const T& b ) {
+	return (a<b)?a:b;     // or: return comp(b,a)?a:b; for the comp version
+}
+
 #endif

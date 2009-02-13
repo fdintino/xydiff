@@ -15,6 +15,7 @@
 #include "include/XyInt.hpp"
 #include "include/XyDelta_DOMInterface.hpp"
 #include "include/XyStrDiff.hpp"
+#include "include/XyStrDelta.hpp"
 
 #include "Tools.hpp"
 #include "include/XID_map.hpp"
