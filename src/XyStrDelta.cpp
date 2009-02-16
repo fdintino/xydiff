@@ -120,6 +120,7 @@ void XyStrDeltaApply::remove(int startpos, int len)
 	int endpos = startpos + len;
 
 	currentNode = walker->firstChild();
+	if (currentNode == NULL) return;
 	do { // while (currentNode = walker->nextNode())
 		const XMLCh *currentNodeValue = currentNode->getNodeValue();
 		int currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
@@ -144,11 +145,21 @@ void XyStrDeltaApply::remove(int startpos, int len)
 			parentNode->removeChild(currentNode);
 			continue;
 		}
-		
+
+
+
 		int startIndex = max(0, startpos - curpos);
 		int endIndex   = min( currNodeValueStrLen,  endpos - curpos ) ;	
-		
-		// If the entire <xy:i> tag needs to be removed
+
+		// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
+		// text node, so we simply insert a regular <xy:d> tag around the removed text
+		if ( getOperationType(parentNode) == XYDIFF_TXT_NOOP ) {
+			removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex);
+			curpos += currNodeValueStrLen;
+			continue;
+		}
+
+		// If the entire element needs to be removed
 		if (startIndex == 0 && endIndex == currNodeValueStrLen) {
 			// This keeps the DOMTreeWalker from going haywire after our changes to the structure
 			walker->previousNode();
@@ -162,14 +173,13 @@ void XyStrDeltaApply::remove(int startpos, int len)
 					node->insertBefore(delNode, replNode);
 					node->removeChild(replNode);
 					doc->getXidMap().removeNode(replNode);
-					break;
+				break;
 					
 				// <xy:i> tag by itself, we can just remove it
 				case XYDIFF_TXT_INS:
-					//parentNode = (DOMElement *)currentNode->getParentNode();
 					node->removeChild(parentNode);
 					doc->getXidMap().removeNode(parentNode);     // Remove <xy:i> from xidmap
-					break;
+				break;
 			}
 		
 		} else {
@@ -189,10 +199,6 @@ void XyStrDeltaApply::remove(int startpos, int len)
 					// Free up memory
 					XMLString::release(&endString);
 					XMLString::release(&replaceString);
-				break;
-				
-				case XYDIFF_TXT_NOOP:
-					removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex);
 				break;
 			}
 
