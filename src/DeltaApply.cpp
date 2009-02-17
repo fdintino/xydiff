@@ -145,7 +145,7 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 		}
 		XMLString::release(&optype);
 	}
-	xytext->complete();	
+	xytext->complete();
 }
 
 

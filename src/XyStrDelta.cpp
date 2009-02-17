@@ -74,6 +74,15 @@ XyStrOperationType XyStrDeltaApply::getOperationType(DOMNode *node)
 	}
 }
 
+DOMNodeFilter::FilterAction FilterIfEmptyTextNode::acceptNode(const DOMNode *node) const {
+	if ( node->getNodeType() == DOMNode::TEXT_NODE ) {
+		if ( XMLString::stringLen(node->getNodeValue()) == 0 ) {
+			return DOMNodeFilter::FILTER_ACCEPT;
+		}
+	}
+	return DOMNodeFilter::FILTER_SKIP;
+}
+
 
 DOMNodeFilter::FilterAction FilterIfParentIsDelete::acceptNode(const DOMNode *node) const {
 	if ( node->getNodeType() == DOMNode::TEXT_NODE ) {
@@ -153,43 +162,23 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 
 		int startIndex = max(0, startpos - curpos);
 		int endIndex   = min( currNodeValueStrLen,  endpos - curpos ) ;	
+		
+		switch( getOperationType(parentNode) ) {
+			// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
+			// text node, so we simply insert a regular <xy:d> tag around the removed text
+			case XYDIFF_TXT_NOOP:
+				removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex, isReplaceOperation);
+			break;
 
-		// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
-		// text node, so we simply insert a regular <xy:d> tag around the removed text
-		if ( getOperationType(parentNode) == XYDIFF_TXT_NOOP ) {
-			removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex, isReplaceOperation);
-			curpos += currNodeValueStrLen;
-			continue;
-		}
-
-		// If the entire element needs to be removed
-		if (startIndex == 0 && endIndex == currNodeValueStrLen) {
-			// This keeps the DOMTreeWalker from going haywire after our changes to the structure
-			walker->previousNode();
-			
-			switch( getOperationType(parentNode) ) {
-				// If under a <xy:r> tag, we need to move the <xy:d> tag up one level and delete the <xy:r>
-				case XYDIFF_TXT_REPL_INS:
-					replNode = (DOMElement *) parentNode->getParentNode();
-					// We move the <xy:d> element up one level, then delete the <xy:r> node
-					delNode = (DOMElement *) replNode->removeChild( replNode->getFirstChild() );
-					node->insertBefore(delNode, replNode);
-					node->removeChild(replNode);
-					doc->getXidMap().removeNode(replNode);
-				break;
-					
-				// <xy:i> tag by itself, we can just remove it
-				case XYDIFF_TXT_INS:
+			// Only a substring of the <xy:i> text needs to be removed
+			case XYDIFF_TXT_INS:
+				// If the entire element needs to be removed
+				if (startIndex == 0 && endIndex == currNodeValueStrLen) {
+					// This keeps the DOMTreeWalker from going haywire after our changes to the structure
+					walker->previousNode();
 					node->removeChild(parentNode);
 					doc->getXidMap().removeNode(parentNode);     // Remove <xy:i> from xidmap
-				break;
-			}
-		
-		} else {
-			switch( getOperationType(parentNode) ) {
-				// Only a substring of the <xy:i> text needs to be removed
-				case XYDIFF_TXT_REPL_INS:
-				case XYDIFF_TXT_INS:
+				} else {
 					// Anything that had been inserted and then subsequently deleted in another
 					// change can just be removed, since we're only interested in annotating
 					// text that was changed from the first diffed revision
@@ -199,13 +188,12 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 					XMLString::subString(endString, currentNodeValue, endIndex, currNodeValueStrLen);
 					XMLString::catString(replaceString, endString);
 					currentNode->setNodeValue( replaceString );
-
+					
 					// Free up memory
 					XMLString::release(&endString);
 					XMLString::release(&replaceString);
-				break;
-			}
-
+				}
+			break;
 		}
 		curpos += currNodeValueStrLen;
 	} while (currentNode = walker->nextNode());
@@ -269,39 +257,18 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 		// nodes will show up. We just remove them and move on.
 
 		// If we haven't hit the start of the change, keep going.
-		if (startpos == currNodeValueStrLen && curpos == 0) {
-//			
-		}
+		if (startpos == currNodeValueStrLen && curpos == 0) { }
 		else
 		if (curpos + currNodeValueStrLen <= startpos) {
 			curpos += currNodeValueStrLen;
 			continue;
 		}
 		if (currNodeValueStrLen == 0) {
-			//walker->previousNode();
-			//if (parentNode != NULL) {
-//				parentNode->removeChild(currentNode);
-//			}
-			//parentNode->removeChild(currentNode);
 			continue;
 		}
 		
 		int startIndex = max(0, startpos - curpos);
 		switch( getOperationType(parentNode) ) {
-			case XYDIFF_TXT_REPL_INS:
-				// If under a <xy:r> tag, we need to move the <xy:d> tag up one level and delete the <xy:r>
-				if (startIndex == 0) {
-					insertIntoNode(parentNode->getParentNode(), startIndex, ins);
-				} else {
-					// Split into two insert nodes at insertion point
-					DOMNode *newInsNode = parentNode->cloneNode(false);
-					DOMNode *endCurrentNode = ((DOMText *)currentNode)->splitText(startIndex);
-					parentNode->removeChild(endCurrentNode);
-					newInsNode->appendChild(endCurrentNode);
-				}
-				// Only a substring of the <xy:i> text needs to be removed				
-			break;
-
 			case XYDIFF_TXT_INS:
 				if (startIndex == 0) {
 					insertIntoNode(parentNode, startIndex, ins);
@@ -323,7 +290,7 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 				
 			break;
 		}
-					return;
+		return;
 		curpos += currNodeValueStrLen;
 	} while (currentNode = walker->nextNode());
 }
@@ -386,14 +353,27 @@ void XyStrDeltaApply::complete()
 	// we end up with a situation where there are multiple edits in a single word, which can look
 	// confusing and isn't particularly helpful. Here we search for replace, insert, or delete operations
 	// that surround a text node with no whitespace, and then merge the three into a single replace operation.
+//	
+//	DOMNodeFilter *filter = new FilterIfEmptyTextNode();
+//	DOMTreeWalker *walker = doc->createTreeWalker(node, DOMNodeFilter::SHOW_ALL, filter, true);
+//	DOMNode *emptyTextNode = walker->firstChild();
+//	do {
+//		if (emptyTextNode == NULL) break;
+//		DOMNode *emptyTextParentNode = emptyTextNode->getParentNode();
+//		if (emptyTextParentNode != NULL) {
+//			emptyTextParentNode->removeChild(emptyTextNode);
+//			break;
+//		}
+//	} while( emptyTextNode = walker->nextNode() );
+	node->normalize();
 	DOMNodeList *childNodes = node->getChildNodes();
-	
 	for (int i = 0; i < childNodes->getLength(); i++) {
 		DOMNode *node1 = childNodes->item(i);
 		if (node1 == NULL) break;
 		if (node1->getNodeType() == DOMNode::ELEMENT_NODE) {
 			DOMNode *node2 = node1->getNextSibling();
 			if (node2 == NULL) break;
+			
 			DOMNode *node3 = node2->getNextSibling();
 			if (node3 == NULL) break;
 			if (node3->getNodeType() != DOMNode::ELEMENT_NODE) {
@@ -406,9 +386,32 @@ void XyStrDeltaApply::complete()
 				// Move the increment back to retest our new node to see if it
 				// can be merged in the same way with the nodes that follow it
 				i--;
+				continue;
 			}
 		}
 	}
+//	for (int i = 0; i < childNodes->getLength(); i++) {
+//		DOMNode *node1 = childNodes->item(i);
+//		if (node1 == NULL) break;
+//		if (node1->getNodeType() == DOMNode::ELEMENT_NODE) {
+//			DOMNode *node2 = node1->getNextSibling();
+//			if (node2 == NULL) break;
+//			
+//			DOMNode *node3 = node2->getNextSibling();
+//			if (node3 == NULL) break;
+//			if (node3->getNodeType() != DOMNode::ELEMENT_NODE) {
+//				continue;
+//			}
+//			if (node2->getNodeType() == DOMNode::ELEMENT_NODE || !textNodeHasNoWhitespace((DOMText *)node2)) {
+//				continue;
+//			}
+//			if (mergeNodes(node1, node2, node3)) {
+//				// Move the increment back to retest our new node to see if it
+//				// can be merged in the same way with the nodes that follow it
+//				i--;
+//			}
+//		}
+//	}
 
 	// Second go-around we see if adjacent operation nodes can be merged (ie ones that don't have
 	// any text nodes between them, for instance two adjacent xy:i tags with matching changeIds
@@ -488,10 +491,9 @@ bool XyStrDeltaApply::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 	if (node2->getNodeType() == DOMNode::ELEMENT_NODE) {
 		return false;
 	}
-	if (XMLString::stringLen(node2->getNodeValue()) == 0) {
-		
-		return false;
-	}
+//	if (XMLString::stringLen(node2->getNodeValue()) == 0) {
+//		return false;
+//	}
 	switch ( getOperationType(node1) ) {
 		case XYDIFF_TXT_REPL:
 			if (!node1->hasChildNodes()) return false;
@@ -508,11 +510,6 @@ bool XyStrDeltaApply::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 	instext += XMLString::transcode( node2->getNodeValue() );
 	deltext += XMLString::transcode( node2->getNodeValue() );
 	switch ( getOperationType(node3) ) {
-		case XYDIFF_TXT_REPL:
-			if (!node3->hasChildNodes()) return false;
-			instext += XMLString::transcode( node3->getChildNodes()->item(0)->getFirstChild()->getNodeValue() );
-			deltext += XMLString::transcode( node3->getChildNodes()->item(1)->getFirstChild()->getNodeValue() );
-			break;
 		case XYDIFF_TXT_DEL:
 			deltext += XMLString::transcode( node3->getFirstChild()->getNodeValue() );
 			break;

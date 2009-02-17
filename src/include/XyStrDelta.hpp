@@ -46,7 +46,13 @@ private:
 	bool fReject;
 };
 
-
+class FilterIfEmptyTextNode : public xercesc::DOMNodeFilter {
+public:
+	FilterIfEmptyTextNode(bool reject=false) : xercesc::DOMNodeFilter(), fReject(reject) {};
+	xercesc::DOMNodeFilter::FilterAction acceptNode(const xercesc::DOMNode *node) const;
+private:
+	bool fReject;
+};
 class XyStrDeltaApply {
 public:
 	XyStrDeltaApply(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, int changeId=0);
