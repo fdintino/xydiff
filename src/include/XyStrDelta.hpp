@@ -70,6 +70,7 @@ private :
 	bool applyAnnotations;
 	bool textNodeHasNoWhitespace(xercesc::DOMText *t);
 	bool mergeNodes(xercesc::DOMNode *node1, xercesc::DOMNode *node2, xercesc::DOMNode *node3);
+	bool mergeTwoNodes(xercesc::DOMElement *node1, xercesc::DOMElement *node2);
 	int cid;
 	domnode_vec_t removedNodeVector;
 	domnode_vec_t addedNodeVector;

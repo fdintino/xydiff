@@ -85,6 +85,12 @@ int watoi(const XMLCh* str) {
 	return intValue;
 }
 
+const XMLCh * witoa(int intValue)
+{
+	const XMLCh *str = XMLString::transcode( itoa(intValue).c_str() );
+	return str;
+}
+
 /*
  * tells if a certain file exists or not 
  */
