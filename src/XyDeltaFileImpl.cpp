@@ -86,10 +86,10 @@ void XyDelta::ApplyDelta(const char *incDeltaName, const char *incSourceName, co
         std::cout << "destinationName " << destinationName << std::endl;
 
 	FILE *f=fopen(destinationName.c_str(), "r");
-	if (f!=NULL) {
-		fclose(f);
-		THROW_AWAY(("destination file <%s> already exists",destinationName.c_str()));
-		}
+//	if (f!=NULL) {
+//		fclose(f);
+//		THROW_AWAY(("destination file <%s> already exists",destinationName.c_str()));
+//		}
 		
 	vddprintf(("Opening source file: %s\n",sourceName.c_str() ));
 	XID_DOMDocument* sourceXML = new XID_DOMDocument(sourceName.c_str()) ;

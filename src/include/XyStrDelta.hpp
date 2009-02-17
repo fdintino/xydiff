@@ -51,10 +51,10 @@ class XyStrDeltaApply {
 public:
 	XyStrDeltaApply(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, int changeId=0);
 	~XyStrDeltaApply();
-	void removeFromNode(xercesc::DOMText *removeNode, int pos, int len);
-	void remove(int startpos, int len);
-	void insert(int startpos, const XMLCh *ins);
-	void insertIntoNode(xercesc::DOMNode *insertNode, int pos, const XMLCh *ins);
+	void removeFromNode(xercesc::DOMText *removeNode, int pos, int len, bool isReplaceOperation=false);
+	void remove(int startpos, int len, bool isReplaceOperation=false);
+	void insert(int startpos, const XMLCh *ins, bool isReplaceOperation=false);
+	void insertIntoNode(xercesc::DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation=false);
 	void replaceFromNode(xercesc::DOMText *replacedNode, int pos, int len, const XMLCh *repl);
 	void replace(int pos, int len, const XMLCh *repl);
 	void complete();

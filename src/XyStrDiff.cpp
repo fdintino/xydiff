@@ -236,7 +236,7 @@ void XyStrDiff::flushBuffers()
 		delbuf = "";
 		insbuf = "";
 	} else if (currop == STRDIFF_INS) {
-		startpos = xpos - 1;
+		startpos = xpos;
 		debugstr.append("<ti pos=\"" + itoa(startpos) + "\">"+insbuf+"</i>\n");
 		
 		try {

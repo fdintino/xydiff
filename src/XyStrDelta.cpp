@@ -76,6 +76,11 @@ XyStrOperationType XyStrDeltaApply::getOperationType(DOMNode *node)
 
 
 DOMNodeFilter::FilterAction FilterIfParentIsDelete::acceptNode(const DOMNode *node) const {
+	if ( node->getNodeType() == DOMNode::TEXT_NODE ) {
+		if ( XMLString::stringLen(node->getNodeValue()) == 0 ) {
+			return DOMNodeFilter::FILTER_SKIP;
+		}
+	}
 	if ( XMLString::equals(
 						   node->getParentNode()->getNodeName(),
 						   XMLString::transcode("xy:d")) ) {
@@ -105,7 +110,7 @@ XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, int cha
 }
 
 
-void XyStrDeltaApply::remove(int startpos, int len)
+void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 {
 	DOMTreeWalker *walker;
 	DOMNode *currentNode;
@@ -146,15 +151,13 @@ void XyStrDeltaApply::remove(int startpos, int len)
 			continue;
 		}
 
-
-
 		int startIndex = max(0, startpos - curpos);
 		int endIndex   = min( currNodeValueStrLen,  endpos - curpos ) ;	
 
 		// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
 		// text node, so we simply insert a regular <xy:d> tag around the removed text
 		if ( getOperationType(parentNode) == XYDIFF_TXT_NOOP ) {
-			removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex);
+			removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex, isReplaceOperation);
 			curpos += currNodeValueStrLen;
 			continue;
 		}
@@ -196,6 +199,7 @@ void XyStrDeltaApply::remove(int startpos, int len)
 					XMLString::subString(endString, currentNodeValue, endIndex, currNodeValueStrLen);
 					XMLString::catString(replaceString, endString);
 					currentNode->setNodeValue( replaceString );
+
 					// Free up memory
 					XMLString::release(&endString);
 					XMLString::release(&replaceString);
@@ -207,7 +211,7 @@ void XyStrDeltaApply::remove(int startpos, int len)
 	} while (currentNode = walker->nextNode());
 }
 
-void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len)
+void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
 		currentValue.erase(pos, len);
@@ -215,40 +219,29 @@ void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len)
 	}
 	DOMText *deletedText;
 	DOMText *endText;
-	DOMNode *nextNode;
+	DOMElement *delNode;
 	
-	endText = removeNode->splitText(pos+len);
-	if (pos == 0) {
-		nextNode = removeNode->getNextSibling();
-		deletedText = (DOMText *)node->removeChild((DOMNode *)removeNode);
-		doc->getXidMap().removeNode(removeNode);
-	} else {
-		deletedText = removeNode->splitText(pos);
-		nextNode = removeNode->getNextSibling();
-	}
-	
-	if (nextNode == NULL) {
-		node->appendChild(endText);
-	} else {
-		node->insertBefore((DOMNode *)endText, nextNode);
-	}
-	
-	doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
-	
-	DOMElement *delNode = doc->createElement(XMLString::transcode("xy:d"));
-	delNode->setAttribute(XMLString::transcode("cid"),
-						  XMLString::transcode( itoa(this->cid).c_str() ) );
-	node->insertBefore(delNode, endText);
-	
-	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
-	
+	endText     = removeNode->splitText(pos+len);
+	deletedText = removeNode->splitText(pos);
+
+	node->insertBefore(endText, removeNode->getNextSibling());
+
+	delNode = doc->createElement(XMLString::transcode("xy:d"));
+	delNode->setAttribute(XMLString::transcode("cid"), witoa(cid) );
 	delNode->appendChild(deletedText);
-	doc->getXidMap().registerNode(deletedText, doc->getXidMap().allocateNewXID());
+	if (isReplaceOperation) {
+		((DOMElement *)delNode)->setAttribute(XMLString::transcode("repl"),
+											  XMLString::transcode("yes") );
+	}
+	node->insertBefore(delNode, endText);
+
+	doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
+	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
+	doc->getXidMap().registerNode(deletedText, doc->getXidMap().allocateNewXID());	
 }
 
-void XyStrDeltaApply::insert(int startpos, const XMLCh *ins)
+void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOperation)
 {
-	int len = 0;
 	DOMTreeWalker *walker;
 	DOMNode *currentNode;
 	DOMElement *parentNode;
@@ -259,7 +252,6 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins)
 	walker = doc->createTreeWalker(node, DOMNodeFilter::SHOW_TEXT, filter, true);
 	
 	int curpos = 0;
-	int endpos = startpos + len;
 
 	currentNode = walker->firstChild();
 	if (currentNode == NULL) return;
@@ -268,26 +260,29 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins)
 		int currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
 
 		parentNode = (DOMElement *)currentNode->getParentNode();
-		printf("text=%s, currNodeValueStrLen=%d, curpos=%d, endpos=%d, startpos=%d, parent=%s\n",
-			   XMLString::transcode(currentNodeValue),
-			   currNodeValueStrLen, curpos, endpos, startpos,
-			   XMLString::transcode(parentNode->getNodeName()));
 		
 		// Reached end of the loop
-		if (curpos > endpos) {
+		if (curpos > startpos) {
 			break;
-		}
-		// If we haven't hit the start of the change, keep going.
-		if (curpos + currNodeValueStrLen <= startpos) {
-			printf("curpos+currNodeValueStrLen <= startpos\n");
-			curpos += currNodeValueStrLen;
-			continue;
 		}
 		// Since we're not normalizing the document at every step, empty text
 		// nodes will show up. We just remove them and move on.
+
+		// If we haven't hit the start of the change, keep going.
+		if (startpos == currNodeValueStrLen && curpos == 0) {
+//			
+		}
+		else
+		if (curpos + currNodeValueStrLen <= startpos) {
+			curpos += currNodeValueStrLen;
+			continue;
+		}
 		if (currNodeValueStrLen == 0) {
-			walker->previousNode();
-			parentNode->removeChild(currentNode);
+			//walker->previousNode();
+			//if (parentNode != NULL) {
+//				parentNode->removeChild(currentNode);
+//			}
+			//parentNode->removeChild(currentNode);
 			continue;
 		}
 		
@@ -311,20 +306,29 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins)
 				if (startIndex == 0) {
 					insertIntoNode(parentNode, startIndex, ins);
 				} else {
-					std::cout << "ELSE\n" << std::endl;
+					// Split into two insert nodes at insertion point
+					DOMNode *newInsNode = parentNode->cloneNode(false);
+					DOMNode *endCurrentNode = ((DOMText *)currentNode)->splitText(startIndex);
+					//parentNode->removeChild(endCurrentNode);
+					newInsNode->appendChild( endCurrentNode );
+					node->insertBefore( newInsNode, parentNode->getNextSibling() );
+					doc->getXidMap().registerNode(newInsNode, doc->getXidMap().allocateNewXID());
+					doc->getXidMap().registerNode(endCurrentNode, doc->getXidMap().allocateNewXID());
+					insertIntoNode(newInsNode, 0, ins, isReplaceOperation);
 				}				
 			break;
 
 			case XYDIFF_TXT_NOOP:
-				printf("insertIntoNode(currentNode, %d, %d)\n", startIndex, ins);
-				insertIntoNode(currentNode, startIndex, ins);
+				insertIntoNode(currentNode, startIndex, ins, isReplaceOperation);
+				
 			break;
 		}
+					return;
 		curpos += currNodeValueStrLen;
 	} while (currentNode = walker->nextNode());
 }
 
-void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *ins)
+void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
 		std::string insString( XMLString::transcode(ins) );
@@ -334,92 +338,36 @@ void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *
 	DOMNode *insNode;
 	DOMText *insText;
 	DOMNode *endText;
-	
+	DOMNode *parentNode;
+	parentNode = insertNode->getParentNode();
 	insNode = doc->createElement(XMLString::transcode("xy:i"));
-	XMLCh *changeIdAttr = XMLString::transcode( itoa(this->cid).c_str() );
-	((DOMElement *)insNode)->setAttribute( XMLString::transcode("cid"), changeIdAttr );
-	
+	((DOMElement *)insNode)->setAttribute( XMLString::transcode("cid"), witoa(this->cid) );
+
 	if (pos == 0) {
-		node->insertBefore(insNode, insertNode);
-		printf("inserting before insertNode=%s with content=%s\n", XMLString::transcode(insertNode->getNodeName()), XMLString::transcode(ins));
+		parentNode->insertBefore(insNode, insertNode);
 		doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
 	} else {
 		endText = ((DOMText *)insertNode)->splitText(pos);
 		node->insertBefore(insNode, insertNode->getNextSibling());
-		doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
 		node->insertBefore(endText, insNode->getNextSibling());
+		doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
 		doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
 	}
 	
 	insText = doc->createTextNode(ins);
 	insNode->appendChild(insText);
+
+	if (isReplaceOperation) {
+		((DOMElement *)insNode)->setAttribute(XMLString::transcode("repl"),
+							  XMLString::transcode("yes") );
+	}
 	doc->getXidMap().registerNode(insText, doc->getXidMap().allocateNewXID());
 }
 
 void XyStrDeltaApply::replace(int pos, int len, const XMLCh *repl)
 {
-	if (!applyAnnotations) {
-		std::string replString( XMLString::transcode(repl) );
-		currentValue.replace(pos, len, replString);
-		return;
-	}
-	
-	DOMText *replacedText;
-	DOMText *endText;
-	DOMNode *nextNode;
-
-	vddprintf(("pos=%d, len=%d, repl=(%s)\n", pos, len, XMLString::transcode(repl)));
-	endText = txt->splitText(pos+len);
-	
-	replacedText = txt->splitText(pos);
-	nextNode = txt->getNextSibling();
-	
-	
-	DOMElement *replNode = doc->createElement(XMLString::transcode("xy:r"));
-	
-	replNode->setAttribute(XMLString::transcode("cid"),
-						   witoa( this->cid) );
-	
-	node->insertBefore((DOMNode *)endText, nextNode);
-	doc->getXidMap().registerNode(endText, doc->getXidMap().allocateNewXID());
-	//node->insertBefore(replNode, endText);
-	
-	doc->getXidMap().registerNode(replNode, doc->getXidMap().allocateNewXID());
-	
-
-	DOMElement *delNode = doc->createElement(XMLString::transcode("xy:d"));
-	delNode->setAttribute(XMLString::transcode("repl"),
-						  XMLString::transcode("yes") );
-	//replNode->appendChild(delNode);
-	node->insertBefore(delNode, endText);
-	//
-	delNode->setAttribute(XMLString::transcode("cid"), witoa( this->cid) );
-	
-	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
-	
-	
-	DOMElement *insNode = doc->createElement(XMLString::transcode("xy:i"));
-	
-	//replNode->appendChild(insNode);
-	node->insertBefore(insNode, delNode);
-	//
-	insNode->setAttribute(XMLString::transcode("cid"),
-						  witoa( this->cid) );
-	insNode->setAttribute(XMLString::transcode("repl"),
-						  XMLString::transcode("yes") );
-	doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
-	
-	
-	DOMText *replText = doc->createTextNode(repl);
-	insNode->appendChild(replText);
-	doc->getXidMap().registerNode(replText, doc->getXidMap().allocateNewXID());
-	
-	delNode->appendChild(replacedText);
-	doc->getXidMap().registerNode(replacedText, doc->getXidMap().allocateNewXID());
-	
-	if (pos != 0) {
-		txt = (DOMText *) node->getFirstChild();
-	}
+	this->remove(pos, len, true);
+	this->insert(pos, repl, true);
 }
 
 XyStrDeltaApply::~XyStrDeltaApply()
@@ -429,6 +377,7 @@ XyStrDeltaApply::~XyStrDeltaApply()
 
 void XyStrDeltaApply::complete()
 {
+	doc->normalize();
 	if (!applyAnnotations) {
 		txt->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
 		return;
@@ -450,7 +399,7 @@ void XyStrDeltaApply::complete()
 			if (node3->getNodeType() != DOMNode::ELEMENT_NODE) {
 				continue;
 			}
-			if (node2->getNodeType() != DOMNode::ELEMENT_NODE && !textNodeHasNoWhitespace((DOMText *)node2)) {
+			if (node2->getNodeType() == DOMNode::ELEMENT_NODE || !textNodeHasNoWhitespace((DOMText *)node2)) {
 				continue;
 			}
 			if (mergeNodes(node1, node2, node3)) {
@@ -498,14 +447,14 @@ bool XyStrDeltaApply::mergeTwoNodes(DOMElement *node1, DOMElement *node2)
 	if (!XMLString::equals(node1->getNodeName(), node2->getNodeName())) {
 		return false;
 	}
-	int textSize = XMLString::stringLen(node1->getFirstChild()->getNodeValue())
-					+ XMLString::stringLen(node1->getFirstChild()->getNodeValue());
+	const XMLCh *value1 = node1->getFirstChild()->getNodeValue();
+	const XMLCh *value2 = node2->getFirstChild()->getNodeValue();
+	int textSize = XMLString::stringLen(value1) + XMLString::stringLen(value2);
 	std::vector<XMLCh> nodeValue_vec(textSize+1);
-	XMLString::copyString(&nodeValue_vec[0], node1->getFirstChild()->getNodeValue());
+	XMLString::copyString(&nodeValue_vec[0], value1);
 	XMLCh *nodeValue = &nodeValue_vec[0];
-	XMLString::catString(nodeValue,
-						 node2->getFirstChild()->getNodeValue());
-	node1->getFirstChild()->setNodeValue(&nodeValue[0]);
+	XMLString::catString(nodeValue, value2);
+	node1->getFirstChild()->setNodeValue(nodeValue);
 	node->removeChild(node2);
 	doc->getXidMap().removeNode(node2);
 	return true;
@@ -539,6 +488,10 @@ bool XyStrDeltaApply::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 	if (node2->getNodeType() == DOMNode::ELEMENT_NODE) {
 		return false;
 	}
+	if (XMLString::stringLen(node2->getNodeValue()) == 0) {
+		
+		return false;
+	}
 	switch ( getOperationType(node1) ) {
 		case XYDIFF_TXT_REPL:
 			if (!node1->hasChildNodes()) return false;
@@ -569,15 +522,20 @@ bool XyStrDeltaApply::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 	}
 
 	parent = node1->getParentNode();
-	
-	insNode = doc->createElement(XMLString::transcode("xy:i"));
-	parent->insertBefore(insNode, node1);
-	insNode->setAttribute( XMLString::transcode("cid"), cid1 );
+
+	bool isReplaceOperation;
+	const XMLCh *repl1 = ((DOMElement *)node1)->getAttribute( XMLString::transcode("repl") );
+	const XMLCh *repl3 = ((DOMElement *)node3)->getAttribute( XMLString::transcode("repl") );
+	isReplaceOperation = (XMLString::stringLen(repl1) > 0 || XMLString::stringLen(repl3) > 0);
 
 	delNode = doc->createElement(XMLString::transcode("xy:d"));
 	parent->insertBefore(delNode, node1);
 	delNode->setAttribute( XMLString::transcode("cid"), cid1 );	
 
+	
+	insNode = doc->createElement(XMLString::transcode("xy:i"));
+	parent->insertBefore(insNode, node1);
+	insNode->setAttribute( XMLString::transcode("cid"), cid1 );
 
 	insTextNode = doc->createTextNode( XMLString::transcode(instext.c_str()) );
 	insNode->appendChild(insTextNode);
@@ -585,6 +543,12 @@ bool XyStrDeltaApply::mergeNodes(DOMNode *node1, DOMNode *node2, DOMNode *node3)
 	delTextNode = doc->createTextNode( XMLString::transcode(deltext.c_str()) );
 	delNode->appendChild(delTextNode);
 
+	if (isReplaceOperation) {
+		((DOMElement *)insNode)->setAttribute(XMLString::transcode("repl"),
+											  XMLString::transcode("yes") );
+		((DOMElement *)delNode)->setAttribute(XMLString::transcode("repl"),
+											  XMLString::transcode("yes") );
+	}
 	doc->getXidMap().registerNode(insNode, doc->getXidMap().allocateNewXID());
 	doc->getXidMap().registerNode(delNode, doc->getXidMap().allocateNewXID());
 	doc->getXidMap().registerNode(insTextNode, doc->getXidMap().allocateNewXID());
