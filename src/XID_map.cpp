@@ -281,6 +281,19 @@ void XID_map::registerNode( DOMNode *node, XID_t xid ) {
 	(*xidByNode)[ node ] = xid ;
 }
 
+void XID_map::registerNewNode( DOMNode *node ) {//}, XID_t xid ) {
+	XID_t xid = allocateNewXID();
+	if (xid==XID_INVALID) THROW_AWAY(("XID is INVALID"));
+        if (node==NULL) THROW_AWAY(("can not register NULL DOMNode"));
+          
+	if (nodeByXid->find(xid)!=nodeByXid->end()) THROW_AWAY(("XID %d already used", (int)xid));
+	if (xidByNode->find(node)!=xidByNode->end()) THROW_AWAY(("this node is already registered"));
+          
+	if ((firstAvailableXID!=XID_INVALID)&&(xid>=firstAvailableXID)) firstAvailableXID=xid+1;
+	(*nodeByXid)[ xid ] = node ;
+	(*xidByNode)[ node ] = xid ;
+}
+
 void XID_map::removeNode( DOMNode *node ) {
 	XID_t xid = getXIDbyNode( node );
 	if (!nodeByXid->erase( xid )) THROW_AWAY(("xid %d not found",(int)xid));

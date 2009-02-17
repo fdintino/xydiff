@@ -46,13 +46,6 @@ private:
 	bool fReject;
 };
 
-class FilterIfEmptyTextNode : public xercesc::DOMNodeFilter {
-public:
-	FilterIfEmptyTextNode(bool reject=false) : xercesc::DOMNodeFilter(), fReject(reject) {};
-	xercesc::DOMNodeFilter::FilterAction acceptNode(const xercesc::DOMNode *node) const;
-private:
-	bool fReject;
-};
 class XyStrDeltaApply {
 public:
 	XyStrDeltaApply(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, int changeId=0);
@@ -74,8 +67,8 @@ private :
 	xercesc::DOMText *txt;
 	std::string currentValue;
 	bool applyAnnotations;
-	bool textNodeHasNoWhitespace(xercesc::DOMText *t);
-	bool mergeNodes(xercesc::DOMNode *node1, xercesc::DOMNode *node2, xercesc::DOMNode *node3);
+	bool textNodeHasWhitespace(xercesc::DOMNode *t);
+	bool mergeNodes(xercesc::DOMElement *node1, xercesc::DOMElement *node2, xercesc::DOMElement *node3);
 	bool mergeTwoNodes(xercesc::DOMElement *node1, xercesc::DOMElement *node2);
 	int cid;
 	domnode_vec_t removedNodeVector;

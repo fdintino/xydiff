@@ -65,6 +65,7 @@ class XID_map {
 		 */
 		
 		void     registerNode( xercesc::DOMNode *node, XID_t xid );
+		void     registerNewNode( xercesc::DOMNode *node );
 		void     removeNode( xercesc::DOMNode *node ) ;
 		
 		xercesc::DOMNode* getNodeWithXID(const XID_t xid);
