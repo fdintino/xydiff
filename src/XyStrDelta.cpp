@@ -145,7 +145,7 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 				removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex, isReplaceOperation);
 			break;
 
-			// Only a substring of the <xy:i> text needs to be removed
+			
 			case XYDIFF_TXT_INS:
 				// If the entire element needs to be removed
 				if (startIndex == 0 && endIndex == currNodeValueStrLen) {
@@ -153,6 +153,7 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 					walker->previousNode();
 					node->removeChild(parentNode);
 					doc->getXidMap().removeNode(parentNode);     // Remove <xy:i> from xidmap
+				// Only a substring of the <xy:i> text needs to be removed
 				} else {
 					// Anything that had been inserted and then subsequently deleted in another
 					// change can just be removed, since we're only interested in annotating
@@ -322,13 +323,16 @@ void XyStrDeltaApply::complete()
 		txt->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
 		return;
 	}
+
 	DOMElement *node1, *node2, *node3;
+	DOMNodeList *childNodes;
+	node->normalize();
+
 	// If a word in the previous document is replaced with another word that shares some characters,
 	// we end up with a situation where there are multiple edits in a single word, which can look
 	// confusing and isn't particularly helpful. Here we search for replace, insert, or delete operations
 	// that surround a text node with no whitespace, and then merge the three into a single replace operation.
-	node->normalize();
-	DOMNodeList *childNodes = node->getChildNodes();
+	childNodes = node->getChildNodes();
 	for (int i = 0; i < childNodes->getLength(); i++) {
 		node1 = (DOMElement *) childNodes->item(i);
 		if (node1 == NULL) {
@@ -408,7 +412,7 @@ bool XyStrDeltaApply::mergeTwoNodes(DOMElement *node1, DOMElement *node2)
 	// Remove nodes from xidmap
 	doc->getXidMap().removeNode(node2);
 	// Free up allocated memory
-	XMLString::release(&newNodeValue);
+//	XMLString::release(&newNodeValue);
 	return true;
 }
 
@@ -438,10 +442,6 @@ bool XyStrDeltaApply::mergeNodes(DOMElement *node1, DOMElement *node2, DOMElemen
 	
 	// If the nodes are not from the same edit, don't merge them
 	if (!XMLString::equals(cid1, cid3)) {
-		return false;
-	}
-	// If second node is an operation node, check that it has a matching changeId (cid)
-	if (node2->getNodeType() == DOMNode::ELEMENT_NODE) {
 		return false;
 	}
 

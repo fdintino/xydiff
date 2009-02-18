@@ -211,7 +211,7 @@ void XyStrDiff::flushBuffers()
 	if (currop == STRDIFF_NOOP) {
 		return;
 	} else if (currop == STRDIFF_SUB) {
-		startpos = xpos - delbuf.length() - 1;
+		startpos = xpos - delbuf.length();
 		len = delbuf.length();
 		debugstr.append("<tr pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		
