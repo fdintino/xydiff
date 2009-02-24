@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "xercesc/dom/DOMDocument.hpp"
+#include "include/XID_DOMDocument.hpp"
 
 namespace XyDelta {
 	// doc1xidmap can be NULL => the default XidMap (1-n|n+1) will be used
@@ -19,5 +20,15 @@ namespace XyDelta {
 
 extern bool _XyDiff_DontSaveXidmapToFile ;
 
+class XyDOMDelta {
+public:
+	XyDOMDelta(XID_DOMDocument* doc1p, XID_DOMDocument* doc2p, const char *doc1xidmapp=NULL);
+	~XyDOMDelta();
+	XID_DOMDocument* createDelta();
+private:
+	XID_DOMDocument* doc1;
+	XID_DOMDocument* doc2;
+	const char* doc1xidmap;
+	};
 
 #endif

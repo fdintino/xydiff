@@ -85,7 +85,6 @@ void XyDelta::ApplyDelta(const char *incDeltaName, const char *incSourceName, co
 
         std::cout << "destinationName " << destinationName << std::endl;
 
-	FILE *f=fopen(destinationName.c_str(), "r");
 //	if (f!=NULL) {
 //		fclose(f);
 //		THROW_AWAY(("destination file <%s> already exists",destinationName.c_str()));

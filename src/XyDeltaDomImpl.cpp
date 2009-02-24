@@ -175,6 +175,30 @@ unsigned int XyDelta::estimateSubtreeSize(DOMNode *node) {
 	return mySize;
 }
 
+XyDOMDelta::XyDOMDelta(XID_DOMDocument* doc1p, XID_DOMDocument* doc2p, const char *doc1xidmapp)
+	: doc1(doc1p), doc2(doc2p), doc1xidmap(doc1xidmapp)
+{
+	if (doc1==NULL) {
+		ERROR("doc1 is NULL");
+		return;
+	}
+	if (doc2==NULL) {
+		ERROR("doc2 is NULL");
+		return;
+	}
+	
+}
 
+XyDOMDelta::~XyDOMDelta()
+{
+	delete [] doc1xidmap;
+}
 
-
+XID_DOMDocument* XyDOMDelta::createDelta()
+{
+	_XyDiff_DontSaveXidmapToFile = true;
+	doc1->addXidMap(doc1xidmap);
+	doc2->initEmptyXidmapStartingAt(doc1->getXidMap().getFirstAvailableXID());
+	XID_DOMDocument* delta = XidXyDiff(doc1, "doc1", doc2, "doc2", 1, false);
+	return delta;
+}

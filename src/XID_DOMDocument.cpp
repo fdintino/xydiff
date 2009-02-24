@@ -228,20 +228,15 @@ void XID_DOMDocument::SaveAs(const char *xml_filename, bool saveXidMap) {
 //
 
 XID_DOMDocument* XID_DOMDocument::copy(const XID_DOMDocument *doc, bool withXID) {
-	std::cout << "XID_DOMDocument::copy" << std::endl;
 	XID_DOMDocument* result = XID_DOMDocument::createDocument() ;
-	std::cout << "create document ok" << std::endl;
 	DOMNode* resultRoot = result->importNode((DOMNode*)doc->getDocumentElement(), true);
-	std::cout << "node import ok" << std::endl;
 	result->appendChild(resultRoot);
-	std::cout << "append child ok" << std::endl;
 
 	if (withXID) {
 		if ( doc->xidmap==NULL ) throw VersionManagerException("Program Error", "XID_DOMDocument::copy()", "Option 'withXID' used but source has NULL xidmap");
 		result->xidmap = XID_map::addReference(new XID_map(doc->xidmap->String().c_str(), resultRoot));
-		std::cout << "copy xidmap ok" << std::endl;
 	}
-	return (result) ;	
+	return (result);	
 }
 
 XID_DOMDocument::~XID_DOMDocument() {
@@ -446,7 +441,7 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 		}
 		DOMAttr* attrNode = doc->createAttributeNS(
 			XMLString::transcode("urn:schemas-xydiff:xydelta"),
-			XMLString::transcode("xyd:xid"));
+			XMLString::transcode("xy:xid"));
 		attrNode->setValue(XyLatinStr(xidStr).wideForm());
 		attr->setNamedItem(attrNode);
 		}
