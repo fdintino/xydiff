@@ -148,35 +148,33 @@ void XyStrDiff::LevenshteinDistance()
 		
 		vddprintf(("debugstr=%s\n", debugstr.c_str()));
 	}
-	//return root;
 }
 
 void XyStrDiff::calculatePath(int i, int j)
 {
 	if (i == -1) i = sizex;
 	if (j == -1) j = sizey;
-	
 	if (i > 0 && j > 0 && (x[i-1] == y[j-1])) {
 		this->calculatePath(i-1, j-1);
-		this->registerBuffer(i, j, STRDIFF_NOOP, x[i-1]);
+		this->registerBuffer(i-1, STRDIFF_NOOP, x[i-1]);
 	} else {
 		if (j > 0 && (i == 0 || c[(j-1)*n+i] >= c[j*n+i-1])) {
 			this->calculatePath(i, j-1);
-			this->registerBuffer(i, j, STRDIFF_INS, y[j-1]);
+			this->registerBuffer(i, STRDIFF_INS, y[j-1]);
 		} else if (i > 0 && (j == 0 || c[(j-1)*n+i] < c[j*n+i-1])) {
 			this->calculatePath(i-1, j);
-			this->registerBuffer(i, j, STRDIFF_DEL, x[i-1]);
+			this->registerBuffer(i-1, STRDIFF_DEL, x[i-1]);
 		}
 	}
 }
 
-void XyStrDiff::registerBuffer(int i, int j, int optype, char chr)
+void XyStrDiff::registerBuffer(int i, int optype, char chr)
 {
 	if (wordbuf.empty()) {
 		wordbuf = chr;
 	}
 	xpos = i;
-	ypos = j;
+
 	if (currop == -1) {
 		currop = optype;
 
@@ -211,8 +209,8 @@ void XyStrDiff::flushBuffers()
 	if (currop == STRDIFF_NOOP) {
 		return;
 	} else if (currop == STRDIFF_SUB) {
-		startpos = xpos - delbuf.length();
 		len = delbuf.length();
+		startpos = xpos - len;
 		debugstr.append("<tr pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		
 		try {
@@ -253,14 +251,14 @@ void XyStrDiff::flushBuffers()
 			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (...) {
-			std::cout << "Unexpected Exception" << std::endl;
+			std::cout << "Unexpected Exception" << std::endl; 
 		}
 		
 		
 		insbuf = "";
 	} else if (currop == STRDIFF_DEL) {
-		startpos = xpos - delbuf.length() - 1;
 		len = delbuf.length();
+		startpos = xpos - len;
 		debugstr.append("<td pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\" />\n");
 		try {
 			DOMElement *r = doc->createElement(XMLString::transcode("td"));
