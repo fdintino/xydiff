@@ -28,8 +28,6 @@ public:
 	~DeltaException();
 };
 
-
-
 class MessageEngine {
 	public:
 		MessageEngine(const char *filename, int line, const char *method);

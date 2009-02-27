@@ -5,7 +5,7 @@
 #include "infra/general/hash_map.hpp"
 #include <vector>
 #include <string>
-
+#include "Tools.hpp"
 //#include "xercesc/dom/deprecated/DOM_Node.hpp"
 #include "xercesc/dom/DOMNode.hpp"
 
@@ -106,6 +106,13 @@ class XID_map {
 		// No default copy or equal operator
 		XID_map( const XID_map &other );
 		XID_map & operator = (const XID_map &other);
+	} ;
+
+class XIDMapException : public VersionManagerException {
+  public:
+	XIDMapException(const std::string &cause)
+	  : VersionManagerException("XID-Map Error", cause)
+		{} ;
 	} ;
 
 

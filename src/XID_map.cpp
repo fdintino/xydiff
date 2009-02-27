@@ -4,10 +4,7 @@
 
 #include "include/XyLatinStr.hpp"
 #include "DeltaException.hpp"
-//#include "DOM_Node_PassThrough.hh"
-#include "Tools.hpp"
 
-//#include "xercesc/dom/DOMString.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/util/XMLString.hpp"
 
@@ -32,7 +29,13 @@ XID_t XidMap_Parser::getNextXID(void) {
 	if (postfix<xidList.size()) {
 		return xidList[postfix++] ;
 	}
-	else THROW_AWAY(("next postfix (%d) is out of bound",(int)postfix));
+	else {
+		char *error;
+		sprintf(error, "next postfix (%d) is out of bound", (int)postfix);
+		throw XIDMapException(error);
+		delete [] error;
+		//sprintf("next postfix (%d) is out of bound")
+		}//THROW_AWAY(("next postfix (%d) is out of bound",(int)postfix));
 }
 
 XID_t XidMap_Parser::getFirstAvailableXID(XID_t actualValue) {
