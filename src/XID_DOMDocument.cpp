@@ -136,6 +136,7 @@ void XID_DOMDocument::initEmptyXidmapStartingAt(XID_t firstAvailableXid) {
 
 XID_DOMDocument::XID_DOMDocument(DOMDocument *doc, const char *xidmapStr, bool adoptDocument) : xidmap(NULL), theDocument(doc), theParser(NULL), doReleaseTheDocument(adoptDocument)
 {
+	removeIgnorableWhitespace((DOMNode*)theDocument);
 	if (xidmapStr) {
 		(void)addXidMap(xidmapStr);
 	}
@@ -431,14 +432,6 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 		sprintf(xidStr, "%d", (int)myXid);
 		DOMNamedNodeMap* attr = node->getAttributes();
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
-		// If we are dealing with the root node
-		if (node->isEqualNode((DOMNode*)doc->getDocumentElement())) {
-			DOMAttr* attrNodeNS = doc->createAttributeNS(
-				XMLString::transcode("http://www.w3.org/2000/xmlns/"),
-				XMLString::transcode("xmlns:xyd"));
-				attrNodeNS->setValue(XMLString::transcode("urn:schemas-xydiff:xydelta"));
-				attr->setNamedItem(attrNodeNS);
-		}
 		DOMAttr* attrNode = doc->createAttributeNS(
 			XMLString::transcode("urn:schemas-xydiff:xydelta"),
 			XMLString::transcode("xy:xid"));
