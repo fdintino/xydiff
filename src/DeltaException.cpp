@@ -21,7 +21,6 @@ struct timezone
   int  tz_dsttime;     /* type of dst correction */
 };
 
-
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
   FILETIME ft;
@@ -58,6 +57,27 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 }
 #endif
 
+
+DeltaException::DeltaException(std::string msg, char *e) {
+#ifndef ZEND_API
+	// ERROR("msg="<<msg.c_str());
+	// printf("\n\n*** DELTA-EXCEPTION ***\n>> %s\n\n", msg.c_str());
+	// fflush(stdout);
+#endif
+	message = new char[msg.size() + 1];
+	std::copy(msg.begin(), msg.end(), message);
+	message[msg.size()] = '\0';
+	if (e != NULL) {
+		error = strdup(e);
+	}
+}
+
+DeltaException::~DeltaException() {
+	delete [] message;
+	delete [] error;
+}	
+
+
 MessageEngine::MessageEngine(const char *filename, int line, const char *method) {
   struct tm tm_time;
   struct timeval tval;
@@ -88,16 +108,21 @@ MessageEngine::MessageEngine(const char *filename, int line, const char *method)
 
 void MessageEngine::add(const char *format, ...) {
 	int len=strlen(s);
+	int lenwhy = strlen(why);
 #ifdef __SunOS
   snprintf(s+len, 499-len, "Sorry, Exception Text disabled on SunOS/Solaris");
 #else
 	va_list var_arg ;
 	va_start (var_arg, format);
 	vsnprintf(s+len, 499-len, format, var_arg);
+	vsnprintf(why+lenwhy, 499-lenwhy, format, var_arg);
 	va_end(var_arg);
 #endif
 	};
 	
 char* MessageEngine::getStr(void) {
 	return s;
+	};
+char* MessageEngine::getWhy(void) {
+	return why;
 	};

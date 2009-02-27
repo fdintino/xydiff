@@ -21,28 +21,31 @@
 #endif
 
 class DeltaException {
-	public:
-		DeltaException(std::string msg) {
-			ERROR("msg="<<msg.c_str());
-			printf("\n\n*** DELTA-EXCEPTION ***\n>> %s\n\n", msg.c_str());
-			fflush(stdout);
-			}
-	};
+public:
+	DeltaException(std::string msg, char *e = NULL);
+	char *message;
+	char *error;
+	~DeltaException();
+};
+
+
 
 class MessageEngine {
 	public:
 		MessageEngine(const char *filename, int line, const char *method);
 		void add(const char *format, ...);
 		char *getStr(void);
+		char *getWhy(void);
 	private:
 		char s[500];
+		char why[500];
 	};
 
 #define THROW_AWAY(why) { \
 	MessageEngine e(__FILE__, __LINE__, __FUNCTION__); \
 	e.add why ; \
 	std::string s=e.getStr(); \
-	throw DeltaException(s); \
+	throw DeltaException(s, e.getWhy()); \
 	}
 	
 #endif
