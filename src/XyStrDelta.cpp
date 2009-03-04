@@ -135,8 +135,8 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 			continue;
 		}
 
-		int startIndex = max(0, startpos - curpos);
-		int endIndex   = min( currNodeValueStrLen,  endpos - curpos ) ;	
+		int startIndex = intmax(0, startpos - curpos);
+		int endIndex   = intmin( currNodeValueStrLen,  endpos - curpos ) ;	
 		
 		switch( getOperationType(parentNode) ) {
 			// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
@@ -244,7 +244,7 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 			continue;
 		}
 		
-		int startIndex = max(0, startpos - curpos);
+		int startIndex = intmax(0, startpos - curpos);
 		switch( getOperationType(parentNode) ) {
 			case XYDIFF_TXT_INS:
 				if (startIndex == 0) {

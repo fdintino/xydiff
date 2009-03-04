@@ -124,7 +124,7 @@ void XyStrDiff::LevenshteinDistance()
 					c[j*n+i] = c[(j-1)*n + i-1] + 1;
 				} else {
 					cost = 1;
-					c[j*n+i] = max(c[(j-1)*n + i], c[j*n + i-1]);
+					c[j*n+i] = intmax(c[(j-1)*n + i], c[j*n + i-1]);
 				}
 				// Step 6
 				int del = d[j*n+i-1] + 1;

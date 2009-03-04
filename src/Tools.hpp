@@ -67,6 +67,15 @@ bool existsFile(const char *fileName);
  * Converts int to std::string
  */
 std::string itoa (int n);
-int min(int x, int y);
-int max(int x, int y);
+int intmin(int x, int y);
+int intmax(int x, int y);
+
+#if defined(_WIN32) || defined(_WIN64)
+#ifdef NATIVEDLL_EXPORTS
+#define NATIVEDLL_API extern "C" __declspec(dllexport)
+#else
+#define NATIVEDLL_API __declspec(dllimport)
+#endif
+#endif
+
 #endif
