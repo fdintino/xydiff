@@ -11,24 +11,26 @@ COMMON_OBJECTS = convertUTF.o StringPusher.o \
                  Diff_NodesManager.o \
                  Diff_UniqueIdHandler.o \
                  DeltaApply.o \
-		 DeltaException.o \
+                 DeltaException.o \
                  DeltaManager.o \
-		 DeltaReverse.o \
+                 DeltaReverse.o \
                  DeltaSortOperations.o \
                  easy_css.o \
                  lcss.o \
                  lookup2.o \
-		 Tools.o \
-		 XID_map.o \
-		 XID_DOMDocument.o \
+                 Tools.o \
+                 XID_map.o \
+                 XID_DOMDocument.o \
                  XyDeltaFileImpl.o \
                  XyDeltaDomImpl.o \
-		 XyInt.o \
-		 XyLatinStr.o \
-		 XyLatinDocument.o \
+                 XyInt.o \
+                 XyLatinStr.o \
+                 XyLatinDocument.o \
                  XyStr.o \
-		 XyUTF8Str.o \
-		 XyUTF8Document.o
+                 XyStrDiff.o \
+                 XyStrDelta.o \
+                 XyUTF8Str.o \
+                 XyUTF8Document.o
 
 
 XyCmpXidmap_LOC_OBJS = $(COMMON_OBJECTS) XyCmpXidmap.o xyleme_DOMPrint.o
