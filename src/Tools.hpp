@@ -6,7 +6,6 @@
 
 #include <string>
 #include <stdio.h>
-#include <algorithm>
 
 class VersionManagerException {
 	public:
@@ -68,5 +67,6 @@ bool existsFile(const char *fileName);
  * Converts int to std::string
  */
 std::string itoa (int n);
-
+int min(int x, int y);
+int max(int x, int y);
 #endif
