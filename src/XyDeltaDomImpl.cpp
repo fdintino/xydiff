@@ -96,42 +96,39 @@ void XyDelta::SaveDomDocument(DOMDocument* d, const char *filename) {
         delete xd;
 }
 
-DOMDocument* XyDelta::ApplyDelta(DOMDocument* doc, DOMNode* deltaElement, bool CreateNewDocumentResult, bool applyAnnotations) {
-	XID_DOMDocument* xdoc = new XID_DOMDocument(doc);
-	XyLatinStr fromXidmap(deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromXidMap"))->getNodeValue());
+DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElement, bool applyAnnotations) {
 
-	try {
-		xdoc->addXidMap(fromXidmap);
+//	XyLatinStr fromXidmap(deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromXidMap"))->getNodeValue());
+
+//	try {
+//		xdoc->addXidMap(fromXidmap);
 
 		DeltaApplyEngine appliqueDoc(xdoc);
 		appliqueDoc.setApplyAnnotations(applyAnnotations);
 		appliqueDoc.ApplyDeltaElement(deltaElement) ;
 	
-		doc = xdoc->getDOMDocumentOwnership();
-		delete xdoc;
-		xdoc=NULL;
+		//doc = xdoc->getDOMDocumentOwnership();
+//		delete xdoc;
+//		xdoc=NULL;
 
 		// TO-DO: testXidMap value ?	
 
-                if (CreateNewDocumentResult) {
 			DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
                 	DOMDocument* resultDoc = impl->createDocument();
 			DOMNode* resultRoot = resultDoc->importNode(appliqueDoc.getResultDocument()->getDocumentElement(), true);
 			resultDoc->appendChild(resultRoot);
 			return resultDoc;
-		} else {
-			return doc;
-		}			
-	}
-	catch(...) {
-		ERROR("Unknown Exception catched");
-		if (xdoc) {
-			doc = xdoc->getDOMDocumentOwnership();
-			delete xdoc;
-			xdoc=NULL;
-		}
-		return NULL;
-	}
+	// }
+//	}
+	// catch(...) {
+	// 	ERROR("Unknown Exception catched");
+	// 	if (xdoc) {
+	// 		doc = xdoc->getDOMDocumentOwnership();
+	// 		delete xdoc;
+	// 		xdoc=NULL;
+	// 	}
+	// 	return NULL;
+	// }
 }
 
 unsigned int XyDelta::estimateDocumentSize(DOMDocument *doc) {
@@ -203,7 +200,10 @@ XID_DOMDocument* XyDOMDelta::createDelta()
 	} catch (...) {
 		
 	}
-	doc2->initEmptyXidmapStartingAt(doc1->getXidMap().getFirstAvailableXID());
+	//try {
+		doc2->initEmptyXidmapStartingAt(doc1->getXidMap().getFirstAvailableXID());
+	//} catch (...) { }
+	
 	XID_DOMDocument* delta = XidXyDiff(doc1, "doc1", doc2, "doc2", 1, false);
 	return delta;
 }

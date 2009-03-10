@@ -15,7 +15,7 @@ namespace XyDelta {
 	unsigned int estimateSubtreeSize(xercesc::DOMNode *node);
 
 	xercesc::DOMNode* ReverseDelta(xercesc::DOMDocument *reversedDeltaDoc, xercesc::DOMNode *deltaElement);
-	xercesc::DOMDocument* ApplyDelta(xercesc::DOMDocument *doc, xercesc::DOMNode *deltaElement, bool CreateNewDocumentResult=true, bool applyAnnotations=false);
+	xercesc::DOMDocument* ApplyDelta(XID_DOMDocument *xdoc, xercesc::DOMNode *deltaElement, bool applyAnnotations=false);
 	} ;
 
 extern bool _XyDiff_DontSaveXidmapToFile ;
