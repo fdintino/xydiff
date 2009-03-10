@@ -117,9 +117,9 @@ XID_map::XID_map( const char *str, DOMNode *IncDocRoot)
 	TRACE("init");
 	docRoot = IncDocRoot ;
 	TRACE("parse");
-	XidMap_Parser parse( str );
+	rootParse = new XidMap_Parser( str );
 	TRACE("register subtree");
-	registerSubtree( parse, IncDocRoot );
+	registerSubtree( *rootParse, IncDocRoot );
 	TRACE("ok");
 }
 

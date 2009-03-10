@@ -100,7 +100,7 @@ class XID_map {
 		std::map<XID_t, xercesc::DOMNode*> *nodeByXid ;
 		std::map<xercesc::DOMNode*, XID_t> *xidByNode ;
 		XID_t                  firstAvailableXID ;
-
+		XidMap_Parser *rootParse;
 		xercesc::DOMNode*               docRoot ;
 		
 		// No default copy or equal operator

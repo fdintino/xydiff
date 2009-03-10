@@ -110,7 +110,7 @@ void XID_DOMDocument::addXidMapFile(const char *xidmapFilename) {
 	}
 
 int XID_DOMDocument::addXidMap(const char *theXidmap) {
-	if (xidmap!=NULL) THROW_AWAY(("can't attach XidMap, slot not empty"));
+	if (xidmap!=NULL) return 0;
 	TRACE("getDocumentElement()");
 	DOMElement* docRoot = getDocumentElement();
 	if (theXidmap==NULL) {
