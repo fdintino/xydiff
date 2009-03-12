@@ -15,6 +15,7 @@ typedef long int XID_t ;
 class XidMap_Parser {
 	public:
 		XidMap_Parser( const char *str );
+		~XidMap_Parser();
 		XID_t getNextXID(void) ; // in Postfix order
 		XID_t getRootXID(void); // =the last one
 		XID_t getFirstAvailableXID(XID_t actualValue=XID_INVALID) ;

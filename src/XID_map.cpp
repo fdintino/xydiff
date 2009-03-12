@@ -62,7 +62,6 @@ XidMap_Parser::XidMap_Parser( const char *str ) {
 	
 	if (str[0]!='(')            THROW_AWAY(("string %s does not start with a left parenthesis", str)) ;
 	char *s = (char*)str ;
-	
 	while((s[0]=='(')||(s[0]==';')) {
 		if (s[0]=='-')            THROW_AWAY(("unexpected character %d : >>> %c <<<",(int)s[0],s[0]));
 		XID_t xid = (XID_t) strtol(++s, &s, 10);
@@ -89,6 +88,13 @@ XidMap_Parser::XidMap_Parser( const char *str ) {
 	
 }
 
+XidMap_Parser::~XidMap_Parser()
+{
+	if (postfix != 0) {
+		xidList.swap( xidList );
+	}
+}
+
 /*************************************************************************
  *                                                                       *
  * ---- ---- CLASS Xid_Map : Management of XID-2-Node mappings ---- ---- *
@@ -100,7 +106,7 @@ XidMap_Parser::XidMap_Parser( const char *str ) {
  */
 
 XID_map::XID_map(void)
-	: referenceCount(0), nodeByXid(NULL), xidByNode(NULL), firstAvailableXID(XID_INVALID), docRoot(NULL)
+	: referenceCount(0), nodeByXid(NULL), xidByNode(NULL), firstAvailableXID(XID_INVALID), docRoot(NULL), rootParse(NULL)
 {
 	
 	nodeByXid         = new std::map<XID_t, DOMNode*> ;
@@ -140,6 +146,9 @@ XID_map::~XID_map(void) {
 	xidByNode = NULL ;
 	referenceCount = -1 ;
 	firstAvailableXID = XID_INVALID ;
+	if (rootParse != NULL) {
+		delete rootParse;
+	}
 }
 
 /* ---- Output to STRING functions ----

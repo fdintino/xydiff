@@ -10,6 +10,7 @@
 class DeltaApplyEngine {
 	public:
 		DeltaApplyEngine(XID_DOMDocument *sourceDoc) ;
+		~DeltaApplyEngine();
 		void ApplyDelta(XID_DOMDocument *IncDeltaDoc);
 		void ApplyDelta(XID_DOMDocument *IncDeltaDoc, int backwardNumber);
 		void ApplyDeltaElement(xercesc::DOMNode* incDeltaElement);

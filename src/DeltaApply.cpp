@@ -111,41 +111,48 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	vddprintf(("        update xid=%d\n",(int)nodeXID));
 	DOMNode* upNode = xiddoc->getXidMap().getNodeWithXID( nodeXID );
 	if (upNode==NULL) THROW_AWAY(("node with XID=%d not found",(int)nodeXID));
-	std::string currentValue = XMLString::transcode(upNode->getNodeValue());
+	char *currentValue_char = XMLString::transcode(upNode->getNodeValue());
+	std::string currentValue = currentValue_char;
+	XMLString::release(&currentValue_char);
 	
 	DOMNodeList *opNodes = operationNode->getChildNodes();
 	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));
 	XyStrDeltaApply *xytext = new XyStrDeltaApply(xiddoc, upNode, 1);
 	xytext->setApplyAnnotations(applyAnnotations);
 	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
-		DOMNode *op = opNodes->item(i);
+		DOMElement *op = (DOMElement *) opNodes->item(i);
 		char *optype = XMLString::transcode(op->getNodeName());
+		XMLCh pos_attr[4];
+		XMLCh len_attr[4];
+		XMLString::transcode("pos", pos_attr, 3);
+		XMLString::transcode("len", len_attr, 3);
 		vddprintf(("item %d = %s\n", i, optype));
 		// Replace operation
 		if (strcmp(optype, "tr") == 0) {
-			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
-			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
+			char *pos = XMLString::transcode(op->getAttribute(pos_attr));
+			char *len = XMLString::transcode(op->getAttribute(len_attr));
 			xytext->replace(atoi(pos), atoi(len), op->getTextContent());
 			XMLString::release(&pos);
 			XMLString::release(&len);
 		}
 		// Delete operation
 		else if (strcmp(optype, "td") == 0) {
-			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
-			char *len = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("len")));
+			char *pos = XMLString::transcode(op->getAttribute(pos_attr));
+			char *len = XMLString::transcode(op->getAttribute(len_attr));
 			xytext->remove(atoi(pos), atoi(len));
 			XMLString::release(&pos);
 			XMLString::release(&len);
 		}
 		// Insert operation
 		else if (strcmp(optype, "ti") == 0) {
-			char *pos = XMLString::transcode(((DOMElement*)op)->getAttribute(XMLString::transcode("pos")));
+			char *pos = XMLString::transcode(op->getAttribute(pos_attr));
 			xytext->insert(atoi(pos), op->getTextContent());
 			XMLString::release(&pos);
 		}
 		XMLString::release(&optype);
 	}
 	xytext->complete();
+	delete xytext;
 }
 
 
@@ -184,29 +191,34 @@ void DeltaApplyEngine::Attribute_Delete( XID_t nodeXID, const XMLCh* attr ) {
 void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 	 
 	vddprintf(("ApplyOperation\n"));
-	XMLCh dStr[100];
-	XMLCh iStr[100];
-	XMLCh uStr[100];
-	XMLCh adStr[100];
-	XMLCh aiStr[100];
-	XMLCh auStr[100];
-	XMLCh renameRootStr[100];
-	XMLString::transcode("d", dStr, 99);
-	XMLString::transcode("i", iStr, 99);
-	XMLString::transcode("u", uStr, 99);
-	XMLString::transcode("ad", adStr, 99);
-	XMLString::transcode("ai", aiStr, 99);
-	XMLString::transcode("au", auStr, 99);
-	XMLString::transcode("renameRoot", renameRootStr, 99);
+	XMLCh dStr[2];
+	XMLCh iStr[2];
+	XMLCh uStr[2];
+	XMLCh adStr[3];
+	XMLCh aiStr[3];
+	XMLCh auStr[3];
+	XMLCh renameRootStr[11];
+	XMLString::transcode("d", dStr, 1);
+	XMLString::transcode("i", iStr, 1);
+	XMLString::transcode("u", uStr, 1);
+	XMLString::transcode("ad", adStr, 2);
+	XMLString::transcode("ai", aiStr, 2);
+	XMLString::transcode("au", auStr, 2);
+	XMLString::transcode("renameRoot", renameRootStr, 10);
+	XMLCh tempStr[6];
 	if (XMLString::equals(operationNode->getNodeName(), dStr)) {
 		vddprintf(("        d(elete)\n"));
 		
 		bool move = false ;
-		DOMNode* moveAttr = operationNode->getAttributes()->getNamedItem(XMLString::transcode("move")) ;
-		if ((moveAttr!=NULL)&&(XMLString::equals(moveAttr->getNodeValue(),XMLString::transcode("yes")))) move=true ;
+		XMLString::transcode("move", tempStr, 5);
+		DOMNode* moveAttr = operationNode->getAttributes()->getNamedItem(tempStr) ;
+		XMLString::transcode("yes", tempStr, 5);
+		if ((moveAttr!=NULL) && (XMLString::equals(moveAttr->getNodeValue(),tempStr))) {
+			move = true;
+		}
 
-		XyLatinStr xidmapStr(operationNode->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue()) ;
-		
+		XMLString::transcode("xm", tempStr, 5);
+		char *xidmapStr = XMLString::transcode(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());		
 		if (move) {
 			XidMap_Parser parse(xidmapStr) ;
 			XID_t myXid = parse.getRootXID();
@@ -214,29 +226,36 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 		  }
 		else {
 			Subtree_Delete(xidmapStr) ;
-		  }
 		}
+		XMLString::release(&xidmapStr);
+	}
 
 	else if (XMLString::equals(operationNode->getNodeName(),iStr)) {
 		vddprintf(("        i(nsert)\n"));
 
 		bool move = false ;
-		DOMNode* moveAttr = operationNode->getAttributes()->getNamedItem(XMLString::transcode("move")) ;
-		if ((moveAttr!=NULL)&&(XMLString::equals(moveAttr->getNodeValue(),XMLString::transcode("yes")))) move=true ;
-		DOMNode *n = operationNode->getAttributes()->getNamedItem(XMLString::transcode("pos"));
+		XMLString::transcode("move", tempStr, 5);
+		DOMNode* moveAttr = operationNode->getAttributes()->getNamedItem(tempStr) ;
+		XMLString::transcode("yes", tempStr, 5);
+		if ( (moveAttr!=NULL) && (XMLString::equals( moveAttr->getNodeValue(), tempStr ))) {
+			move = true;
+		}
+		XMLString::transcode("pos", tempStr, 5);
+		DOMNode *n = operationNode->getAttributes()->getNamedItem(tempStr);
 		int position = XyInt(n->getNodeValue());
 
-		n = operationNode->getAttributes()->getNamedItem(XMLString::transcode("par"));
+		XMLString::transcode("par", tempStr, 5);
+		n = operationNode->getAttributes()->getNamedItem(tempStr);
 		XID_t parentXID = (XID_t)(int)XyInt(n->getNodeValue());
-		
-		XyLatinStr xidmapStr(operationNode->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue()) ;
 
+		XMLString::transcode("xm", tempStr, 5);
+		char *xidmapStr = XMLString::transcode(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 		if (move) {
 			XidMap_Parser parse(xidmapStr) ;
 			XID_t myXid = parse.getRootXID();
 
 			Subtree_MoveTo( myXid, parentXID, position );
-			}
+		}
 		else {
 			DOMNode* insertRoot ;
 			// get data to insert
@@ -244,51 +263,57 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 			else THROW_AWAY(("insert operator element contains no data"));
 				
 			Subtree_Insert( insertRoot, parentXID, position, xidmapStr ) ;
-			}
 		}
+		XMLString::release(&xidmapStr);
+	}
 
 	else if (XMLString::equals(operationNode->getNodeName(), uStr)) {
 		vddprintf(("        u(pdate)\n"));
-		XyLatinStr xidmapStr(operationNode->getAttributes()->getNamedItem(XMLString::transcode("oldxm"))->getNodeValue()) ;		
+		XMLString::transcode("oldxm", tempStr, 5);
+		char *xidmapStr = XMLString::transcode(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 		XidMap_Parser parse(xidmapStr) ;
 		XID_t nodeXID = parse.getRootXID();
 		TextNode_Update( nodeXID, operationNode);
+		XMLString::release(&xidmapStr);
 		}
 
 	else if (XMLString::equals(operationNode->getNodeName(), adStr)) {
 		vddprintf(("        a(ttribute) d(elete)\n"));
-		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(XMLString::transcode("xid"))->getNodeValue());
+		XMLString::transcode("xid", tempStr, 5);
+		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 
-        const XMLCh* attr = operationNode->getAttributes()->getNamedItem(XMLString::transcode("a"))->getNodeValue() ;
-        //DOMString attr = operationNode.getAttributes().getNamedItem("a").getNodeValue() ;
+		XMLString::transcode("a", tempStr, 5);
+        const XMLCh* attr = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		Attribute_Delete( nodeXID, attr );
 		}
 	else if (XMLString::equals(operationNode->getNodeName(), aiStr)) {
 		vddprintf(("        a(ttribute) i(nsert)\n"));
-		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(XMLString::transcode("xid"))->getNodeValue());
-
-		//DOMString attr = operationNode.getAttributes().getNamedItem("a").getNodeValue() ;
-		//DOMString value = operationNode.getAttributes().getNamedItem("v").getNodeValue() ;
-        const XMLCh* attr = operationNode->getAttributes()->getNamedItem(XMLString::transcode("a"))->getNodeValue() ;
-        const XMLCh* value = operationNode->getAttributes()->getNamedItem(XMLString::transcode("v"))->getNodeValue() ;
+		XMLString::transcode("xid", tempStr, 5);
+		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
+		XMLString::transcode("a", tempStr, 5);
+        const XMLCh* attr = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
+		XMLString::transcode("v", tempStr, 5);
+        const XMLCh* value = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		Attribute_Insert( nodeXID, attr, value );
 		}
 	else if (XMLString::equals(operationNode->getNodeName(), auStr)) {
 		vddprintf(("        a(ttribute) u(pdate)\n"));
-		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(XMLString::transcode("xid"))->getNodeValue());
-
-		//DOMString attr = operationNode.getAttributes().getNamedItem("a").getNodeValue() ;
-		//DOMString value = operationNode.getAttributes().getNamedItem("nv").getNodeValue() ;
-		const XMLCh* attr = operationNode->getAttributes()->getNamedItem(XMLString::transcode("a"))->getNodeValue() ;
-        const XMLCh* value = operationNode->getAttributes()->getNamedItem(XMLString::transcode("nv"))->getNodeValue() ;
+		XMLString::transcode("xid", tempStr, 5);
+		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
+		XMLString::transcode("a", tempStr, 5);
+        const XMLCh* attr = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
+		XMLString::transcode("nv", tempStr, 5);
+        const XMLCh* value = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		Attribute_Update( nodeXID, attr, value );
 		}
 	else if (XMLString::equals(operationNode->getNodeName(), renameRootStr)) {
 		vddprintf(("        renameRoot\n"));
 		DOMNode *root = xiddoc->getDocumentElement();
 		XID_t rootXID = xiddoc->getXidMap().getXIDbyNode(root);
-		const XMLCh* newrootName = operationNode->getAttributes()->getNamedItem(XMLString::transcode("to"))->getNodeValue();
+		XMLString::transcode("to", tempStr, 5);
+        const XMLCh* newrootName = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		DOMElement* newroot = xiddoc->createElement(newrootName);
+
 		DOMNode* child = root->getFirstChild();
 		while(child!=NULL) {
 			root->removeChild(child);
@@ -302,6 +327,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 		}
 		xiddoc->removeChild(root);
 		xiddoc->getXidMap().removeNode(root);
+		root->release();
 		xiddoc->appendChild(newroot);
 		xiddoc->getXidMap().registerNode(newroot, rootXID);
 		xiddoc->getXidMap().SetRootElement(newroot);
@@ -402,12 +428,17 @@ DeltaApplyEngine::DeltaApplyEngine(XID_DOMDocument *sourceDoc) {
 	vddprintf(("creating temporary move document\n"));
 	moveDocument = XID_DOMDocument::createDocument() ;
 	moveDocument->initEmptyXidmapStartingAt(-1);
-
-	DOMElement* moveRoot = moveDocument->createElement(XMLString::transcode("moveRoot")) ;
+	XMLCh *moveRootCh = XMLString::transcode("moveRoot");
+	DOMElement* moveRoot = moveDocument->createElement(moveRootCh) ;
+	XMLString::release(&moveRootCh);
 	moveDocument->appendChild( moveRoot );
 	applyAnnotations = false;
 	}
 
+DeltaApplyEngine::~DeltaApplyEngine() {
+	moveDocument->release();
+	delete moveDocument;
+}
 DOMNode* DeltaApplyEngine::getDeltaElement(XID_DOMDocument *IncDeltaDoc) {
 
 	if (IncDeltaDoc  == NULL) THROW_AWAY(("delta document is null"));

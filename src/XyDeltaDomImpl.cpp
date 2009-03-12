@@ -194,7 +194,6 @@ XyDOMDelta::~XyDOMDelta()
 XID_DOMDocument* XyDOMDelta::createDelta()
 {
 	_XyDiff_DontSaveXidmapToFile = true;
-	XID_map* xidmap = &(doc1->getXidMap());
 	try {
 		doc1->addXidMap(doc1xidmap);
 	} catch (...) {

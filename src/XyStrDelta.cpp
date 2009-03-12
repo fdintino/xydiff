@@ -47,12 +47,14 @@ using namespace XyStrDelta;
 
 XyStrOperationType XyStrDeltaApply::getOperationType(DOMNode *node)
 {
-	if ( XMLString::equals(node->getNodeName(),
-						   XMLString::transcode("xy:d")) ) {
+	XMLCh xyd_ch[6];
+	XMLCh xyi_ch[6];
+	XMLString::transcode("xy:d", xyd_ch, 5);
+	XMLString::transcode("xy:i", xyi_ch, 5);
+	if ( XMLString::equals(node->getNodeName(), xyd_ch) ) {
 		return XYDIFF_TXT_DEL;
 	}
-	else if ( XMLString::equals(node->getNodeName(),
-								XMLString::transcode("xy:i")) ) {
+	else if ( XMLString::equals(node->getNodeName(), xyi_ch) ) {
 		return XYDIFF_TXT_INS;
 	}
 	else {
@@ -66,8 +68,9 @@ DOMNodeFilter::FilterAction FilterIfParentIsDelete::acceptNode(const DOMNode *no
 			return DOMNodeFilter::FILTER_SKIP;
 		}
 	}
-	if ( XMLString::equals(node->getParentNode()->getNodeName(),
-						   XMLString::transcode("xy:d")) ) {
+	XMLCh xyd_ch[6];
+	XMLString::transcode("xy:d", xyd_ch, 5);
+	if ( XMLString::equals(node->getParentNode()->getNodeName(), xyd_ch) ) {
 		return DOMNodeFilter::FILTER_SKIP;
 	} else {
 		return DOMNodeFilter::FILTER_ACCEPT;
@@ -88,7 +91,9 @@ XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, int cha
 	DOMNode *txtNode = node->getFirstChild();
 
 	txt = (DOMText *)txtNode;
-	currentValue = XMLString::transcode(upNode->getNodeValue());
+	char *currentValue_char = XMLString::transcode(upNode->getNodeValue());
+	currentValue = currentValue_char;
+	XMLString::release(&currentValue_char);
 	applyAnnotations = false;
 	cid = changeId;
 }
@@ -173,6 +178,7 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 		}
 		curpos += currNodeValueStrLen;
 	} while (currentNode = walker->nextNode());
+	delete filter;
 }
 
 void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len, bool isReplaceOperation)
@@ -190,12 +196,19 @@ void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len, bool
 
 	node->insertBefore(endText, removeNode->getNextSibling());
 
-	delNode = doc->createElement(XMLString::transcode("xy:d"));
-	delNode->setAttribute(XMLString::transcode("cid"), witoa(cid) );
+	XMLCh tempStrA[6];
+	XMLCh tempStrB[6];
+	
+	XMLString::transcode("xy:d", tempStrA, 5);
+	delNode = doc->createElement(tempStrA);
+	XMLString::transcode("cid", tempStrA, 5);
+	delNode->setAttribute( tempStrA, witoa(cid) );
+
 	delNode->appendChild(deletedText);
 	if (isReplaceOperation) {
-		delNode->setAttribute(XMLString::transcode("repl"),
-							  XMLString::transcode("yes") );
+		XMLString::transcode("repl", tempStrA, 5);
+		XMLString::transcode("yes", tempStrB, 5);
+		delNode->setAttribute( tempStrA, tempStrB );
 	}
 	node->insertBefore(delNode, endText);
 
@@ -265,14 +278,18 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 				insertIntoNode(currentNode, startIndex, ins, isReplaceOperation);
 			break;
 		}
+		delete filter;
 		return;
 	} while (currentNode = walker->nextNode());
+	
 }
 
 void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
-		std::string insString( XMLString::transcode(ins) );
+		char *ins_char = XMLString::transcode(ins);
+		std::string insString( ins_char );
+		XMLString::release(&ins_char);
 		currentValue.insert(pos, insString);
 		return;
 	}
@@ -280,9 +297,14 @@ void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *
 	DOMText *insText;
 	DOMNode *endText;
 	DOMNode *parentNode;
+	XMLCh tempStrA[6];
+	XMLCh tempStrB[6];
+
 	parentNode = insertNode->getParentNode();
-	insNode = doc->createElement(XMLString::transcode("xy:i"));
-	insNode->setAttribute( XMLString::transcode("cid"), witoa(cid) );
+	XMLString::transcode("xy:i", tempStrA, 5);
+	insNode = doc->createElement(tempStrA);
+	XMLString::transcode("cid", tempStrA, 5);
+	insNode->setAttribute( tempStrA, witoa(cid) );
 
 	if (pos == 0) {
 		parentNode->insertBefore(insNode, insertNode);
@@ -299,8 +321,9 @@ void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *
 	insNode->appendChild(insText);
 
 	if (isReplaceOperation) {
-		insNode->setAttribute(XMLString::transcode("repl"),
-							  XMLString::transcode("yes") );
+		XMLString::transcode("repl", tempStrA, 5);
+		XMLString::transcode("yes", tempStrB, 5);
+		insNode->setAttribute( tempStrA, tempStrB );
 	}
 	doc->getXidMap().registerNewNode(insText);
 }
@@ -320,7 +343,9 @@ XyStrDeltaApply::~XyStrDeltaApply()
 void XyStrDeltaApply::complete()
 {
 	if (!applyAnnotations) {
-		txt->setNodeValue( XMLString::transcode(currentValue.c_str()) ) ;
+		XMLCh *currentValue_xmlch = XMLString::transcode(currentValue.c_str());
+		txt->setNodeValue( currentValue_xmlch ) ;
+		XMLString::release(&currentValue_xmlch);
 		return;
 	}
 
@@ -383,8 +408,10 @@ bool XyStrDeltaApply::mergeTwoNodes(DOMElement *node1, DOMElement *node2)
 	if (node1->getNodeType() != DOMNode::ELEMENT_NODE) return false;
 	if (node2->getNodeType() != DOMNode::ELEMENT_NODE) return false;
 
-	cid1 = node1->getAttribute( XMLString::transcode("cid") );
-	cid2 = node2->getAttribute( XMLString::transcode("cid") );
+	XMLCh cid_attr_name_xmlch[5];
+	XMLString::transcode("cid", cid_attr_name_xmlch, 4);
+	cid1 = node1->getAttribute( cid_attr_name_xmlch );
+	cid2 = node2->getAttribute( cid_attr_name_xmlch );
 	
 	if (cid1 == NULL || cid2 == NULL) {
 		return false;
@@ -422,7 +449,9 @@ bool XyStrDeltaApply::textNodeHasWhitespace(DOMNode *t)
 	if (t->getNodeType() != DOMNode::TEXT_NODE) {
 		return false;
 	}
-	std::string nodeText = std::string ( XMLString::transcode(t->getNodeValue()) );
+	char *tNodeValue = XMLString::transcode(t->getNodeValue());
+	std::string nodeText = std::string ( tNodeValue );
+	XMLString::release(&tNodeValue);
 	return (nodeText.find("		\n") != std::string::npos);
 }
 
@@ -432,65 +461,90 @@ bool XyStrDeltaApply::mergeNodes(DOMElement *node1, DOMElement *node2, DOMElemen
 	DOMElement *delNode, *insNode;
 	DOMText *insTextNode, *delTextNode;
 	std::string instext, deltext;
+	const XMLCh *cid1, *cid3;
 
 	if (node1->getNodeType() != DOMNode::ELEMENT_NODE || node3->getNodeType() != DOMNode::ELEMENT_NODE) {
 		return false;
 	}
-	
-	const XMLCh *cid1 = node1->getAttribute(XMLString::transcode("cid"));
-	const XMLCh *cid3 = node3->getAttribute(XMLString::transcode("cid"));
+
+	XMLCh cid_attr_name_xmlch[5];
+	XMLString::transcode("cid", cid_attr_name_xmlch, 4);
+	cid1 = node1->getAttribute( cid_attr_name_xmlch );
+	cid3 = node3->getAttribute( cid_attr_name_xmlch );
 	
 	// If the nodes are not from the same edit, don't merge them
 	if (!XMLString::equals(cid1, cid3)) {
 		return false;
 	}
+	char *node1_value = XMLString::transcode( node1->getFirstChild()->getNodeValue() );
+	char *node2_value = XMLString::transcode( node2->getNodeValue() );
+	char *node3_value = XMLString::transcode( node3->getFirstChild()->getNodeValue() );
 
 	switch ( getOperationType(node1) ) {
 		case XYDIFF_TXT_DEL:
-			deltext += XMLString::transcode( node1->getFirstChild()->getNodeValue() );
+			deltext += node1_value;
 			break;
 		case XYDIFF_TXT_INS:
-			instext += XMLString::transcode( node1->getFirstChild()->getNodeValue() );
+			instext += node1_value;
 			break;
 	}
-	instext += XMLString::transcode( node2->getNodeValue() );
-	deltext += XMLString::transcode( node2->getNodeValue() );
+
+	instext += node2_value;
+	deltext += node2_value;
+	
+	
 	switch ( getOperationType(node3) ) {
 		case XYDIFF_TXT_DEL:
-			deltext += XMLString::transcode( node3->getFirstChild()->getNodeValue() );
+			deltext += node3_value;
 			break;
 		case XYDIFF_TXT_INS:
-			instext += XMLString::transcode( node3->getFirstChild()->getNodeValue() );
+			instext += node3_value;
 			break;
 	}
+
+	XMLString::release(&node1_value);
+	XMLString::release(&node2_value);
+	XMLString::release(&node3_value);
 
 	parent = node1->getParentNode();
 
 	bool isReplaceOperation;
-	const XMLCh *repl1 = node1->getAttribute( XMLString::transcode("repl") );
-	const XMLCh *repl3 = node3->getAttribute( XMLString::transcode("repl") );
+
+	XMLCh tempStrA[6];
+	XMLCh tempStrB[6];
+
+	XMLString::transcode("repl", tempStrA, 5);
+	const XMLCh *repl1 = node1->getAttribute( tempStrA );
+	const XMLCh *repl3 = node3->getAttribute( tempStrA );
 	isReplaceOperation = (XMLString::stringLen(repl1) > 0 || XMLString::stringLen(repl3) > 0);
 
-	delNode = doc->createElement(XMLString::transcode("xy:d"));
+	XMLString::transcode("xy:d", tempStrA, 5);
+	delNode = doc->createElement(tempStrA);
 	parent->insertBefore(delNode, node1);
-	delNode->setAttribute( XMLString::transcode("cid"), cid1 );	
+	XMLString::transcode("cid", tempStrA, 5);
+	delNode->setAttribute( tempStrA, cid1 );	
 
-	
-	insNode = doc->createElement(XMLString::transcode("xy:i"));
+	XMLString::transcode("xy:i", tempStrA, 5);
+	insNode = doc->createElement(tempStrA);
 	parent->insertBefore(insNode, node1);
-	insNode->setAttribute( XMLString::transcode("cid"), cid1 );
 
-	insTextNode = doc->createTextNode( XMLString::transcode(instext.c_str()) );
+	XMLString::transcode("cid", tempStrA, 5);
+	insNode->setAttribute( tempStrA, cid1 );
+
+	XMLCh *instext_xmlch = XMLString::transcode(instext.c_str());
+	XMLCh *deltext_xmlch = XMLString::transcode(deltext.c_str());
+	insTextNode = doc->createTextNode( instext_xmlch );
 	insNode->appendChild(insTextNode);
-
-	delTextNode = doc->createTextNode( XMLString::transcode(deltext.c_str()) );
+	delTextNode = doc->createTextNode( deltext_xmlch );
 	delNode->appendChild(delTextNode);
+	XMLString::release(&instext_xmlch);
+	XMLString::release(&deltext_xmlch);
 
 	if (isReplaceOperation) {
-		insNode->setAttribute(XMLString::transcode("repl"),
-							  XMLString::transcode("yes") );
-		delNode->setAttribute(XMLString::transcode("repl"),
-							  XMLString::transcode("yes") );
+		XMLString::transcode("repl", tempStrA, 5);
+		XMLString::transcode("yes", tempStrB, 5);
+		insNode->setAttribute(tempStrA, tempStrB);
+		delNode->setAttribute(tempStrA, tempStrB);
 	}
 
 	parent->removeChild(node1);

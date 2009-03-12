@@ -206,6 +206,8 @@ void XyStrDiff::registerBuffer(int i, int optype, char chr)
 void XyStrDiff::flushBuffers()
 {
 	int startpos, len;
+	XMLCh tempStrA[100];
+	XMLCh tempStrB[100];
 	if (currop == STRDIFF_NOOP) {
 		return;
 	} else if (currop == STRDIFF_SUB) {
@@ -214,10 +216,19 @@ void XyStrDiff::flushBuffers()
 		debugstr.append("<tr pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		
 		try {
-			DOMElement *r = doc->createElement(XMLString::transcode("tr"));
-			r->setAttribute(XMLString::transcode("pos"), XMLString::transcode((itoa(startpos)).c_str()));
-			r->setAttribute(XMLString::transcode("len"), XMLString::transcode((itoa(len)).c_str()));		
-			DOMText *textNode = doc->createTextNode(XMLString::transcode(insbuf.c_str()));
+			XMLString::transcode("tr", tempStrA, 99);
+			DOMElement *r = doc->createElement(tempStrA);
+			XMLString::transcode("pos", tempStrA, 99);
+			XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
+			r->setAttribute(tempStrA, tempStrB);
+			XMLString::transcode("len", tempStrA, 99);
+			XMLString::transcode(itoa(len).c_str(), tempStrB, 99);
+			r->setAttribute(tempStrA, tempStrB);
+
+			XMLCh *insbuf_ch = XMLString::transcode(insbuf.c_str());
+			DOMText *textNode = doc->createTextNode(insbuf_ch);
+			XMLString::release(&insbuf_ch);
+
 			r->appendChild((DOMNode *)textNode);
 			root->appendChild((DOMNode *)r);
 		}
@@ -238,9 +249,17 @@ void XyStrDiff::flushBuffers()
 		debugstr.append("<ti pos=\"" + itoa(startpos) + "\">"+insbuf+"</i>\n");
 		
 		try {
-			DOMElement *r = doc->createElement(XMLString::transcode("ti"));
-			r->setAttribute(XMLString::transcode("pos"), XMLString::transcode((itoa(startpos)).c_str()));
-			DOMText *textNode = doc->createTextNode(XMLString::transcode(insbuf.c_str()));
+			XMLString::transcode("ti", tempStrA, 99);
+			DOMElement *r = doc->createElement(tempStrA);
+
+			XMLString::transcode("pos", tempStrA, 99);
+			XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
+			r->setAttribute(tempStrA, tempStrB);
+
+			XMLCh *insbuf_ch = XMLString::transcode(insbuf.c_str());
+			DOMText *textNode = doc->createTextNode(insbuf_ch);
+			XMLString::release(&insbuf_ch);
+
 			r->appendChild((DOMNode *)textNode);
 			root->appendChild((DOMNode *)r);
 		}
@@ -261,9 +280,14 @@ void XyStrDiff::flushBuffers()
 		startpos = xpos - len;
 		debugstr.append("<td pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\" />\n");
 		try {
-			DOMElement *r = doc->createElement(XMLString::transcode("td"));
-			r->setAttribute(XMLString::transcode("pos"), XMLString::transcode((itoa(startpos)).c_str()));
-			r->setAttribute(XMLString::transcode("len"), XMLString::transcode((itoa(len)).c_str()));		
+			XMLString::transcode("td", tempStrA, 99);
+			DOMElement *r = doc->createElement(tempStrA);
+			XMLString::transcode("pos", tempStrA, 99);
+			XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
+			r->setAttribute(tempStrA, tempStrB);
+			XMLString::transcode("len", tempStrA, 99);
+			XMLString::transcode(itoa(len).c_str(), tempStrB, 99);
+			r->setAttribute(tempStrA, tempStrB);		
 			root->appendChild((DOMNode *)r);
 		}
 		catch (const XMLException& toCatch) {

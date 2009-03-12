@@ -134,7 +134,7 @@ void XID_DOMDocument::initEmptyXidmapStartingAt(XID_t firstAvailableXid) {
 
 // Construct XID_DOMDocument from a DOM_Document
 
-XID_DOMDocument::XID_DOMDocument(DOMDocument *doc, const char *xidmapStr, bool adoptDocument) : xidmap(NULL), theDocument(doc), theParser(NULL), doReleaseTheDocument(adoptDocument)
+XID_DOMDocument::XID_DOMDocument(DOMDocument *doc, const char *xidmapStr, bool adoptDocument, DOMLSParser *domParser) : xidmap(NULL), theDocument(doc), theParser(NULL), doReleaseTheDocument(adoptDocument)
 {
 	removeIgnorableWhitespace((DOMNode*)theDocument);
 	if (xidmapStr) {
@@ -432,10 +432,13 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 		sprintf(xidStr, "%d", (int)myXid);
 		DOMNamedNodeMap* attr = node->getAttributes();
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
-		DOMAttr* attrNode = doc->createAttributeNS(
-			XMLString::transcode("urn:schemas-xydiff:xydelta"),
-			XMLString::transcode("xy:xid"));
-		attrNode->setValue(XyLatinStr(xidStr).wideForm());
+		XMLCh tempStrA[100];
+		XMLCh tempStrB[100];
+		XMLString::transcode("urn:schemas-xydiff:xydelta", tempStrA, 99);
+		XMLString::transcode("xy:xid", tempStrB, 99);
+		DOMAttr* attrNode = doc->createAttributeNS(tempStrA, tempStrB);
+		XMLString::transcode(xidStr, tempStrA, 99);
+		attrNode->setValue(tempStrA);
 		attr->setNamedItem(attrNode);
 		}
 	

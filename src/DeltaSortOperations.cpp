@@ -26,14 +26,17 @@ SortDeleteOperationsEngine::SortDeleteOperationsEngine(XID_DOMDocument *sourceDo
 void SortDeleteOperationsEngine::registerOperations(XID_DOMDocument *sourceDoc, DOMNode *firstOperatorSibling) {
 	
 	DOMNode* op=firstOperatorSibling;
+	XMLCh tempStr[3];
+	
 	while(op!=NULL) {
-		if (XMLString::equals(op->getNodeName(),XMLString::transcode("d"))) {
-			XyLatinStr xidmapStr(op->getAttributes()->getNamedItem(XMLString::transcode("xm"))->getNodeValue());
-			
+		XMLString::transcode("d", tempStr, 2);
+		if (XMLString::equals(op->getNodeName(),tempStr)) {
+			XMLString::transcode("xm", tempStr, 2);
+			char *xidmapStr = XMLString::transcode(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 			XidMap_Parser parse(xidmapStr) ;
 			XID_t myXid = parse.getRootXID();
-
 			operationBySourceNode[(long)myXid]=op;
+			XMLString::release(&xidmapStr);
 			}
 		op=op->getNextSibling();
 		}
@@ -84,12 +87,19 @@ DOMNode* SortDeleteOperationsEngine::getNextDeleteOperation(void) {
 
 InsertOpWithPos::InsertOpWithPos(DOMNode *_op) {
 	op=_op;
-	pos = (int)XyInt(op->getAttributes()->getNamedItem(XMLString::transcode("pos"))->getNodeValue());
-	parentXID = (XID_t)(int)XyInt(op->getAttributes()->getNamedItem(XMLString::transcode("par"))->getNodeValue());
+	XMLCh tempStr[4];
+	XMLString::transcode("pos", tempStr, 3);
+	pos = (int)XyInt(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
+	XMLString::transcode("par", tempStr, 3);
+	parentXID = (XID_t)(int)XyInt(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 	}
 
 bool cmpSiblingInsertOrder::operator() (InsertOpWithPos op1, InsertOpWithPos op2) const {
-	if (!XMLString::equals(op1.op->getAttributes()->getNamedItem(XMLString::transcode("par"))->getNodeValue(), op2.op->getAttributes()->getNamedItem(XMLString::transcode("par"))->getNodeValue())) {
+	XMLCh tempStr[4];
+	XMLString::transcode("par", tempStr, 3);
+	if (!XMLString::equals(
+						   op1.op->getAttributes()->getNamedItem(tempStr)->getNodeValue(),
+						   op2.op->getAttributes()->getNamedItem(tempStr)->getNodeValue())) {
 		THROW_AWAY(("two supposed sibling insert operations do not have the same parents"));
 		}
 	return (op1.pos>op2.pos);
@@ -98,8 +108,10 @@ bool cmpSiblingInsertOrder::operator() (InsertOpWithPos op1, InsertOpWithPos op2
 SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDoc, DOMNode *firstOperatorSibling) {
 
 	DOMNode* op=firstOperatorSibling;
+	XMLCh iStr[2];
+	XMLString::transcode("i", iStr, 1);
 	while(op!=NULL) {
-		if (XMLString::equals(op->getNodeName(),XMLString::transcode("i"))) {
+		if ( XMLString::equals(op->getNodeName(), iStr) ) {
 
 			InsertOpWithPos iOp(op);
 			
