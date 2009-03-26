@@ -6,7 +6,7 @@
         <xs:element name="t">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="d">
+              <xs:element name="d" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="book">
@@ -26,7 +26,7 @@
                   <xs:attribute name="xm" type="xs:string" use="required" />
                 </xs:complexType>
               </xs:element>
-              <xs:element name="i">
+              <xs:element name="i" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="novel">
@@ -46,10 +46,10 @@
                   <xs:attribute name="xm" type="xs:string" use="required" />
                 </xs:complexType>
               </xs:element>
-              <xs:element name="u">
+              <xs:element name="u" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="tr">
+                    <xs:element name="tr" minOccurs="0">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
@@ -59,7 +59,7 @@
                         </xs:simpleContent>
                       </xs:complexType>
                     </xs:element>
-                    <xs:element name="ti">
+                    <xs:element name="ti" minOccurs="0">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
@@ -68,7 +68,7 @@
                         </xs:simpleContent>
                       </xs:complexType>
                     </xs:element>
-                    <xs:element name="td">
+                    <xs:element name="td" minOccurs="0">
                       <xs:complexType>
                         <xs:attribute name="len" type="xs:unsignedByte" use="required" />
                         <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
@@ -81,21 +81,21 @@
                   <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
                 </xs:complexType>
               </xs:element>
-              <xs:element name="ai">
+              <xs:element name="ai" minOccurs="0">
                 <xs:complexType>
                   <xs:attribute name="a" type="xs:string" use="required" />
                   <xs:attribute name="v" type="xs:string" use="required" />
                   <xs:attribute name="xid" type="xs:unsignedByte" use="required" />
                 </xs:complexType>
               </xs:element>
-              <xs:element name="ad">
+              <xs:element name="ad" minOccurs="0">
                 <xs:complexType>
                   <xs:attribute name="a" type="xs:string" use="required" />
                   <xs:attribute name="v" type="xs:string" use="required" />
                   <xs:attribute name="xid" type="xs:unsignedByte" use="required" />
                 </xs:complexType>
               </xs:element>
-              <xs:element name="au">
+              <xs:element name="au" minOccurs="0">
                 <xs:complexType>
                   <xs:attribute name="a" type="xs:string" use="required" />
                   <xs:attribute name="nv" type="xs:string" use="required" />
