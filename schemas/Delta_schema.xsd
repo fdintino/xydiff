@@ -1,115 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xyd="http://www.nflc.org/schema/xydiff/" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="unit_delta">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="t">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="d" minOccurs="0">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="book">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="title" type="xs:string" />
-                          <xs:element name="author" type="xs:string" />
-                          <xs:element name="year" type="xs:unsignedShort" />
-                          <xs:element name="price" type="xs:decimal" />
-                        </xs:sequence>
-                        <xs:attribute name="category" type="xs:string" use="required" />
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                  <xs:attribute name="par" type="xs:unsignedByte" use="required" />
-                  <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
-                  <xs:attribute name="xm" type="xs:string" use="required" />
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="i" minOccurs="0">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="novel">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="title" type="xs:string" />
-                          <xs:element name="author" type="xs:string" />
-                          <xs:element name="year" type="xs:unsignedShort" />
-                          <xs:element name="price" type="xs:decimal" />
-                        </xs:sequence>
-                        <xs:attribute name="category" type="xs:string" use="required" />
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                  <xs:attribute name="par" type="xs:unsignedByte" use="required" />
-                  <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
-                  <xs:attribute name="xm" type="xs:string" use="required" />
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="u" minOccurs="0">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="tr" minOccurs="0">
-                      <xs:complexType>
-                        <xs:simpleContent>
-                          <xs:extension base="xs:string">
-                            <xs:attribute name="len" type="xs:unsignedByte" use="required" />
-                            <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
-                          </xs:extension>
-                        </xs:simpleContent>
-                      </xs:complexType>
-                    </xs:element>
-                    <xs:element name="ti" minOccurs="0">
-                      <xs:complexType>
-                        <xs:simpleContent>
-                          <xs:extension base="xs:string">
-                            <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
-                          </xs:extension>
-                        </xs:simpleContent>
-                      </xs:complexType>
-                    </xs:element>
-                    <xs:element name="td" minOccurs="0">
-                      <xs:complexType>
-                        <xs:attribute name="len" type="xs:unsignedByte" use="required" />
-                        <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                  <xs:attribute name="newxm" type="xs:string" use="required" />
-                  <xs:attribute name="oldxm" type="xs:string" use="required" />
-                  <xs:attribute name="par" type="xs:unsignedByte" use="required" />
-                  <xs:attribute name="pos" type="xs:unsignedByte" use="required" />
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="ai" minOccurs="0">
-                <xs:complexType>
-                  <xs:attribute name="a" type="xs:string" use="required" />
-                  <xs:attribute name="v" type="xs:string" use="required" />
-                  <xs:attribute name="xid" type="xs:unsignedByte" use="required" />
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="ad" minOccurs="0">
-                <xs:complexType>
-                  <xs:attribute name="a" type="xs:string" use="required" />
-                  <xs:attribute name="v" type="xs:string" use="required" />
-                  <xs:attribute name="xid" type="xs:unsignedByte" use="required" />
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="au" minOccurs="0">
-                <xs:complexType>
-                  <xs:attribute name="a" type="xs:string" use="required" />
-                  <xs:attribute name="nv" type="xs:string" use="required" />
-                  <xs:attribute name="ov" type="xs:string" use="required" />
-                  <xs:attribute name="xid" type="xs:unsignedByte" use="required" />
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-            <xs:attribute name="from" type="xs:string" use="required" />
-            <xs:attribute name="fromXidMap" type="xs:string" use="required" />
-            <xs:attribute name="to" type="xs:string" use="required" />
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="urn:schemas-xydiff:xydelta"
+	xmlns:xy="urn:schemas-xydiff:xydelta">
+	<xs:element name="unit_delta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="t">
+					<xs:complexType>
+						<xs:sequence minOccurs="1" maxOccurs="unbounded">
+							<xs:element ref="xy:ad" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="xy:au" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="xy:ai" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="xy:d" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="xy:u" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="xy:i" minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute name="IgnoreBlankTexts" type="xs:string" default="yes"/>
+						<xs:attribute name="from" type="xs:string" use="required"/>
+						<xs:attribute name="fromXidMap" type="xs:string" use="required"/>
+						<xs:attribute name="to" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="d">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any namespace="##any" processContents="skip" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="move" type="xs:string" default="no" />
+			<xs:attribute name="par" type="xs:integer" use="required"/>
+			<xs:attribute name="pos" type="xs:integer" use="required"/>
+			<xs:attribute name="xm" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="i">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any namespace="##any" processContents="skip" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="move" type="xs:string"  default="no" />
+			<xs:attribute name="par" type="xs:integer" use="required"/>
+			<xs:attribute name="pos" type="xs:integer" use="required"/>
+			<xs:attribute name="xm" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="u">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="xy:tr" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="xy:ti" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="xy:td" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="newxm" type="xs:string" use="required"/>
+			<xs:attribute name="oldxm" type="xs:string" use="required"/>
+			<xs:attribute name="par" type="xs:integer" use="required"/>
+			<xs:attribute name="pos" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ai">
+		<xs:complexType>
+			<xs:attribute name="a" type="xs:string" use="required"/>
+			<xs:attribute name="v" type="xs:string" use="required"/>
+			<xs:attribute name="xid" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ad">
+		<xs:complexType>
+			<xs:attribute name="a" type="xs:string" use="required"/>
+			<xs:attribute name="v" type="xs:string" use="required"/>
+			<xs:attribute name="xid" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="au">
+		<xs:complexType>
+			<xs:attribute name="a" type="xs:string" use="required"/>
+			<xs:attribute name="nv" type="xs:string" use="required"/>
+			<xs:attribute name="ov" type="xs:string" use="required"/>
+			<xs:attribute name="xid" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="tr">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="len" type="xs:integer" use="required"/>
+					<xs:attribute name="pos" type="xs:integer" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ti">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="pos" type="xs:integer" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="td">
+		<xs:complexType>
+			<xs:attribute name="len" type="xs:integer" use="required"/>
+			<xs:attribute name="pos" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>
