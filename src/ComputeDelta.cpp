@@ -160,15 +160,8 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 	TRACE("PHASE 3: Optimize matchings");
 	xyMappingEngine.Optimize( v0rootID );
 	
-#if 0
-	TimeStep();
-	vddprintf(("\n+++ Print Raw Assigns +++\n\n")) ;
-	xyMappingEngine.PrintAll();
-#endif
-
 	/* ---- [[ Phase 4: ]] Construct the Delta ---- */
 		
-	TimeStep();
 	vddprintf(("\n+++ Phase 4: Construct the Delta +++\n\n")) ;
 		
 	TRACE("PHASE 4: Construct result delta");

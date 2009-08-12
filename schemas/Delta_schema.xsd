@@ -19,9 +19,9 @@
 							<xs:element ref="xy:i" minOccurs="0" maxOccurs="unbounded" />
 						</xs:sequence>
 						<xs:attribute name="IgnoreBlankTexts" type="xs:string" default="yes"/>
-						<xs:attribute name="from" type="xs:string" use="required"/>
+						<xs:attribute name="from" type="xs:string" />
 						<xs:attribute name="fromXidMap" type="xs:string" use="required"/>
-						<xs:attribute name="to" type="xs:string" use="required"/>
+						<xs:attribute name="to" type="xs:string" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>

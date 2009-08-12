@@ -62,33 +62,21 @@ DeltaConstructor::DeltaConstructor(
 	ignoreUnimportantData = IncIgnoreUnimportantData ;
 	XMLCh tempStrA[100];
 	XMLCh tempStrB[100];
-	
+	XMLString::transcode("urn:schemas-xydiff:unit-delta", xyDiffNS_ch, 99);
 	deltaDoc     = XID_DOMDocument::createDocument() ;
 
 	XMLString::transcode("unit_delta", tempStrA, 99);
 	DOMElement* deltaRoot = deltaDoc->createElement(tempStrA);
 	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
 	XMLCh *xmlns_ch = XMLString::transcode("xmlns");
-	XMLCh *unitDeltaURI_ch = XMLString::transcode("urn:schemas-xydiff:unit-delta");
-	deltaRoot->setAttributeNS(xmlnsURI_ch, xmlns_ch, unitDeltaURI_ch);
+	deltaRoot->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDiffNS_ch);
 	XMLString::release(&xmlnsURI_ch);
 	XMLString::release(&xmlns_ch);
-	XMLString::release(&unitDeltaURI_ch);
 	deltaDoc->appendChild( (DOMNode*) deltaRoot );
 
 	XMLString::transcode("t", tempStrA, 99);
 	DOMElement* tElem = deltaDoc->createElement(tempStrA);
 
-	XMLCh *v0filename_ch = XMLString::transcode(v0filename.c_str());
-	XMLCh *v1filename_ch = XMLString::transcode(v1filename.c_str());
-	XMLString::transcode("from", tempStrA, 99);
-	tElem->setAttribute(tempStrA, v0filename_ch);
-	XMLString::transcode("to", tempStrA, 99);
-	tElem->setAttribute(tempStrA, v1filename_ch);
-	XMLString::release(&v0filename_ch);
-	XMLString::release(&v1filename_ch);
-
-	
 	if (ignoreUnimportantData) {
 		XMLString::transcode("IgnoreBlankTexts", tempStrA, 99);
 		XMLString::transcode("yes", tempStrB, 99);

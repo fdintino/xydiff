@@ -26,6 +26,16 @@ XERCES_CPP_NAMESPACE_USE
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 XID_DOMDocument* DeltaApplyEngine::getResultDocument (void) {
+	if (applyAnnotations) {
+		XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+		deltaDoc     = XID_DOMDocument::createDocument() ;
+		XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+		XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+		((DOMElement*)xiddoc)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+		XMLString::release(&xyDeltaNS_ch);
+		XMLString::release(&xmlnsURI_ch);
+		XMLString::release(&xmlns_ch);
+	}
   return xiddoc ;
 }
 
@@ -395,8 +405,8 @@ void DeltaApplyEngine::ApplyDelta(XID_DOMDocument *IncDeltaDoc) {
 	deltaElement      = DeltaApplyEngine::getDeltaElement(IncDeltaDoc);
 	deltaDoc          = IncDeltaDoc ;
 	
-	vddprintf(("FROM: %s\n", DeltaApplyEngine::getSourceURI(IncDeltaDoc).c_str() ));
-	vddprintf(("TO:   %s\n", DeltaApplyEngine::getDestinationURI(IncDeltaDoc).c_str() ));
+	// vddprintf(("FROM: %s\n", DeltaApplyEngine::getSourceURI(IncDeltaDoc).c_str() ));
+	// vddprintf(("TO:   %s\n", DeltaApplyEngine::getDestinationURI(IncDeltaDoc).c_str() ));
 
 	ApplyDeltaElement(deltaElement);
 }

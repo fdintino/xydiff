@@ -6,6 +6,4 @@ using __gnu_cxx::hashtable;
 using __gnu_cxx::hash_map;
 using __gnu_cxx::hash_multimap;
 }
-#else
-#include <hash_map>
 #endif

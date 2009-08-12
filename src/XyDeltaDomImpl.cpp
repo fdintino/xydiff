@@ -116,6 +116,15 @@ DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElement, b
 			DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
                 	DOMDocument* resultDoc = impl->createDocument();
 			DOMNode* resultRoot = resultDoc->importNode(appliqueDoc.getResultDocument()->getDocumentElement(), true);
+			if (applyAnnotations) {
+				XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+				XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+				XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+				((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+				XMLString::release(&xyDeltaNS_ch);
+				XMLString::release(&xmlnsURI_ch);
+				XMLString::release(&xmlns_ch);
+			}
 			resultDoc->appendChild(resultRoot);
 			return resultDoc;
 	// }

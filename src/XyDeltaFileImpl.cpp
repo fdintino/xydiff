@@ -262,8 +262,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	
 	/* ---- [[ Phase Post: ]] Clean-up uses ressources ---- */
 		
-	TimeStep();
-	
 	vddprintf(("\n+++ Freeing Ressources +++\n\n")) ;
 
 	vddprintf(("closing v1XML\n")) ;
