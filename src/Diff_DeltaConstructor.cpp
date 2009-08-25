@@ -62,16 +62,17 @@ DeltaConstructor::DeltaConstructor(
 	ignoreUnimportantData = IncIgnoreUnimportantData ;
 	XMLCh tempStrA[100];
 	XMLCh tempStrB[100];
+
+	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+	XMLCh *xmlns_ch = XMLString::transcode("xmlns");
+
 	XMLString::transcode("urn:schemas-xydiff:unit-delta", xyDiffNS_ch, 99);
 	deltaDoc     = XID_DOMDocument::createDocument() ;
 
+
 	XMLString::transcode("unit_delta", tempStrA, 99);
 	DOMElement* deltaRoot = deltaDoc->createElement(tempStrA);
-	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-	XMLCh *xmlns_ch = XMLString::transcode("xmlns");
 	deltaRoot->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDiffNS_ch);
-	XMLString::release(&xmlnsURI_ch);
-	XMLString::release(&xmlns_ch);
 	deltaDoc->appendChild( (DOMNode*) deltaRoot );
 
 	XMLString::transcode("t", tempStrA, 99);
@@ -84,8 +85,25 @@ DeltaConstructor::DeltaConstructor(
 	}
 	deltaRoot->appendChild( tElem );
 
-	scriptRoot = tElem ;
+	// Copy namespaces from root element
+	DOMNamedNodeMap *v1XMLAttrs = v1XML->getDocumentElement()->getAttributes();
+	for (int i = 0; i < v1XMLAttrs->getLength(); i++) {
+		DOMAttr *attr = (DOMAttr *) v1XMLAttrs->item(i);
+		// If it is in the xmlns namespace
+		if (XMLString::compareString(attr->getNamespaceURI(), xmlnsURI_ch) != 0) {
+			DOMNamedNodeMap *deltaAttrs = deltaRoot->getAttributes();
+			if (deltaAttrs->getNamedItem( attr->getNodeName()) == NULL) {
+				deltaRoot->setAttributeNS(xmlnsURI_ch, attr->getName(), attr->getValue());
+			}
+		}
+	}
 	
+	
+	scriptRoot = tElem ;
+
+	XMLString::release(&xmlnsURI_ch);
+	XMLString::release(&xmlns_ch);
+
 	}
 
 /*****************************************************
