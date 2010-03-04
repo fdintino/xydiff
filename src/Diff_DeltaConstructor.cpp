@@ -89,10 +89,23 @@ DeltaConstructor::DeltaConstructor(
 	DOMNamedNodeMap *v1XMLAttrs = v1XML->getDocumentElement()->getAttributes();
 	for (int i = 0; i < v1XMLAttrs->getLength(); i++) {
 		DOMAttr *attr = (DOMAttr *) v1XMLAttrs->item(i);
-		// If it is in the xmlns namespace
-		if (XMLString::compareString(attr->getNamespaceURI(), xmlnsURI_ch) != 0) {
+		// If it is prefixed with xmlns
+		if (XMLString::compareNString(attr->getName(), xmlns_ch, 5) == 0) {
 			DOMNamedNodeMap *deltaAttrs = deltaRoot->getAttributes();
-			if (deltaAttrs->getNamedItem( attr->getNodeName()) == NULL) {
+			// If we don't already have this attribute
+			if (deltaAttrs->getNamedItem( attr->getName() ) == NULL) {
+				deltaRoot->setAttributeNS(xmlnsURI_ch, attr->getName(), attr->getValue());
+			}
+		}
+	}
+	DOMNamedNodeMap *v0XMLAttrs = v0XML->getDocumentElement()->getAttributes();
+	for (int i = 0; i < v0XMLAttrs->getLength(); i++) {
+		DOMAttr *attr = (DOMAttr *) v0XMLAttrs->item(i);
+		// If it is prefixed with xmlns
+		if (XMLString::compareNString(attr->getName(), xmlns_ch, 5) == 0) {
+			DOMNamedNodeMap *deltaAttrs = deltaRoot->getAttributes();
+			// If we don't already have this attribute
+			if (deltaAttrs->getNamedItem( attr->getName() ) == NULL) {
 				deltaRoot->setAttributeNS(xmlnsURI_ch, attr->getName(), attr->getValue());
 			}
 		}
