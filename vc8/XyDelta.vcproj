@@ -92,7 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(ProjectDir)\lib\xerces-c_3D.lib&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy &quot;$(ProjectDir)\lib\xerces-c_3_0D.dll&quot; &quot;$(OutDir)&quot;"
+				CommandLine="copy &quot;$(ProjectDir)\lib\xerces-c_3D.lib&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy &quot;$(ProjectDir)\lib\xerces-c_3_0D.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -100,6 +100,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
+			UseOfMFC="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -122,7 +123,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(ProjectDir)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;XYDELTA_EXPORTS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -139,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(ProjectDir)\lib\xerces-c_3.lib"
+				AdditionalDependencies="$(ProjectDir)\lib\xerces-c_3.lib $(ProjectDir)\lib\xerces-c_static_3.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -170,7 +171,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(ProjectDir)\lib\xerces-c_3.lib&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy &quot;$(ProjectDir)\lib\xerces-c_3_0.dll&quot; &quot;$(OutDir)&quot;"
+				CommandLine="copy &quot;$(ProjectDir)\lib\xerces-c_3.lib&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy &quot;$(ProjectDir)\lib\xerces-c_3_0.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
