@@ -86,7 +86,7 @@ MessageEngine::MessageEngine(const char *filename, int line, const char *method)
   time(&sec_time);
   gettimeofday(&tval, 0);
 #if defined(_WIN32) || defined(_WIN64)
-    localtime_s(&tm_time, &sec_time);
+    memcpy(&tm_time, localtime(&sec_time), sizeof(tm_time));
 #else
     localtime_r(&sec_time, &tm_time);
 #endif
