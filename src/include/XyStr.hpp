@@ -72,5 +72,4 @@ class XyStr {
 	} ;
 
 // Work-around for VC6 (see http://support.microsoft.com/kb/241569)
-const unsigned int XyStr::BlockSize = 8*1024;
 #endif

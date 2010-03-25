@@ -40,8 +40,8 @@ public:
 	~XyStrDiff();
 	void LevenshteinDistance();
 	void calculatePath(int i=-1, int j=-1);
-	void XyStrDiff::registerBuffer(int i, int optype, char chr);
-	void XyStrDiff::flushBuffers();
+	void registerBuffer(int i, int optype, char chr);
+	void flushBuffers();
 private :
 	xercesc::DOMImplementation* impl;
 	xercesc::DOMDocument *doc;
