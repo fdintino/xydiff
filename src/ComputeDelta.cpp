@@ -57,8 +57,8 @@ unsigned long long int clocksSaveDelta              ;
 
 #ifdef WIN32
 #ifndef ftime
-	#define timeb	__timeb32
-	#define ftime	_ftime32_s
+	#define timeb	_timeb
+	#define ftime	_ftime
 #endif
 #endif
 struct timeb timeStart ;
