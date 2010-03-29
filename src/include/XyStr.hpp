@@ -48,7 +48,7 @@ class XyStr {
 
 		unsigned int transcodeFromUTF32_andReplaceXmlHeader(const XMLCh* const source, const unsigned int length, const char *outputEncoding, char** result, int *resultLength=NULL);
 
-		static const unsigned int BlockSize;
+		static const unsigned int BlockSize = 8*1024;
 	
 		static XMLCh* newCopyOf(const XMLCh* source, int size=-1);
 		static char*  newCopyOf(const char* source, int size=-1);
@@ -71,5 +71,4 @@ class XyStr {
 		static std::map<std::string,xercesc::XMLTranscoder*> staticTranscoder ; 
 	} ;
 
-// Work-around for VC6 (see http://support.microsoft.com/kb/241569)
 #endif

@@ -260,30 +260,30 @@ bool xydeltaParseHandler::handleError(const DOMError& domError)
 {
   DOMLocator* locator = domError.getLocation();
   cerr << "\n(GF) Error at (file " << XyLatinStr(locator->getURI()).localForm()
-       << ", line " << locator->getLineNumber()
-       << ", char " << locator->getColumnNumber()
+       << ", line " << (long) locator->getLineNumber()
+       << ", char " << (long) locator->getColumnNumber()
        << "): " << XyLatinStr(domError.getMessage()).localForm() << endl;
   throw VersionManagerException("xydeltaParseHandler", "error", "-");
 }
 
 void xydeltaParseHandler::error(const SAXParseException& e) {
 	cerr << "\n(GF) Error at (file " << XyLatinStr(e.getSystemId()).localForm()
-	     << ", line " << e.getLineNumber()
-	     << ", char " << e.getColumnNumber()
+	     << ", line " << (long) e.getLineNumber()
+	     << ", char " << (long) e.getColumnNumber()
 	     << "): " << XyLatinStr(e.getMessage()).localForm() << endl;
 	throw VersionManagerException("xydeltaParseHandler", "error", "-");
 	}
 void xydeltaParseHandler::fatalError(const SAXParseException& e) {
 	cerr << "\n(GF) Fatal Error at (file " << XyLatinStr(e.getSystemId()).localForm()
-	     << ", line " << e.getLineNumber()
-	     << ", char " << e.getColumnNumber()
+	     << ", line " << (long) e.getLineNumber()
+	     << ", char " << (long) e.getColumnNumber()
 	     << "): " << XyLatinStr(e.getMessage()).localForm() << endl;
 	throw VersionManagerException("xydeltaParseHandler", "fatal error", "-");
 	}
 void xydeltaParseHandler::warning(const SAXParseException& e) {
 	cerr << "\n(GF) Warning at (file " << XyLatinStr(e.getSystemId()).localForm()
-	     << ", line " << e.getLineNumber()
-	     << ", char " << e.getColumnNumber()
+	     << ", line " << (long) e.getLineNumber()
+	     << ", char " << (long) e.getColumnNumber()
 	     << "): " << XyLatinStr(e.getMessage()).localForm() << endl;
 	}
   

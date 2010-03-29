@@ -55,6 +55,12 @@ unsigned long long int clocksSaveDelta              ;
 
 // We can use: getitimer, setitimer
 
+#ifdef WIN32
+#ifndef ftime
+	#define timeb	__timeb32
+	#define ftime	_ftime32_s
+#endif
+#endif
 struct timeb timeStart ;
 struct timeb timeLast ;
 
