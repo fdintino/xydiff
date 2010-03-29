@@ -82,8 +82,6 @@ XyStr::operator const char*() {
 	return this->localForm();
 }
 
-const unsigned int XyStr::BlockSize = 8*1024;
-
 const char *ErrorMsgCouldNotTranscode =   "??lTranscode Error??"; // length is 20, +1 for null char
 //XMLCh LErrorMsgCouldNotTranscode[21];
 //XMLCh testStr = XMLString::transcode("??wTranscode Error??", LErrorMsgCouldNotTranscode, 20);
