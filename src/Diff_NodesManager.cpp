@@ -44,9 +44,6 @@ AtomicInfo::AtomicInfo() {
 	isUnimportant=false ;
 	}
 
-unsigned long long int   clocksGetBestCandidate     ;
-unsigned long long int   clocksQueueOps             ;
-unsigned long long int   clocksPropagateAssign      ;
 
 int statsNodeAlreadyAssigned       =0 ;
 int statsRecursiveAssignFailed     =0 ;
@@ -77,13 +74,14 @@ void NodesManager::PrintAll(void) {
 	printf("XML document Source(v1): %d assigned nodes over total of %d\n", resultAssigned, resultNumberOfNodes) ;
 	
 	vddprintf(("List of v0->v1 assignements\n")) ;
-	for(unsigned long i=1; i<sourceNumberOfNodes; i++) {
+	unsigned long i;
+	for(i=1; i<sourceNumberOfNodes; i++) {
 		if (!v0Assigned(i)) vddprintf(("%4d not matched(delete)\n", (int)i )) ;
 		else vddprintf(("%4d->%4d\n", (int)i, (int) v0node[i].myMatchID ));
 		}
 		
 	vddprintf(("List of v1->v0 assignements\n")) ;
-	for(unsigned long i=1; i<resultNumberOfNodes; i++) {
+	for(i=1; i<resultNumberOfNodes; i++) {
 	  if (!v1Assigned(i)) vddprintf(("%4d not matched(insert)", (int)i )) ;
 		else vddprintf(("%4d->%4d\n", (int)i, (int) v1node[i].myMatchID ));
 		}
@@ -937,12 +935,13 @@ void NodesManager::ComputeWeakMove( int v0nodeID ) {
 		v0childID = childInfo.nextSibling ;
 		}
 	vddprintf(("Index for children of v0 node %d are listed here(0: not concerned by weak-move): ", v0nodeID ));
-	for(unsigned int i=1; i<oldChildValue.size(); i++) vddprintf(("(%d, %.2f)  ", oldChildValue[i].data, oldChildValue[i].weight));
+	unsigned int i;
+	for(i=1; i<oldChildValue.size(); i++) vddprintf(("(%d, %.2f)  ", oldChildValue[i].data, oldChildValue[i].weight));
 	vddprintf(("\n"));
 
 	std::vector<wSequence> originalSequence ;
 	originalSequence.push_back(wSequence(-1, 997000.0));
-	for(unsigned int i=1; i<oldChildValue.size(); i++) if (oldChildValue[i].data) originalSequence.push_back( oldChildValue[i] );
+	for(i=1; i<oldChildValue.size(); i++) if (oldChildValue[i].data) originalSequence.push_back( oldChildValue[i] );
 	
 	// Construct Sequence with new orders of children, given their 'stable index'
 	
@@ -959,7 +958,7 @@ void NodesManager::ComputeWeakMove( int v0nodeID ) {
 		}
 		
 	vddprintf(("final sequence is: "));
-	for(unsigned int i=1; i<finalSequence.size(); i++) vddprintf(("%d ", finalSequence[i].data));
+	for(i=1; i<finalSequence.size(); i++) vddprintf(("%d ", finalSequence[i].data));
 	vddprintf(("\n"));
 
 	// Resolution : may be replaced by Longest Common Subsequence algorithms
@@ -979,7 +978,7 @@ void NodesManager::ComputeWeakMove( int v0nodeID ) {
 #endif
 	
 	vddprintf(("using common subsequence: "));
-	for(unsigned int i=1; i<finalSequence.size(); i++) if (finalSequence[i].data) vddprintf(("%d ", finalSequence[i].data));
+	for(i=1; i<finalSequence.size(); i++) if (finalSequence[i].data) vddprintf(("%d ", finalSequence[i].data));
 	vddprintf(("\n"));
 	
 	// Children that have been marked with 0 will be 'moved'

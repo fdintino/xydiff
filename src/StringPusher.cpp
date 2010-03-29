@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+const int StringPusher::kIniSize = 32;
+
 StringPusher::StringPusher() :
     buf((char*)malloc(kIniSize)),
     firstFree(buf),

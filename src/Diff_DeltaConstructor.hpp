@@ -8,14 +8,6 @@
 #include <string>
 #include <vector>
 
-extern unsigned long long int   clocksCDDinitDomDelta      ;
-extern unsigned long long int   clocksCDDprepareVectors    ;
-extern unsigned long long int   clocksCDDsaveXidMap        ;
-extern unsigned long long int   clocksCDDcomputeWeakMove   ;
-extern unsigned long long int   clocksCDDdetectUpdate      ;
-extern unsigned long long int   clocksCDDaddAttributeOps   ;
-extern unsigned long long int   clocksConstructDOMDelta    ;
-
 class NodesManager ;
 
 class DeltaConstructor {

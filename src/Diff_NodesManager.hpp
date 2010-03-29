@@ -127,8 +127,5 @@ class NodesManager {
 	  bool operator() (int id1, int id2) const ;
 	} ;
 
-extern unsigned long long int   clocksGetBestCandidate     ;
-extern unsigned long long int   clocksQueueOps             ;
-extern unsigned long long int   clocksPropagateAssign      ;
 
 #endif

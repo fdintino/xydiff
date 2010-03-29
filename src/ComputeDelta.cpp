@@ -42,14 +42,6 @@
  *                                                                 *
  *******************************************************************/
  
-unsigned long long int clocksComputeDelta           ;
-
-unsigned long long int clocksReadDocuments          ;
-unsigned long long int clocksRegisterSubtree        ;
-unsigned long long int clocksTopDownMatch           ;
-unsigned long long int clocksOptimize               ;
-unsigned long long int clocksConstructDeltaDocument ;
-unsigned long long int clocksSaveDelta              ;
 
 /* 1 to 10 ms resolution functions */
 
@@ -99,22 +91,6 @@ void TimeStep(void) {
 
 // apelat din XyDiff() de mai jos
 XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOMDocument* v1XML, const char *doc2name, bool ignoreSpacesFlag=false, bool verbose=false) {
-#ifdef HW_PROF
-	clocksRegisterSubtree        = 0 ;
-	clocksTopDownMatch           = 0 ;
-		clocksGetBestCandidate     = 0 ;
-		clocksQueueOps             = 0 ;
-		clocksPropagateAssign      = 0 ;
-	clocksOptimize               = 0 ;
-	clocksConstructDeltaDocument = 0 ;
-		clocksCDDinitDomDelta      = 0 ;
-		clocksCDDprepareVectors    = 0 ;
-		clocksCDDsaveXidMap        = 0 ;
-		clocksCDDcomputeWeakMove   = 0 ;
-		clocksCDDdetectUpdate      = 0 ;
-		clocksCDDaddAttributeOps   = 0 ;
-		clocksConstructDOMDelta    = 0 ;
-#endif
 
 	/* ---- [[ Phase 1: ]] Compute signatures and weight for subtrees on both documents ---- */
 	

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="xydiff"
 	ProjectGUID="{6D8FADC7-B09B-4ADC-8D62-781ADFCCEAF6}"
 	Keyword="Win32Proj"
@@ -105,8 +105,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\include;&quot;..\..\xerces-c-3.0.1\src&quot;;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api;C:\WinDDK\7600.16385.1\inc\api\crt\stl70"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_STATIC_CPPLIB;XYDIFF_EXPORTS;_STL70_"
+				AdditionalIncludeDirectories="..\include;&quot;..\..\xerces-c-3.0.0-x86-windows-vc-9.0\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_STATIC_CPPLIB;XYDIFF_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"

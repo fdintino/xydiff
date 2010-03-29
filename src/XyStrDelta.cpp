@@ -358,7 +358,8 @@ void XyStrDeltaApply::complete()
 	// confusing and isn't particularly helpful. Here we search for replace, insert, or delete operations
 	// that surround a text node with no whitespace, and then merge the three into a single replace operation.
 	childNodes = node->getChildNodes();
-	for (int i = 0; i < childNodes->getLength(); i++) {
+	int i;
+	for (i = 0; i < childNodes->getLength(); i++) {
 		node1 = (DOMElement *) childNodes->item(i);
 		if (node1 == NULL) {
 			break;
@@ -383,7 +384,7 @@ void XyStrDeltaApply::complete()
 	
 	// Second go-around we see if adjacent operation nodes can be merged (ie ones that don't have
 	// any text nodes between them, for instance two adjacent xy:i tags with matching changeIds
-	for (int i = 0; i < childNodes->getLength(); i++) {
+	for (i = 0; i < childNodes->getLength(); i++) {
 		node1 = (DOMElement *) childNodes->item(i);
 		if (node1 == NULL) {
 			break;

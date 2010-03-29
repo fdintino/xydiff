@@ -16,18 +16,6 @@
 
 #define HWPROF_LOG 0
 
-#if HWPROF_LOG
-FILE *timeFile ;
-
-extern unsigned long long int   clocksCDDsaveXidMap        ;
-extern unsigned long long int clocksRegisterSubtree        ;
-extern unsigned long long int clocksTopDownMatch           ;
-extern unsigned long long int clocksOptimize               ;
-extern unsigned long long int clocksConstructDeltaDocument ;
-extern unsigned long long int clocksSaveDelta              ;
-
-#endif
-
 XERCES_CPP_NAMESPACE_USE
 
 unsigned long getFileSize(const char *filename) {
@@ -43,15 +31,6 @@ unsigned long getFileSize(const char *filename) {
                                                                    
 int main(int argc, char **argv) {
  
-#if HWPROF_LOG
-	timeFile = fopen("timefile.txt", "wb");
-	if (timeFile==NULL) {
- 		fprintf(stderr, "could not open timefile.txt\n");
-		exit(0);
-		}
-	printf("Logging time profile\n");
-#endif
-
 	std::string file1, file2 ;
 	bool ignoreSpacesFlag=false;
 	bool defaultDeltafile=true;
@@ -117,25 +96,6 @@ int main(int argc, char **argv) {
 		/* Compute Delta over FILE1.XML and FILE2.XML */
 		XyDelta::XyDiff(file1.c_str(), file2.c_str(), deltafile.c_str(), ignoreSpacesFlag);
 
-#if HWPROF_LOG
-		if (timeFile!=NULL) {
-			printf("add timing profile to log\n");
-			// Time Data for Algorithm Analysis
-			unsigned long long int phase2 = clocksRegisterSubtree ;
-			unsigned long long int phase3 = clocksTopDownMatch ;
-			unsigned long long int phase4 = clocksOptimize ;
-			unsigned long long int phase5 = clocksConstructDeltaDocument - clocksCDDsaveXidMap ;
-			fprintf(timeFile, "# data size, phase1+2; phase3; phase4; phase5\n");
-			unsigned long dataSize = getFileSize(v0filename)+getFileSize(v1filename) ;
-			fprintf(timeFile, "%7d %7d %7d %7d %7d\n",
-								(int)dataSize,
-								(int)(phase2/(CLOCKRATE/1000000)),
-								(int)(phase3/(CLOCKRATE/1000000)),
-								(int)(phase4/(CLOCKRATE/1000000)),
-								(int)(phase5/(CLOCKRATE/1000000))
-								);
-			}
-#endif
 		}
 
 	catch( const DeltaException &e ) {
@@ -155,11 +115,7 @@ int main(int argc, char **argv) {
 		XMLString::release(&tmpChar);
 		exit(-1);
 		}	
-	
-#if HWPROF_LOG
-	fclose( timeFile );
-#endif
-	
+
 	return(0);
 	}
 	

@@ -72,7 +72,9 @@ void lcss(std::vector<wSequence> & s1, std::vector<wSequence> & s2) {
 	//char origin[l2][l1] ;
 	float** cost   = new float*[l2];
 	char**  origin = new char* [l2];
-	for(unsigned int j=0; j<l2; j++) {
+	unsigned int i;
+	unsigned int j;
+	for(j=0; j<l2; j++) {
 		cost[j]  = new float[l1];
 		origin[j]= new char [l1];
 	}
@@ -82,20 +84,20 @@ void lcss(std::vector<wSequence> & s1, std::vector<wSequence> & s2) {
 	origin[0][0]='Z' ;
 
 	// Transforming parts of S1 into empty string is just deleting
-	for(unsigned int i=1; i<l1; i++) {
+	for(i=1; i<l1; i++) {
 		cost[0][i]=cost[0][i-1]+s1[i].weight ;
 		origin[0][i]='A';
 		}
 	// Transforming empty string into parts of S2 is just inserting
-	for(unsigned int j=1; j<l2; j++) {
+	for(j=1; j<l2; j++) {
 		cost[j][0]=cost[j-1][0]+s2[j].weight ;
 		origin[j][0]='B';
 		}
 
 	// compute paths cost which transforms S1 into S2
 	
-	for(unsigned int j=1; j<l2; j++) {
-		for(unsigned int i=1; i<l1; i++) {
+	for(j=1; j<l2; j++) {
+		for(i=1; i<l1; i++) {
 			vddprintf(("Computing cost(i=%3d,j=%3d)\n", i, j));
 
 			// delete item i in S1 and use tranformation of  S1[1..i-1] into S2[1..j]
@@ -130,8 +132,8 @@ void lcss(std::vector<wSequence> & s1, std::vector<wSequence> & s2) {
 	
 	// trace best path
 	
-	unsigned int i=l1-1 ;
-	unsigned int j=l2-1 ;
+	i=l1-1 ;
+	j=l2-1 ;
 	unsigned int balance = 0 ; // Delete/Insert balance
 	
 	while((i>0)||(j>0)) {
@@ -164,11 +166,12 @@ void lcss(std::vector<wSequence> & s1, std::vector<wSequence> & s2) {
 	}
 	
 #ifdef TESTING
-	for(unsigned int k=1; k<s1.size(); k++) printf("s1: Keeping %d\n", s1[k].data);
-	for(unsigned int k=1; k<s2.size(); k++) printf("s2: Keeping %d\n", s2[k].data);
+	unsigned int k;
+	for(k=1; k<s1.size(); k++) printf("s1: Keeping %d\n", s1[k].data);
+	for(k=1; k<s2.size(); k++) printf("s2: Keeping %d\n", s2[k].data);
 #endif
 
-	for(unsigned int j=0; j<l2; j++) {
+	for(j=0; j<l2; j++) {
 		delete [] cost[j];
 		delete [] origin[j];
 	}

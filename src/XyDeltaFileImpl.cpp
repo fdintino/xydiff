@@ -42,15 +42,6 @@
 
 XERCES_CPP_NAMESPACE_USE
 
-extern unsigned long long int clocksComputeDelta           ;
-
-extern unsigned long long int clocksReadDocuments          ;
-extern unsigned long long int clocksRegisterSubtree        ;
-extern unsigned long long int clocksTopDownMatch           ;
-extern unsigned long long int clocksOptimize               ;
-extern unsigned long long int clocksConstructDeltaDocument ;
-extern unsigned long long int clocksSaveDelta              ;
-
 void TimeInit(void);
 void TimeStep(void);
 
@@ -160,13 +151,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 	std::string v0filename = incV0filename ;
 	std::string v1filename = incV1filename ;
 	
-#ifdef HW_PROF
-	clocksComputeDelta           = 0 ;
-	
-	clocksReadDocuments          = 0 ;
-	clocksSaveDelta              = 0 ;
-#endif
-
 	TimeInit();
 	
 	/* ---- [[ Phase 0: ]] Read and Parse documents ---- */
@@ -277,28 +261,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 
 	/* ---- [[ END ]] Program terminated ---- */
 
-
-#ifdef HW_PROF
-	if (verbose) {
-		printf("computeDelta                 : %5dms\n", (int)(clocksComputeDelta           /(CLOCKRATE/1000)) );
-		printf("  (0) Read documents              : %5dms\n", (int)(clocksReadDocuments          /(CLOCKRATE/1000)) );
-		printf("  (1) RegisterSubtree             : %5dms\n", (int)(clocksRegisterSubtree        /(CLOCKRATE/1000)) );
-		printf("  (2) top-down Match              : %5dms\n", (int)(clocksTopDownMatch           /(CLOCKRATE/1000)) );
-		printf("    getBestCandidate                   : %5dms\n", (int)(clocksGetBestCandidate       /(CLOCKRATE/1000)) );
-		printf("    clocksQueueOps                     : %5dms\n", (int)(clocksQueueOps               /(CLOCKRATE/1000)) );
-		printf("    clocksPropagateAssign              : %5dms\n", (int)(clocksPropagateAssign        /(CLOCKRATE/1000)) );
-		printf("  (3) Optimize                    : %5dms\n", (int)(clocksOptimize               /(CLOCKRATE/1000)) );
-		printf("  (4) ConstructDeltaDocument      : %5dms\n", (int)(clocksConstructDeltaDocument /(CLOCKRATE/1000)) );
-		printf("    init DOM delta                     : %5dms\n", (int)(clocksCDDinitDomDelta        /(CLOCKRATE/1000)) );
-		printf("    prepare vectors                    : %5dms\n", (int)(clocksCDDprepareVectors      /(CLOCKRATE/1000)) );
-		printf("    save XidMap                        : %5dms\n", (int)(clocksCDDsaveXidMap          /(CLOCKRATE/1000)) );
-		printf("    compute weak move                  : %5dms\n", (int)(clocksCDDcomputeWeakMove     /(CLOCKRATE/1000)) );
-		printf("    detect update                      : %5dms\n", (int)(clocksCDDdetectUpdate        /(CLOCKRATE/1000)) );
-		printf("    add DOM attribute operations       : %5dms\n", (int)(clocksCDDaddAttributeOps     /(CLOCKRATE/1000)) );
-		printf("    construct DOM delta                : %5dms\n", (int)(clocksConstructDOMDelta      /(CLOCKRATE/1000)) );
-		printf("  (5) Save delta                  : %5dms\n", (int)(clocksSaveDelta              /(CLOCKRATE/1000)) );
-		}
-#endif
 
 	return ;
 }

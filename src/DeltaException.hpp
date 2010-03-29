@@ -53,7 +53,7 @@ class MessageEngine {
 	};
 
 #define THROW_AWAY(why) { \
-	MessageEngine e(__FILE__, __LINE__, __FUNCTION__); \
+	MessageEngine e(__FILE__, __LINE__, "function"); \
 	e.add why ; \
 	std::string s=e.getStr(); \
 	throw DeltaException(s, e.getWhy()); \

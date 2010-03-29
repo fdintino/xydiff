@@ -197,7 +197,8 @@ XyDOMDelta::XyDOMDelta(XID_DOMDocument* doc1p, XID_DOMDocument* doc2p, const cha
 
 XyDOMDelta::~XyDOMDelta()
 {
-	delete [] doc1xidmap;
+	char* p = (char*) doc1xidmap;
+	delete [] p;
 }
 
 XID_DOMDocument* XyDOMDelta::createDelta()
