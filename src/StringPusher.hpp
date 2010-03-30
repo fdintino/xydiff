@@ -36,7 +36,7 @@ private:
 
     void grow(int reqSpace);
 
-    static const int kIniSize;
+    static const int kIniSize = 32;
     char * buf;
     char * firstFree;
     char * end;

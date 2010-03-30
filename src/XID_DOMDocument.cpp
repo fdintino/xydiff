@@ -580,12 +580,12 @@ bool XID_DOMDocument::hasChildNodes() const
 
 void XID_DOMDocument::setNodeValue(const XMLCh *nodeValue)
 {
-  return theDocument->setNodeValue(nodeValue);
+  theDocument->setNodeValue(nodeValue);
 }
 
 void XID_DOMDocument::normalize()
 {
-  return theDocument->normalize();
+  theDocument->normalize();
 }
 
 bool XID_DOMDocument::isSupported(const XMLCh *feature, const XMLCh *version) const
@@ -610,7 +610,7 @@ const XMLCh * XID_DOMDocument::getLocalName() const
 
 void XID_DOMDocument::setPrefix(const XMLCh *prefix)
 {
-  return theDocument->setPrefix(prefix);
+  theDocument->setPrefix(prefix);
 }
 
 bool XID_DOMDocument::hasAttributes() const
@@ -650,7 +650,7 @@ const XMLCh * XID_DOMDocument::getTextContent() const
 
 void XID_DOMDocument::setTextContent(const XMLCh *textContent)
 {
-  return theDocument->setTextContent(textContent);
+  theDocument->setTextContent(textContent);
 }
 
 bool XID_DOMDocument::isDefaultNamespace(const XMLCh *namespaceURI) const
@@ -810,7 +810,7 @@ const XMLCh * XID_DOMDocument::getDocumentURI() const
 
 void XID_DOMDocument::setDocumentURI(const XMLCh *documentURI)
 {
-  return theDocument->setDocumentURI(documentURI);
+  theDocument->setDocumentURI(documentURI);
 }
 
 
@@ -821,7 +821,7 @@ bool XID_DOMDocument::getStrictErrorChecking() const
 
 void XID_DOMDocument::setStrictErrorChecking(bool strictErrorChecking)
 {
-  return theDocument->setStrictErrorChecking(strictErrorChecking);
+  theDocument->setStrictErrorChecking(strictErrorChecking);
 }
 
 DOMNode * XID_DOMDocument::renameNode(DOMNode *n, const XMLCh *namespaceURI, const XMLCh *name)
@@ -838,7 +838,7 @@ DOMNode * XID_DOMDocument::adoptNode(DOMNode *node)
 
 void XID_DOMDocument::normalizeDocument()
 {
-  return theDocument->normalizeDocument();
+  theDocument->normalizeDocument();
 }
 
 DOMEntity * XID_DOMDocument::createEntity(const XMLCh *name)

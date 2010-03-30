@@ -37,13 +37,8 @@
 #include <fstream>
 #include "infra/general/hash_map.hpp"
 
-#include <sys/timeb.h>
-#include <time.h>
-
 XERCES_CPP_NAMESPACE_USE
 
-void TimeInit(void);
-void TimeStep(void);
 
 
 /********************************************************************
@@ -150,8 +145,6 @@ void XyDelta::XyDiff(const char *incV0filename, const char *incV1filename, const
 
 	std::string v0filename = incV0filename ;
 	std::string v1filename = incV1filename ;
-	
-	TimeInit();
 	
 	/* ---- [[ Phase 0: ]] Read and Parse documents ---- */
 		

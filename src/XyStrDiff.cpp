@@ -163,7 +163,12 @@ void XyStrDiff::calculatePath(int i, int j)
 			this->registerBuffer(i, STRDIFF_INS, y[j-1]);
 		} else if (i > 0 && (j == 0 || c[(j-1)*n+i] < c[j*n+i-1])) {
 			this->calculatePath(i-1, j);
-			this->registerBuffer(i-1, STRDIFF_DEL, x[i-1]);
+			if (i == sizex && j == sizey) {
+				this->registerBuffer(i, STRDIFF_DEL, x[i-1]);
+			} else {
+				this->registerBuffer(i-1, STRDIFF_DEL, x[i-1]);
+			}
+			
 		}
 	}
 }

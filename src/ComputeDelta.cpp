@@ -26,58 +26,11 @@
 #include <fstream>
 #include "infra/general/hash_map.hpp"
 
-#include <sys/timeb.h>
-#include <time.h>
-
 //class DTDValidator;
 
-/*******************************************************************
- *                                                                 *
- *                                                                 *
- * Time Profiling Functions                                        *
- *                                                                 *
- * Author: Gregory COBENA                                          *
- *                                                                 *
- *                                                                 *
- *                                                                 *
- *******************************************************************/
- 
 
-/* 1 to 10 ms resolution functions */
-
-// We can use: getitimer, setitimer
-
-#ifdef WIN32
-#ifndef ftime
-	#define timeb	_timeb
-	#define ftime	_ftime
-#endif
-#endif
-struct timeb timeStart ;
-struct timeb timeLast ;
 
 XERCES_CPP_NAMESPACE_USE
-
-void TimeInit(void) {
-  vddprintf(("TimeInit\n")) ;
-	ftime ( &timeStart );
-	timeLast = timeStart ;
-	}
-
-void TimeStep(void) {
-  struct timeb timeEnd ;
-	ftime( &timeEnd );
-	int secLast = (int) (timeEnd.time-timeLast.time) ;
-	long mLast = timeEnd.millitm - timeLast.millitm ;
-	mLast += 1000* secLast ;
-	int secStart = (int) (timeEnd.time-timeStart.time) ;
-	long mStart = timeEnd.millitm - timeStart.millitm ;
-	mStart += 1000* secStart ;
-	
-	vddprintf(("<!> time since previous step=%ldms, since timer init=%ldms\n", mLast, mStart));
-	timeLast = timeEnd ;
-	}
-
 /*******************************************************************
  *                                                                 *
  *                                                                 *

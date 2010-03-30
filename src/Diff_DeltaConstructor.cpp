@@ -26,14 +26,6 @@
 #include <fstream>
 #include "infra/general/hash_map.hpp"
 
-unsigned long long int   clocksCDDinitDomDelta      ;
-unsigned long long int   clocksCDDprepareVectors    ;
-unsigned long long int   clocksCDDsaveXidMap        ;
-unsigned long long int   clocksCDDcomputeWeakMove   ;
-unsigned long long int   clocksCDDdetectUpdate      ;
-unsigned long long int   clocksCDDaddAttributeOps   ;
-unsigned long long int   clocksConstructDOMDelta    ;
-
 bool _XyDiff_DontSaveXidmapToFile = false;
 
 XERCES_CPP_NAMESPACE_USE
@@ -87,7 +79,8 @@ DeltaConstructor::DeltaConstructor(
 
 	// Copy namespaces from root element
 	DOMNamedNodeMap *v1XMLAttrs = v1XML->getDocumentElement()->getAttributes();
-	for (int i = 0; i < v1XMLAttrs->getLength(); i++) {
+	int i;
+	for (i = 0; i < v1XMLAttrs->getLength(); i++) {
 		DOMAttr *attr = (DOMAttr *) v1XMLAttrs->item(i);
 		// If it is prefixed with xmlns
 		if (XMLString::compareNString(attr->getName(), xmlns_ch, 5) == 0) {
@@ -99,7 +92,7 @@ DeltaConstructor::DeltaConstructor(
 		}
 	}
 	DOMNamedNodeMap *v0XMLAttrs = v0XML->getDocumentElement()->getAttributes();
-	for (int i = 0; i < v0XMLAttrs->getLength(); i++) {
+	for (i = 0; i < v0XMLAttrs->getLength(); i++) {
 		DOMAttr *attr = (DOMAttr *) v0XMLAttrs->item(i);
 		// If it is prefixed with xmlns
 		if (XMLString::compareNString(attr->getName(), xmlns_ch, 5) == 0) {
@@ -533,7 +526,8 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 		DOMNode* oldnode = nodesManager->v0nodeByDID[ v0nodeID ] ;
 	
 		unsigned int attLength = node->getAttributes()->getLength() ;
-		for(unsigned int i=0; i<attLength; i++) {
+		unsigned int i;
+		for(i=0; i<attLength; i++) {
 			DOMNode* attr = node->getAttributes()->item( i );
 			DOMNode* oldattr = oldnode->getAttributes()->getNamedItem(attr->getNodeName()) ;
 			if (oldattr==NULL) {
@@ -570,7 +564,7 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 		}
 
 		attLength = oldnode->getAttributes()->getLength() ;
-		for(unsigned int i=0; i<attLength; i++) {
+		for(i=0; i<attLength; i++) {
 			DOMNode* oldattr = oldnode->getAttributes()->item( i );
 			DOMNode* attr = node->getAttributes()->getNamedItem(oldattr->getNodeName()) ;
 			if (attr==NULL) {
