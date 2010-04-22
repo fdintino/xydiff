@@ -419,18 +419,20 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 								THROW_AWAY((error_msg));
 							}
 
-							char *oldValue = XMLString::transcode(delElem->getFirstChild()->getNodeValue());
-							char *newValue = XMLString::transcode(contentNode->getNodeValue());
+              // XMLCh *oldValue;
+              // XMLString::copyString(oldValue, delElem->getFirstChild()->getNodeValue());
+              // XMLCh *newValue;
+              // XMLString::copyString(newValue,contentNode->getNodeValue());
 
-							if (oldValue != NULL && newValue != NULL) {
-								XyStrDiff *strdiff = new XyStrDiff(deltaDoc, (DOMElement *)upElem, oldValue, newValue);
+							if (delElem->getFirstChild()->getNodeValue() != NULL && contentNode->getNodeValue() != NULL) {
+								XyStrDiff *strdiff = new XyStrDiff(deltaDoc, (DOMElement *)upElem, delElem->getFirstChild()->getNodeValue(), contentNode->getNodeValue());
 								strdiff->LevenshteinDistance();
 								delete strdiff;
 							}
-							XMLString::release(&oldValue);
-							XMLString::release(&newValue);
-							delete [] oldValue;
-							delete [] newValue;
+              // XMLString::release(&oldValue);
+              // XMLString::release(&newValue);
+              // delete [] oldValue;
+              // delete [] newValue;
 
 							XMLString::transcode("newxm", tempStrA, 99);
 							XMLCh *xidListStringCh = XMLString::transcode(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str());

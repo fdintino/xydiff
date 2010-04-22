@@ -36,25 +36,27 @@
 
 class XyStrDiff {
 public:
-	XyStrDiff(xercesc::DOMDocument *myDoc, xercesc::DOMElement *elem, const char* x, const char *y, int sizex=-1, int sizey=-1);
+	XyStrDiff(xercesc::DOMDocument *myDoc, xercesc::DOMElement *elem, const XMLCh *x, const XMLCh *y, int sizex=-1, int sizey=-1);
 	~XyStrDiff();
 	void LevenshteinDistance();
 	void calculatePath(int i=-1, int j=-1);
-	void registerBuffer(int i, int optype, char chr);
+	void registerBuffer(int i, int optype, XMLCh chr);
 	void flushBuffers();
 private :
 	xercesc::DOMImplementation* impl;
 	xercesc::DOMDocument *doc;
 	xercesc::DOMElement *root;
 	int xpos, ypos;
-	char *x;
-	char *y;
+	XMLCh *x;
+	XMLCh *y;
 	int *c;
 	int *d;
 	int *t;
 	int currop; // Current operation in alterText()
-	std::string wordbuf, subbuf, insbuf, delbuf, debugstr;
-	int sizex, sizey, m, n;
+  std::basic_string<XMLCh> insbuf;
+  std::basic_string<XMLCh> delbuf;
+  int sizex, sizey;
+  int m, n;
 };
 
 

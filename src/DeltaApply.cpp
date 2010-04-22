@@ -121,9 +121,6 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	vddprintf(("        update xid=%d\n",(int)nodeXID));
 	DOMNode* upNode = xiddoc->getXidMap().getNodeWithXID( nodeXID );
 	if (upNode==NULL) THROW_AWAY(("node with XID=%d not found",(int)nodeXID));
-	char *currentValue_char = XMLString::transcode(upNode->getNodeValue());
-	std::string currentValue = currentValue_char;
-	XMLString::release(&currentValue_char);
 	
 	DOMNodeList *opNodes = operationNode->getChildNodes();
 	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));

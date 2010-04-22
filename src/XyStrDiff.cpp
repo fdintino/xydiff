@@ -50,7 +50,7 @@ XERCES_CPP_NAMESPACE_USE
 
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
-XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const char* strX, const char *strY, int sizeXStr, int sizeYStr)
+XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, const XMLCh *strY, int sizeXStr, int sizeYStr)
 {	
 	doc = myDoc;
 	root = elem;
@@ -58,17 +58,13 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const char* strX, con
 	sizey = sizeYStr;
 	
 	if ((strX==NULL)||(sizex==0)) return;
-	if (sizex<0) sizex = strlen(strX);
-	x = new char[sizex+1];
-	memcpy(x, strX, sizex*sizeof(char));
-	x[sizex]='\0';
-	
+	if (sizex<0) sizex = XMLString::stringLen(strX);
 	if ((strY==NULL)||(sizey==0)) return;
-	if (sizey<0) sizey = strlen(strY);
-	y = new char[sizey+1];
-	memcpy(y, strY, sizey*sizeof(char));
-	y[sizey]='\0';
-	
+	if (sizey<0) sizey = XMLString::stringLen(strY);
+
+  x = XMLString::replicate(strX);
+  y = XMLString::replicate(strY);
+
 	n = sizex;
 	m = sizey;
 
@@ -91,16 +87,16 @@ XyStrDiff::~XyStrDiff(void)
 	free(t);
 	free(c);
 	free(d);
-	delete [] x;
-	delete [] y;
+  XMLString::release(&x);
+  XMLString::release(&y);
 }
 
 void XyStrDiff::LevenshteinDistance()
 {
 	// Step 1
 	int k, i, j, cost, distance;
-	n = strlen(x);
-	m = strlen(y);
+	n = XMLString::stringLen(x);
+	m = XMLString::stringLen(y);
 
 	if (n != 0 && m != 0) {
 		m++;
@@ -143,10 +139,10 @@ void XyStrDiff::LevenshteinDistance()
 			}
 		}
 		distance = d[n*m-1];
-		this->calculatePath();
-		this->flushBuffers();
-		
-		vddprintf(("debugstr=%s\n", debugstr.c_str()));
+    this->calculatePath();
+    this->flushBuffers();
+    
+
 	}
 }
 
@@ -173,11 +169,9 @@ void XyStrDiff::calculatePath(int i, int j)
 	}
 }
 
-void XyStrDiff::registerBuffer(int i, int optype, char chr)
+void XyStrDiff::registerBuffer(int i, int optype, XMLCh chr)
 {
-	if (wordbuf.empty()) {
-		wordbuf = chr;
-	}
+
 	xpos = i;
 
 	if (currop == -1) {
@@ -186,9 +180,11 @@ void XyStrDiff::registerBuffer(int i, int optype, char chr)
 	} 
 	if (currop == STRDIFF_SUB) {
 		if (optype == STRDIFF_DEL) {
-			delbuf += chr;
+      // delbuf.append(chr);
+      delbuf += chr;
 		} else if (optype == STRDIFF_INS) {
-			insbuf += chr;
+      // insbuf.append(chr);
+      insbuf += chr;
 		} else {
 			this->flushBuffers();
 			currop = optype;
@@ -197,10 +193,12 @@ void XyStrDiff::registerBuffer(int i, int optype, char chr)
 	else if (optype == STRDIFF_DEL) {
 		currop = optype;
 		delbuf += chr;
+    // delbuf.append(chr);
 	}
 	else if (optype == STRDIFF_INS) {
 		currop = (currop == STRDIFF_DEL) ? STRDIFF_SUB : STRDIFF_INS;
 		insbuf += chr;
+    // insbuf.append(chr);
 	}
 	else if (optype == STRDIFF_NOOP) {
 		this->flushBuffers();
@@ -216,9 +214,8 @@ void XyStrDiff::flushBuffers()
 	if (currop == STRDIFF_NOOP) {
 		return;
 	} else if (currop == STRDIFF_SUB) {
-		len = delbuf.length();
+    len = delbuf.length();
 		startpos = xpos - len;
-		debugstr.append("<tr pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\">" + insbuf + "</r>\n");
 		
 		try {
 			XMLString::transcode("tr", tempStrA, 99);
@@ -230,28 +227,25 @@ void XyStrDiff::flushBuffers()
 			XMLString::transcode(itoa(len).c_str(), tempStrB, 99);
 			r->setAttribute(tempStrA, tempStrB);
 
-			XMLCh *insbuf_ch = XMLString::transcode(insbuf.c_str());
-			DOMText *textNode = doc->createTextNode(insbuf_ch);
-			XMLString::release(&insbuf_ch);
+			DOMText *textNode = doc->createTextNode(insbuf.c_str());
 
 			r->appendChild((DOMNode *)textNode);
 			root->appendChild((DOMNode *)r);
 		}
 		catch (const XMLException& toCatch) {
-			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
+			std::cout << "XMLException: " << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (const DOMException& toCatch) {
-			std::cout << "Exception message is: \n" << XMLString::transcode(toCatch.getMessage()) << std::endl;
+			std::cout << "DOMException: " << XMLString::transcode(toCatch.getMessage()) << std::endl;
 		}
 		catch (...) {
-			std::cout << "Unexpected Exception" << std::endl;
+			std::cout << "Unexpected Exception: " << std::endl;
 		}
-		
-		delbuf = "";
-		insbuf = "";
+
+    delbuf.clear();
+    insbuf.clear();
 	} else if (currop == STRDIFF_INS) {
 		startpos = xpos;
-		debugstr.append("<ti pos=\"" + itoa(startpos) + "\">"+insbuf+"</i>\n");
 		
 		try {
 			XMLString::transcode("ti", tempStrA, 99);
@@ -261,9 +255,7 @@ void XyStrDiff::flushBuffers()
 			XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
 			r->setAttribute(tempStrA, tempStrB);
 
-			XMLCh *insbuf_ch = XMLString::transcode(insbuf.c_str());
-			DOMText *textNode = doc->createTextNode(insbuf_ch);
-			XMLString::release(&insbuf_ch);
+			DOMText *textNode = doc->createTextNode(insbuf.c_str());
 
 			r->appendChild((DOMNode *)textNode);
 			root->appendChild((DOMNode *)r);
@@ -277,13 +269,11 @@ void XyStrDiff::flushBuffers()
 		catch (...) {
 			std::cout << "Unexpected Exception" << std::endl; 
 		}
-		
-		
-		insbuf = "";
+
+    insbuf.clear();
 	} else if (currop == STRDIFF_DEL) {
-		len = delbuf.length();
+    len = delbuf.length();
 		startpos = xpos - len;
-		debugstr.append("<td pos=\"" + itoa(startpos) + "\" len=\"" + itoa(len) + "\" />\n");
 		try {
 			XMLString::transcode("td", tempStrA, 99);
 			DOMElement *r = doc->createElement(tempStrA);
@@ -304,7 +294,7 @@ void XyStrDiff::flushBuffers()
 		catch (...) {
 			std::cout << "Unexpected Exception" << std::endl;
 		}
-		delbuf = "";
+    delbuf.clear();
 	}
 }
 

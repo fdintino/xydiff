@@ -65,7 +65,7 @@ private :
 	XID_DOMDocument *doc;
 	xercesc::DOMNode *node;
 	xercesc::DOMText *txt;
-	std::string currentValue;
+	std::basic_string<XMLCh> currentValue;
 	bool applyAnnotations;
 	bool textNodeHasWhitespace(xercesc::DOMNode *t);
 	bool mergeNodes(xercesc::DOMElement *node1, xercesc::DOMElement *node2, xercesc::DOMElement *node3);

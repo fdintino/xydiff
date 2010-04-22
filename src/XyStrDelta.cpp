@@ -91,9 +91,9 @@ XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, int cha
 	DOMNode *txtNode = node->getFirstChild();
 
 	txt = (DOMText *)txtNode;
-	char *currentValue_char = XMLString::transcode(upNode->getNodeValue());
-	currentValue = currentValue_char;
-	XMLString::release(&currentValue_char);
+//	char *currentValue_char = XMLString::transcode(upNode->getNodeValue());
+  currentValue = upNode->getNodeValue();//currentValue_char;
+//	XMLString::release(&currentValue_char);
 	applyAnnotations = false;
 	cid = changeId;
 }
@@ -287,10 +287,10 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
-		char *ins_char = XMLString::transcode(ins);
-		std::string insString( ins_char );
-		XMLString::release(&ins_char);
-		currentValue.insert(pos, insString);
+    // char *ins_char = XMLString::transcode(ins);
+    // std::string insString( ins_char );
+    // XMLString::release(&ins_char);
+		currentValue.insert(pos, ins);
 		return;
 	}
 	DOMElement *insNode;
@@ -343,9 +343,7 @@ XyStrDeltaApply::~XyStrDeltaApply()
 void XyStrDeltaApply::complete()
 {
 	if (!applyAnnotations) {
-		XMLCh *currentValue_xmlch = XMLString::transcode(currentValue.c_str());
-		txt->setNodeValue( currentValue_xmlch ) ;
-		XMLString::release(&currentValue_xmlch);
+		txt->setNodeValue( currentValue.c_str() ) ;
 		return;
 	}
 
@@ -446,14 +444,22 @@ bool XyStrDeltaApply::mergeTwoNodes(DOMElement *node1, DOMElement *node2)
 
 bool XyStrDeltaApply::textNodeHasWhitespace(DOMNode *t)
 {
+  std::basic_string<XMLCh> nodeText;
+  std::basic_string<XMLCh> findText;
+  XMLCh* findText_ch;
+  bool ret;
+
 	// Make sure we're dealing with a text node
 	if (t->getNodeType() != DOMNode::TEXT_NODE) {
 		return false;
 	}
-	char *tNodeValue = XMLString::transcode(t->getNodeValue());
-	std::string nodeText = std::string ( tNodeValue );
-	XMLString::release(&tNodeValue);
-	return (nodeText.find("		\n") != std::string::npos);
+
+  nodeText = std::basic_string<XMLCh>(t->getNodeValue());
+  findText_ch = XMLString::transcode("		\n");
+  findText = std::basic_string<XMLCh>(findText_ch);
+	ret = (nodeText.find(findText) != std::string::npos);
+  XMLString::release(&findText_ch);
+  return ret;
 }
 
 bool XyStrDeltaApply::mergeNodes(DOMElement *node1, DOMElement *node2, DOMElement *node3)
