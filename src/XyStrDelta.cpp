@@ -91,9 +91,7 @@ XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, int cha
 	DOMNode *txtNode = node->getFirstChild();
 
 	txt = (DOMText *)txtNode;
-//	char *currentValue_char = XMLString::transcode(upNode->getNodeValue());
-  currentValue = upNode->getNodeValue();//currentValue_char;
-//	XMLString::release(&currentValue_char);
+  currentValue = upNode->getNodeValue();
 	applyAnnotations = false;
 	cid = changeId;
 }
@@ -287,9 +285,6 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
-    // char *ins_char = XMLString::transcode(ins);
-    // std::string insString( ins_char );
-    // XMLString::release(&ins_char);
 		currentValue.insert(pos, ins);
 		return;
 	}

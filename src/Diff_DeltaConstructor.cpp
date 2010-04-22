@@ -419,20 +419,11 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 								THROW_AWAY((error_msg));
 							}
 
-              // XMLCh *oldValue;
-              // XMLString::copyString(oldValue, delElem->getFirstChild()->getNodeValue());
-              // XMLCh *newValue;
-              // XMLString::copyString(newValue,contentNode->getNodeValue());
-
 							if (delElem->getFirstChild()->getNodeValue() != NULL && contentNode->getNodeValue() != NULL) {
 								XyStrDiff *strdiff = new XyStrDiff(deltaDoc, (DOMElement *)upElem, delElem->getFirstChild()->getNodeValue(), contentNode->getNodeValue());
 								strdiff->LevenshteinDistance();
 								delete strdiff;
 							}
-              // XMLString::release(&oldValue);
-              // XMLString::release(&newValue);
-              // delete [] oldValue;
-              // delete [] newValue;
 
 							XMLString::transcode("newxm", tempStrA, 99);
 							XMLCh *xidListStringCh = XMLString::transcode(nodesManager->v1doc->getXidMap().StringFromList(xidList).c_str());
@@ -458,17 +449,6 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 				XMLString::release(&parXID_str_ch);
 				XMLString::release(&pos_str_ch);
 
-#if 0
-				vddprintf(("<i xm=""%s"" par=""%d"" pos=""%d"" %s%s%s/>\n",
-					myXidMap.c_str(),
-					(int)parentXID,
-					myPosition,
-					(myAtomicInfo.myEvent==AtomicInfo::STRONGMOVE)?"strongmove":"",
-					(myAtomicInfo.myEvent==AtomicInfo::WEAKMOVE)?"weakmove":"",
-					(myAtomicInfo.myEvent==AtomicInfo::UPDATE_NEW)?"update":""
-					));
-#endif
-				
 				if ((!ignoreUnimportantData)||(!myAtomicInfo.isUnimportant)) {
 					// Update elements function differently, they have already been
 					// appended in DeltaConstructor::ConstructDeleteScript()

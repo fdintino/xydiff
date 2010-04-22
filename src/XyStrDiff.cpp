@@ -180,10 +180,8 @@ void XyStrDiff::registerBuffer(int i, int optype, XMLCh chr)
 	} 
 	if (currop == STRDIFF_SUB) {
 		if (optype == STRDIFF_DEL) {
-      // delbuf.append(chr);
       delbuf += chr;
 		} else if (optype == STRDIFF_INS) {
-      // insbuf.append(chr);
       insbuf += chr;
 		} else {
 			this->flushBuffers();
@@ -193,12 +191,10 @@ void XyStrDiff::registerBuffer(int i, int optype, XMLCh chr)
 	else if (optype == STRDIFF_DEL) {
 		currop = optype;
 		delbuf += chr;
-    // delbuf.append(chr);
 	}
 	else if (optype == STRDIFF_INS) {
 		currop = (currop == STRDIFF_DEL) ? STRDIFF_SUB : STRDIFF_INS;
 		insbuf += chr;
-    // insbuf.append(chr);
 	}
 	else if (optype == STRDIFF_NOOP) {
 		this->flushBuffers();
