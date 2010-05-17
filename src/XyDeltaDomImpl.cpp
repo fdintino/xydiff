@@ -96,51 +96,52 @@ void XyDelta::SaveDomDocument(DOMDocument* d, const char *filename) {
         delete xd;
 }
 
-DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElement, bool applyAnnotations) {
+// DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElement, bool applyAnnotations) {
+// 
+// 		DeltaApplyEngine appliqueDoc(xdoc);
+// 		appliqueDoc.setApplyAnnotations(applyAnnotations);
+// 		appliqueDoc.ApplyDeltaElement(deltaElement) ;
+// 
+// 		DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
+//         DOMDocument* resultDoc = impl->createDocument();
+// 		XID_DOMDocument *resultxdoc = appliqueDoc.getResultDocument();
+// 		DOMNode* resultRoot = resultDoc->importNode(resultxdoc->getDocumentElement(), true);
+// 		if (applyAnnotations) {
+// 			XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+// 			XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+// 			XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+// 			if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
+// 				((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+// 			}
+// 			XMLString::release(&xyDeltaNS_ch);
+// 			XMLString::release(&xmlnsURI_ch);
+// 			XMLString::release(&xmlns_ch);
+// 		}
+// 
+// 		return resultDoc;
+// }
 
-//	XyLatinStr fromXidmap(deltaElement->getAttributes()->getNamedItem(XMLString::transcode("fromXidMap"))->getNodeValue());
-
-//	try {
-//		xdoc->addXidMap(fromXidmap);
+XID_DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElement, bool applyAnnotations) {
 
 		DeltaApplyEngine appliqueDoc(xdoc);
 		appliqueDoc.setApplyAnnotations(applyAnnotations);
 		appliqueDoc.ApplyDeltaElement(deltaElement) ;
 	
-		//doc = xdoc->getDOMDocumentOwnership();
-//		delete xdoc;
-//		xdoc=NULL;
 
-		// TO-DO: testXidMap value ?	
-
-			DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
-                	DOMDocument* resultDoc = impl->createDocument();
-			DOMNode* resultRoot = resultDoc->importNode(appliqueDoc.getResultDocument()->getDocumentElement(), true);
-			if (applyAnnotations) {
-
-				XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
-				XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-				XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
-			  if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
-			    ((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
-			  }
-				XMLString::release(&xyDeltaNS_ch);
-				XMLString::release(&xmlnsURI_ch);
-				XMLString::release(&xmlns_ch);
+		XID_DOMDocument *resultxdoc = appliqueDoc.getResultDocument();
+		DOMNode* resultRoot = resultxdoc->getDocumentElement();
+		if (applyAnnotations) {
+			XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+			XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+			XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+			if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
+				((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
 			}
-			resultDoc->appendChild(resultRoot);
-			return resultDoc;
-	// }
-//	}
-	// catch(...) {
-	// 	ERROR("Unknown Exception catched");
-	// 	if (xdoc) {
-	// 		doc = xdoc->getDOMDocumentOwnership();
-	// 		delete xdoc;
-	// 		xdoc=NULL;
-	// 	}
-	// 	return NULL;
-	// }
+			XMLString::release(&xyDeltaNS_ch);
+			XMLString::release(&xmlnsURI_ch);
+			XMLString::release(&xmlns_ch);
+		}
+		return resultxdoc;
 }
 
 unsigned int XyDelta::estimateDocumentSize(DOMDocument *doc) {
