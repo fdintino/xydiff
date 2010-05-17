@@ -129,18 +129,18 @@ XID_DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElemen
 	
 
 		XID_DOMDocument *resultxdoc = appliqueDoc.getResultDocument();
-		DOMNode* resultRoot = resultxdoc->getDocumentElement();
-		if (applyAnnotations) {
-			XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
-			XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-			XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
-			if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
-				((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
-			}
-			XMLString::release(&xyDeltaNS_ch);
-			XMLString::release(&xmlnsURI_ch);
-			XMLString::release(&xmlns_ch);
-		}
+		// DOMNode* resultRoot = resultxdoc->getDocumentElement();
+		// if (applyAnnotations) {
+		// 	XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+		// 	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+		// 	XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+		// 	if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
+		// 		((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+		// 	}
+		// 	XMLString::release(&xyDeltaNS_ch);
+		// 	XMLString::release(&xmlnsURI_ch);
+		// 	XMLString::release(&xmlns_ch);
+		// }
 		return resultxdoc;
 }
 

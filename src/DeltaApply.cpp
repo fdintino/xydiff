@@ -26,16 +26,20 @@ XERCES_CPP_NAMESPACE_USE
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 XID_DOMDocument* DeltaApplyEngine::getResultDocument (void) {
-	if (applyAnnotations) {
-		XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
-		deltaDoc     = XID_DOMDocument::createDocument() ;
-		XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-		XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
-		((DOMElement*)xiddoc)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
-		XMLString::release(&xyDeltaNS_ch);
-		XMLString::release(&xmlnsURI_ch);
-		XMLString::release(&xmlns_ch);
-	}
+	// if (applyAnnotations) {
+	// 	XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+	// 	deltaDoc     = XID_DOMDocument::createDocument() ;
+	// 	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+	// 	XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+	// 	DOMNode* resultRoot = xiddoc->getDocumentElement();
+	// 	if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
+	// 		((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+	// 	}
+	// 	// ((DOMElement*)xiddoc)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+	// 	XMLString::release(&xyDeltaNS_ch);
+	// 	XMLString::release(&xmlnsURI_ch);
+	// 	XMLString::release(&xmlns_ch);
+	// }
   return xiddoc ;
 }
 
@@ -172,8 +176,18 @@ void DeltaApplyEngine::Attribute_Insert( XID_t nodeXID, const XMLCh* attr, const
 	if (node==NULL) THROW_AWAY(("node with XID=%d not found",(int)nodeXID));
 	DOMAttr* attrNode = xiddoc->createAttribute( attr );
 	attrNode->setNodeValue( value );
-	node->getAttributes()->setNamedItem( attrNode );
+	DOMNamedNodeMap *attrs = node->getAttributes();
+	if (attrs == NULL) {
+		if (node->getNodeType() != DOMNode::ELEMENT_NODE) {
+			THROW_AWAY(("Attempted to insert an attribute on a non-element node. Perhaps xidmap was corrupted?"));
+		} else {
+			THROW_AWAY(("Unexpected error encountered: getAttributes() returned NULL for element"));
+		}
+	} else {
+		attrs->setNamedItem( attrNode );
 	}
+	
+}
 	
 void DeltaApplyEngine::Attribute_Update( XID_t nodeXID, const XMLCh* attr, const XMLCh* value ) {
 	vddprintf(("        update attr at xid=%d\n",(int)nodeXID));

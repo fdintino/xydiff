@@ -196,9 +196,11 @@ void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len, bool
 
 	XMLCh tempStrA[6];
 	XMLCh tempStrB[6];
-	
+	XMLCh xyDeltaNS_ch[36];
+	XMLString::transcode("urn:schemas-xydiff:xydelta", xyDeltaNS_ch, 35);
+
 	XMLString::transcode("xy:d", tempStrA, 5);
-	delNode = doc->createElement(tempStrA);
+	delNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
 	XMLString::transcode("cid", tempStrA, 5);
 	delNode->setAttribute( tempStrA, witoa(cid) );
 
@@ -294,10 +296,12 @@ void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *
 	DOMNode *parentNode;
 	XMLCh tempStrA[6];
 	XMLCh tempStrB[6];
+	XMLCh xyDeltaNS_ch[36];
+	XMLString::transcode("urn:schemas-xydiff:xydelta", xyDeltaNS_ch, 35);
 
 	parentNode = insertNode->getParentNode();
 	XMLString::transcode("xy:i", tempStrA, 5);
-	insNode = doc->createElement(tempStrA);
+	insNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
 	XMLString::transcode("cid", tempStrA, 5);
 	insNode->setAttribute( tempStrA, witoa(cid) );
 
@@ -514,6 +518,8 @@ bool XyStrDeltaApply::mergeNodes(DOMElement *node1, DOMElement *node2, DOMElemen
 
 	XMLCh tempStrA[6];
 	XMLCh tempStrB[6];
+	XMLCh xyDeltaNS_ch[36];
+	XMLString::transcode("urn:schemas-xydiff:xydelta", xyDeltaNS_ch, 35);
 
 	XMLString::transcode("repl", tempStrA, 5);
 	const XMLCh *repl1 = node1->getAttribute( tempStrA );
@@ -521,13 +527,14 @@ bool XyStrDeltaApply::mergeNodes(DOMElement *node1, DOMElement *node2, DOMElemen
 	isReplaceOperation = (XMLString::stringLen(repl1) > 0 || XMLString::stringLen(repl3) > 0);
 
 	XMLString::transcode("xy:d", tempStrA, 5);
-	delNode = doc->createElement(tempStrA);
+	
+	delNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
 	parent->insertBefore(delNode, node1);
 	XMLString::transcode("cid", tempStrA, 5);
 	delNode->setAttribute( tempStrA, cid1 );	
 
 	XMLString::transcode("xy:i", tempStrA, 5);
-	insNode = doc->createElement(tempStrA);
+	insNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
 	parent->insertBefore(insNode, node1);
 
 	XMLString::transcode("cid", tempStrA, 5);
