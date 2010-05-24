@@ -401,25 +401,8 @@ int XID_DOMDocument::getDocumentNodeCount() {
 }
 
 bool XID_DOMDocument::isRealData(DOMNode *node) {
-	switch(node->getNodeType()) {
-		
-/*
- * this part needs to be optimized as it uses XyLatinStr (XML transcode)
- */ 
-
-		case DOMNode::TEXT_NODE: {
-			XyLatinStr theText( node->getNodeValue() );
-			unsigned int l = strlen(theText.localForm()) ;
-			for(unsigned int i=0;i<l;i++) {
-				if (theText.localForm()[i]>32) return true;
-				}
-			return false;
-			}
-			
-		default:
-			return true;
-		}
-	}
+	return true;
+}
 
 
 void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {

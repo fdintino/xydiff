@@ -239,14 +239,18 @@ int NodesManager::registerSubtree(DOMNode *node, bool isSource) {
 	class AtomicInfo myAtomicInfo ;
 	myAtomicInfo.myWeight = 1.0 ;
 	std::vector<int> childList ;
-	
+	XMLCh xmlLangCh[9];
+	XMLCh typeCh[5];
+	XMLString::transcode("xml:lang", xmlLangCh, 8);
+	XMLString::transcode("type", typeCh, 4);
 	switch( node->getNodeType() ) {
 		case DOMNode::ELEMENT_NODE: {
 			unsigned int attLength = node->getAttributes()->getLength();
 			for(unsigned int i=0; ((i<attLength)&&(!myAtomicInfo.hasIdAttr)); i++) {
 				DOMNode* attr = node->getAttributes()->item( i );
 				std::string keyId = UniqueIdHandler::UniqueKey_from_TagAttr(node->getNodeName(),attr->getNodeName());
-				if (myUniqueIdHandler->isIdAttr(keyId)) {
+				const XMLCh *nodeName = attr->getNodeName();
+				if (XMLString::equals(nodeName, xmlLangCh) || XMLString::equals(nodeName, typeCh) || myUniqueIdHandler->isIdAttr(keyId)) {
 					vddprintf(("found unique key %s\n", keyId.c_str()));
 					myAtomicInfo.hasIdAttr = true ;
 					hash32 keyIdH(keyId.c_str());
