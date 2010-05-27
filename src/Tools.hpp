@@ -55,7 +55,6 @@ bool isDelta(const xercesc::DOMDocument *doc) ;
 
 int watoi(const XMLCh* str);
 
-const XMLCh * witoa(int intValue);
 const XMLCh * witoa(XMLSize_t intValue);
 /*
  * tells if a certain file exists or not 
@@ -66,9 +65,9 @@ bool existsFile(const char *fileName);
 /*
  * Converts int to std::string
  */
-std::string itoa (int n);
-int intmin(int x, int y);
-int intmax(int x, int y);
+std::string itoa (XMLSize_t n);
+XMLSize_t intmin(XMLSize_t x, XMLSize_t y);
+XMLSize_t intmax(XMLSize_t x, XMLSize_t y);
 
 #if defined(_WIN32) || defined(_WIN64)
 #ifdef NATIVEDLL_EXPORTS
