@@ -91,6 +91,12 @@ const XMLCh * witoa(int intValue)
 	return str;
 }
 
+const XMLCh * witoa(XMLSize_t intValue)
+{
+	const XMLCh *str = XMLString::transcode( itoa(intValue).c_str() );
+	return str;
+}
+
 /*
  * tells if a certain file exists or not 
  */
@@ -128,6 +134,32 @@ std::string itoa (int n)
 	return u;
 }
 
+std::string itoa (XMLSize_t n)
+{	
+	char * s = new char[17];
+	std::string u;
+	
+	if (n < 0) {         //turns n positive
+		n = (-1 * n); 
+		u = "-";         //adds '-' on result string
+	}
+	
+	int i = 0;  // s counter
+	
+	do {
+		s[i++] = n % 10 + '0'; //conversion of each digit of n to char
+		n -= n % 10;           //update n value
+	} while ((n /= 10) > 0);
+	
+	for (int j = i-1; j >= 0; j--) { 
+		u += s[j];    //building our string number
+	}
+	
+	delete[] s;       //free-up the memory!
+	return u;
+}
+
+
 int intmin(int x, int y)
 {
 	return (x < y) ? x : y;
@@ -136,4 +168,14 @@ int intmin(int x, int y)
 int intmax(int x, int y)
 {
 	return (x > y) ? x : y;
+}
+
+XMLSize_t intmax(XMLSize_t x, XMLSize_t y)
+{
+	return (x > y) ? x : y;
+}
+
+XMLSize_t intmin(XMLSize_t x, XMLSize_t y)
+{
+	return (x < y) ? x : y;
 }

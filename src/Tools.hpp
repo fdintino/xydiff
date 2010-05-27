@@ -56,7 +56,7 @@ bool isDelta(const xercesc::DOMDocument *doc) ;
 int watoi(const XMLCh* str);
 
 const XMLCh * witoa(int intValue);
-
+const XMLCh * witoa(XMLSize_t intValue);
 /*
  * tells if a certain file exists or not 
  */

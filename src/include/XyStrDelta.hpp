@@ -50,12 +50,12 @@ class XyStrDeltaApply {
 public:
 	XyStrDeltaApply(XID_DOMDocument *pDoc, xercesc::DOMNode *upNode, int changeId=0);
 	~XyStrDeltaApply();
-	void removeFromNode(xercesc::DOMText *removeNode, int pos, int len, bool isReplaceOperation=false);
-	void remove(int startpos, int len, bool isReplaceOperation=false);
-	void insert(int startpos, const XMLCh *ins, bool isReplaceOperation=false);
-	void insertIntoNode(xercesc::DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation=false);
-	void replaceFromNode(xercesc::DOMText *replacedNode, int pos, int len, const XMLCh *repl);
-	void replace(int pos, int len, const XMLCh *repl);
+	void removeFromNode(xercesc::DOMText *removeNode, XMLSize_t pos, XMLSize_t len, bool isReplaceOperation=false);
+	void remove(XMLSize_t startpos, XMLSize_t len, bool isReplaceOperation=false);
+	void insert(XMLSize_t startpos, const XMLCh *ins, bool isReplaceOperation=false);
+	void insertIntoNode(xercesc::DOMNode *insertNode, XMLSize_t pos, const XMLCh *ins, bool isReplaceOperation=false);
+	void replaceFromNode(xercesc::DOMText *replacedNode, XMLSize_t pos, XMLSize_t len, const XMLCh *repl);
+	void replace(XMLSize_t pos, XMLSize_t len, const XMLCh *repl);
 	void complete();
 	void setApplyAnnotations(bool paramApplyAnnotations);
 	bool getApplyAnnotations();
