@@ -70,8 +70,8 @@ NodesManager::~NodesManager(void) {
 #define NULL_ID (0)
 
 void NodesManager::PrintAll(void) {
-	printf("XML document Source(v0): %d assigned nodes over total of %d\n", sourceAssigned, sourceNumberOfNodes) ;
-	printf("XML document Source(v1): %d assigned nodes over total of %d\n", resultAssigned, resultNumberOfNodes) ;
+	printf("XML document Source(v0): %d assigned nodes over total of %d\n", (int) sourceAssigned, (int) sourceNumberOfNodes) ;
+	printf("XML document Source(v1): %d assigned nodes over total of %d\n", (int) resultAssigned, (int) resultNumberOfNodes) ;
 	
 	vddprintf(("List of v0->v1 assignements\n")) ;
 	unsigned long i;
@@ -245,8 +245,8 @@ int NodesManager::registerSubtree(DOMNode *node, bool isSource) {
 	XMLString::transcode("type", typeCh, 4);
 	switch( node->getNodeType() ) {
 		case DOMNode::ELEMENT_NODE: {
-			unsigned int attLength = node->getAttributes()->getLength();
-			for(unsigned int i=0; ((i<attLength)&&(!myAtomicInfo.hasIdAttr)); i++) {
+			size_t attLength = node->getAttributes()->getLength();
+			for(size_t i=0; ((i<attLength)&&(!myAtomicInfo.hasIdAttr)); i++) {
 				DOMNode* attr = node->getAttributes()->item( i );
 				std::string keyId = UniqueIdHandler::UniqueKey_from_TagAttr(node->getNodeName(),attr->getNodeName());
 				const XMLCh *nodeName = attr->getNodeName();
@@ -329,8 +329,8 @@ int NodesManager::registerSubtree(DOMNode *node, bool isSource) {
 
 	// Register list of children
 	
-	unsigned int nbChildren = childList.size() ;
-	for(unsigned int i=0; i<nbChildren; i++) {
+	size_t nbChildren = childList.size() ;
+	for(size_t i=0; i<nbChildren; i++) {
 		class AtomicInfo *childAtomicInfo = (isSource) ? & v0node[childList[i]] : & v1node[childList[i]] ;
 		childAtomicInfo->myParent         = myAtomicInfo.myID ;
 		childAtomicInfo->myPosition       = (i+1) ;
@@ -458,7 +458,7 @@ int NodesManager::getBestCandidate(int v1nodeID, unsigned long selfkey) {
 				indexToCandidates &theIndex = listOfCandidatesByParentLevelByHash[candidateRelativeLevel]; 
 				candidatesPointer theList = theIndex.find(tablekey.value);
 				if (theList!=theIndex.end()) {
-					for(unsigned long i=0; i<theList->second.v0node.size(); i++) {
+					for(size_t i=0; i<theList->second.v0node.size(); i++) {
 						int c=theList->second.v0node[i];
 						if (!v0Assigned(c)) {
 							if (candidateRelativeLevel>1) {
@@ -481,10 +481,10 @@ int NodesManager::getBestCandidate(int v1nodeID, unsigned long selfkey) {
 				candidatesPointer theList = listOfCandidatesByParentLevelByHash[0].find(selfkey);
 				if (theList==listOfCandidatesByParentLevelByHash[0].end()) return 0;
 				if (theList->second.v0node.size()>50) {
-					printf("warning, it seems that there are too many candidates(%d)\n", theList->second.v0node.size());
+					printf("warning, it seems that there are too many candidates(%d)\n", (int) theList->second.v0node.size());
 					}
 				
-				for(unsigned long i=0; i<theList->second.v0node.size(); i++) {
+				for(size_t i=0; i<theList->second.v0node.size(); i++) {
 					int candidate = theList->second.v0node[i];
 					if ( !v0Assigned( candidate )) { // Node still not assigned
 			  		vddprintf(("(%d)", candidate )) ;
@@ -939,7 +939,7 @@ void NodesManager::ComputeWeakMove( int v0nodeID ) {
 		v0childID = childInfo.nextSibling ;
 		}
 	vddprintf(("Index for children of v0 node %d are listed here(0: not concerned by weak-move): ", v0nodeID ));
-	unsigned int i;
+	size_t i;
 	for(i=1; i<oldChildValue.size(); i++) vddprintf(("(%d, %.2f)  ", oldChildValue[i].data, oldChildValue[i].weight));
 	vddprintf(("\n"));
 

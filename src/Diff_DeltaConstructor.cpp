@@ -507,8 +507,8 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 		int v0nodeID = nodesManager->v1node[ v1nodeID ].myMatchID ;
 		DOMNode* oldnode = nodesManager->v0nodeByDID[ v0nodeID ] ;
 	
-		unsigned int attLength = node->getAttributes()->getLength() ;
-		unsigned int i;
+		XMLSize_t attLength = node->getAttributes()->getLength() ;
+		XMLSize_t i;
 		for(i=0; i<attLength; i++) {
 			DOMNode* attr = node->getAttributes()->item( i );
 			DOMNode* oldattr = oldnode->getAttributes()->getNamedItem(attr->getNodeName()) ;

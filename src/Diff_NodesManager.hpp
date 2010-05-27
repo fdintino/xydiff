@@ -77,8 +77,8 @@ class NodesManager {
 		void registerResultDocument( XID_DOMDocument *resultDoc );
 		void setUniqueIdHandler( class UniqueIdHandler *theUniqueIdHandler );
 	
-	  unsigned int sourceNumberOfNodes ;
-		unsigned int resultNumberOfNodes ;
+	  size_t sourceNumberOfNodes ;
+		size_t resultNumberOfNodes ;
 
 		std::vector<xercesc::DOMNode*> v0nodeByDID ;
 		std::vector<xercesc::DOMNode*> v1nodeByDID ;
