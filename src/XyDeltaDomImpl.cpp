@@ -49,19 +49,19 @@ DOMDocument* XyDelta::XyDiff(DOMDocument* doc1, const char *doc1name,
 	// doc1xidmap can be NULL => the default XidMap (1-n|n+1) will be used
 	
 	if (doc1==NULL) {
-		ERROR("doc1 is NULL");
+		ERRORMSG("doc1 is NULL");
 		return NULL;
 	}
 	if (doc1name==NULL) {
-		ERROR("doc1name is NULL");
+		ERRORMSG("doc1name is NULL");
 		return NULL;
 	}
 	if (doc2==NULL) {
-		ERROR("doc2 is NULL");
+		ERRORMSG("doc2 is NULL");
 		return NULL;
 	}
 	if (doc2name==NULL) {
-		ERROR("doc2 is NULL");
+		ERRORMSG("doc2 is NULL");
 		return NULL;
 	}
 	
@@ -189,11 +189,11 @@ XyDOMDelta::XyDOMDelta(XID_DOMDocument* doc1p, XID_DOMDocument* doc2p, const cha
 	: doc1(doc1p), doc2(doc2p), doc1xidmap(doc1xidmapp)
 {
 	if (doc1==NULL) {
-		ERROR("doc1 is NULL");
+		ERRORMSG("doc1 is NULL");
 		return;
 	}
 	if (doc2==NULL) {
-		ERROR("doc2 is NULL");
+		ERRORMSG("doc2 is NULL");
 		return;
 	}
 	

@@ -11,8 +11,8 @@
 
 class XyInt {
 	public:
-		XyInt(const XMLCh* str, int size=-1);
-		XyInt(const char* str, int size=-1);
+		XyInt(const XMLCh* str, XMLSize_t size=0);
+		XyInt(const char* str, size_t size=0);
 		int getValue() const ;
 		operator int() const ;
 	private :
@@ -25,7 +25,7 @@ std::ostream& operator<<(std::ostream& target, const XyInt& toDump);
 class XySize {
 	public:
 		XySize(const XMLCh* str, XMLSize_t size=0);
-		XySize(const char* str, XMLSize_t size=0);
+		XySize(const char* str, size_t size=0);
 		XMLSize_t parseInt(const XMLCh* const toConvert);
 		XMLSize_t getValue() const ;
 		operator XMLSize_t() const ;

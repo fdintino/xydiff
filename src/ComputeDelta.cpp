@@ -62,8 +62,8 @@ XID_DOMDocument* XidXyDiff(XID_DOMDocument* v0XML, const char *doc1name, XID_DOM
 	TRACE("PHASE 1: Register version 2");
 	xyMappingEngine.registerResultDocument( v1XML );
 		
-	int v0rootID = xyMappingEngine.sourceNumberOfNodes ;
-	int v1rootID = xyMappingEngine.resultNumberOfNodes ;
+	XMLSize_t v0rootID = xyMappingEngine.sourceNumberOfNodes ;
+	XMLSize_t v1rootID = xyMappingEngine.resultNumberOfNodes ;
 			
 	/* ---- [[ Phase 2: ]] Apply Bottom-Up Lazy-Down Algorithm ---- */
 		

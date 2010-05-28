@@ -9,8 +9,8 @@
 #define TRACE(a)
 #endif
 
-#ifndef ERROR
-#define ERROR(a)
+#ifndef ERRORMSG
+#define ERRORMSG(a)
 #endif
 
 #ifndef WARNING

@@ -114,6 +114,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -329,7 +330,55 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\XID_DOMDocument.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XID_map.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyDelta_DOMInterface.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyDelta_FileInterface.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyInt.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyLatinDocument.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyLatinStr.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\xyleme_DOMPrint.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyStr.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyStrDelta.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyStrDiff.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyUTF8Document.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\XyUTF8Str.hpp"
 				>
 			</File>
 		</Filter>

@@ -13,10 +13,10 @@
 
 XERCES_CPP_NAMESPACE_USE 
 
-XyInt::XyInt(const XMLCh* str, int size) : theIntValue(0) {
-	if ((str==NULL)||(size==0)) return;
-	if (size<0) size = XMLString::stringLen(str);
-
+XyInt::XyInt(const XMLCh* str, XMLSize_t size) : theIntValue(0) {
+	if ((str==NULL)) return;
+	if (size==0) size = XMLString::stringLen(str);
+	if (size == 0) return;
 	XMLCh *tmp = new XMLCh[size+1];
 	memcpy(tmp, str, size*sizeof(XMLCh));
 	tmp[size]=chNull;
@@ -27,10 +27,10 @@ XyInt::XyInt(const XMLCh* str, int size) : theIntValue(0) {
 	delete [] tmp;
 }
 
-XyInt::XyInt(const char* str, int size) {
-	if ((str==NULL)||(size==0)) return;
-	if (size<0) size = strlen(str);
-	
+XyInt::XyInt(const char* str, size_t size) {
+	if ((str==NULL)) return;
+	if (size==0) size = strlen(str);
+	if (size==0) return;
 	char *tmp = new char[size+1];
 	memcpy(tmp, str, size*sizeof(char));
 	tmp[size]='\0';

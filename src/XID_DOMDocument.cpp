@@ -324,7 +324,7 @@ void XID_DOMDocument::parseDOM_Document(const char* xmlfile, bool doValidation) 
 	catch(const XMLException& e) {
 		cerr << "Error during Xerces-c Initialization.\n"
 		     << "  Exception message:" << XyLatinStr(e.getMessage()).localForm() << endl;
-		ERROR("Xerces::Initialize() FAILED");
+		ERRORMSG("Xerces::Initialize() FAILED");
 		throw VersionManagerException("XML Exception", "parseDOM_Document", "Xerces-C++ Initialization failed");
 	}
 
@@ -394,7 +394,7 @@ int XID_DOMDocument::getSubtreeNodeCount(DOMNode *node) {
 int XID_DOMDocument::getDocumentNodeCount() {
 	DOMElement* docRoot = this->getDocumentElement() ;
 	if (docRoot==NULL) {
-		ERROR("document has no Root Element");
+		ERRORMSG("document has no Root Element");
 		return 0;
 	}
 	return getSubtreeNodeCount( docRoot );

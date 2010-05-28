@@ -112,7 +112,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 	*result = NULL;
 	if (resultLength) *resultLength=-1;
 	if (outputEncoding==NULL) {
-		ERROR("Encoding is NULL");
+		ERRORMSG("Encoding is NULL");
 		*result = XyStr::newCopyOf(XMLString::transcode("\n\nINTERNAL ERROR === 'outputEncoding' is NULL\n\n"));
 		if (resultLength) *resultLength=(int)XMLString::stringLen(*result);
 		return 1;
@@ -120,7 +120,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 
 	XMLTranscoder *transcoder = getTranscoder(outputEncoding);
 	if(transcoder==NULL){
-		ERROR("Can not find transcoder for: "<<outputEncoding);
+		ERRORMSG("Can not find transcoder for: "<<outputEncoding);
 		*result = XyStr::newCopyOf(XMLString::transcode("??? Transcode Error ???"));
 		if (resultLength) *resultLength=(int)XMLString::stringLen(*result);
 		fprintf(stderr, "??? Transcode Error ???");
@@ -149,7 +149,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 			unsigned int maxChars = tmpBufferSize - numberInBuf;
 			if (maxChars > XyStr::BlockSize) maxChars = XyStr::BlockSize;
 			if (maxChars < 1) {
-				ERROR("Unexpected problem: destination buffer is full !");
+				ERRORMSG("Unexpected problem: destination buffer is full !");
 			} else {			
 				std::vector<unsigned char> charSizes(maxChars+1);
 				unsigned int addedThisTime = transcoder->transcodeFrom((XMLByte*)sourceBlock, (XMLSize_t)maxSourceChars, tmpResult+numberInBuf, (XMLSize_t)maxChars, (XMLSize_t&)eatenThisTime, &charSizes[0]);
@@ -158,7 +158,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 			}
 					
 			if (eatenThisTime==0) {
-				ERROR("Error, transcoder does not eat any byte. Next byte is: "<<(unsigned int)sourceBlock[0]);
+				ERRORMSG("Error, transcoder does not eat any byte. Next byte is: "<<(unsigned int)sourceBlock[0]);
 				NOTE("followed by: "<<(unsigned int)sourceBlock[1]<<(unsigned int)sourceBlock[2]<<(unsigned int)sourceBlock[3]);
 				fprintf(stderr, "Error, transcoder does not eat any byte\n");
 				XMLCh LErrorMsgCouldNotTranscode[21];
@@ -177,7 +177,7 @@ unsigned int XyStr::transcodeToUTF32(const char* const source, const unsigned in
 			
 		}catch(...){
 			error = true;
-			ERROR("transcode exception catched... leaving...");
+			ERRORMSG("transcode exception catched... leaving...");
 			if (tmpBufferSize-numberInBuf-1>XMLString::stringLen(tto32errorMsg)) {
 				memcpy(tmpResult+numberInBuf, tto32errorMsg, sizeof(XMLCh)*(1+XMLString::stringLen(tto32errorMsg)));
 			}
@@ -217,7 +217,7 @@ class XMLTranscoder * XyStr::getTranscoder(const char *encoding) {
 		transcoder = XMLPlatformUtils::fgTransService->makeNewTranscoderFor(encoding, failReason, XyStr::BlockSize);
 	}
 	if(transcoder==NULL){
-		ERROR("Can Not Create Transcoder: " << encoding);
+		ERRORMSG("Can Not Create Transcoder: " << encoding);
 	}
 	return transcoder;
 }
@@ -227,7 +227,7 @@ unsigned int XyStr::internal_transcodeFromUTF32(const XMLCh* const source, const
 	
 	*resultLength=0;
 	if (outputEncoding==NULL) {
-		ERROR("Encoding is NULL");
+		ERRORMSG("Encoding is NULL");
 		sprintf(result, "??? Transcode Error ???");
 		*resultLength=(int)strlen(result);
 		return 1;
@@ -235,7 +235,7 @@ unsigned int XyStr::internal_transcodeFromUTF32(const XMLCh* const source, const
 	
 	XMLTranscoder *transcoder = getTranscoder(outputEncoding);
 	if(transcoder==NULL){
-		ERROR("Can not find transcoder for: "<<outputEncoding);
+		ERRORMSG("Can not find transcoder for: "<<outputEncoding);
 		sprintf(result, "??? Transcode Error ???");
 		*resultLength=(int)strlen(result);
 		fprintf(stderr, "%s", result);
@@ -329,7 +329,7 @@ static bool disabled=false;
 			numberInBuf += addedThisTime ;
 		}
 		if (eatenThisTime==0) {
-			ERROR("Error, transcoder does not eat any byte, next XMLCh="<<(int)sourceBlock[0]);
+			ERRORMSG("Error, transcoder does not eat any byte, next XMLCh="<<(int)sourceBlock[0]);
 			fprintf(stderr, "Error, transcoder does not eat any XMLCh\n");
 			sprintf(result, "??? Transcode Error ???");
 			*resultLength=strlen(result);
@@ -412,7 +412,7 @@ unsigned int XyStr::transcodeFromUTF32_and_AddPrefix(const XMLCh* const source, 
 #endif
 	} else {
 		if (errors>0) {
-			ERROR("There were "<<errors<<" transcoding errors");
+			ERRORMSG("There were "<<errors<<" transcoding errors");
 		}
 
 		numberInBuf += prefixLength;

@@ -79,7 +79,7 @@ DeltaConstructor::DeltaConstructor(
 
 	// Copy namespaces from root element
 	DOMNamedNodeMap *v1XMLAttrs = v1XML->getDocumentElement()->getAttributes();
-	int i;
+	XMLSize_t i;
 	for (i = 0; i < v1XMLAttrs->getLength(); i++) {
 		DOMAttr *attr = (DOMAttr *) v1XMLAttrs->item(i);
 		// If it is prefixed with xmlns
@@ -132,7 +132,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 		child = nodesManager->v0node[child].nextSibling ;
 		}
 	
-	for(int i=childList.size()-1; i>=0; i--) {
+	for(size_t i=childList.size()-1; i>=0; i--) {
 		// ConstructDeleteScript( childList[i], ancestorDeleted||(myAtomicInfo.myEvent==AtomicInfo::DELETED));
 		ConstructDeleteScript( childList[i], (myAtomicInfo.myEvent==AtomicInfo::DELETED));
 		}
@@ -382,7 +382,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						if (upNodes->getLength() ==0) {
 							THROW_AWAY(("Could not find any matching <u> elements for insert\n"));
 						}
-						for (int i = 0; i < upNodes->getLength(); i++) {
+						for (XMLSize_t i = 0; i < upNodes->getLength(); i++) {
 							DOMNode *tmpUpNode = upNodes->item(i);
 							XMLString::transcode("par", tempStrA, 99);
 							XMLString::transcode("pos", tempStrB, 99);
@@ -413,7 +413,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 							XMLString::transcode("d", tempStrA, 99);
 							if (XMLString::compareString(delElem->getNodeName(), tempStrA) != 0) {
 								char *delElemNodeName = XMLString::transcode(delElem->getNodeName());
-								char *error_msg;
+								char *error_msg = NULL;
 								sprintf(error_msg, "<u> element has incorrect first child <%s>, should be <d>\n", delElemNodeName);
 								XMLString::release(&delElemNodeName);
 								THROW_AWAY((error_msg));
@@ -592,8 +592,8 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	/* ---- Clear Tables ---- */
 
 
-	int v0rootID = nodesManager->sourceNumberOfNodes ;
-	int v1rootID = nodesManager->resultNumberOfNodes ;
+	size_t v0rootID = nodesManager->sourceNumberOfNodes ;
+	size_t v1rootID = nodesManager->resultNumberOfNodes ;
 	
 	/* ---- Construct DELETE Operations script ---- */
 		

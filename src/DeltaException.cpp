@@ -107,8 +107,8 @@ MessageEngine::MessageEngine(const char *filename, int line, const char *method)
 	};
 
 void MessageEngine::add(const char *format, ...) {
-	int len=strlen(s);
-	int lenwhy = strlen(why);
+	size_t len=strlen(s);
+	size_t lenwhy = strlen(why);
 #ifdef __SunOS
   snprintf(s+len, 499-len, "Sorry, Exception Text disabled on SunOS/Solaris");
 #else
