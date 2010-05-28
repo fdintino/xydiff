@@ -70,9 +70,13 @@ void DeltaApplyEngine::Subtree_Delete( const char *xidmapStr ) {
 
 void DeltaApplyEngine::Subtree_MoveTo( XID_t myXID, XID_t parentXID, XMLSize_t position ) {
 	vddprintf(("        move subtree rooted by %d to (parent=%d, pos=%d)\n", (int)myXID, (int)parentXID, position));
-	
-	DOMNode* moveRoot = moveDocument->getXidMap().getNodeWithXID( myXID ) ;
-	if (moveRoot==NULL) THROW_AWAY(("node with XID=%d not found",(int)myXID));
+	DOMNode* moveRoot = NULL;
+	try {
+		moveRoot = moveDocument->getXidMap().getNodeWithXID( myXID ) ;		
+	} catch (...) {
+		return;
+	}
+	if (moveRoot==NULL) return; //THROW_AWAY(("node with XID=%d not found",(int)myXID));
 	
 	Subtree_Insert(moveRoot, parentXID, position, moveDocument->getXidMap().String(moveRoot).c_str() );
 	
