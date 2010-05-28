@@ -50,7 +50,7 @@ XERCES_CPP_NAMESPACE_USE
 
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
-XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, const XMLCh *strY, XMLSize_t sizeXStr, XMLSize_t sizeYStr)
+XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, const XMLCh *strY, int sizeXStr, int sizeYStr)
 {	
 	doc = myDoc;
 	root = elem;
@@ -58,9 +58,9 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, co
 	sizey = sizeYStr;
 	
 	if ((strX==NULL)||(sizex==0)) return;
-	if (sizex==0) sizex = XMLString::stringLen(strX);
+	if (sizex<0) sizex = XMLString::stringLen(strX);
 	if ((strY==NULL)||(sizey==0)) return;
-	if (sizey==0) sizey = XMLString::stringLen(strY);
+	if (sizey<0) sizey = XMLString::stringLen(strY);
 
   x = XMLString::replicate(strX);
   y = XMLString::replicate(strY);
@@ -68,12 +68,12 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, co
 	n = sizex;
 	m = sizey;
 
-	XMLSize_t malloclen = (sizeof(XMLSize_t))*(sizex+1)*(sizey+1);
+	int malloclen = (sizeof(int))*(sizex+1)*(sizey+1);
 	// c = LCS Length matrix
-	c = (XMLSize_t*) malloc(malloclen);
+	c = (int*) malloc(malloclen);
 	// d = Levenshtein Distance matrix
-	d = (XMLSize_t*) malloc(malloclen);
-	t = (XMLSize_t*) malloc(malloclen);
+	d = (int*) malloc(malloclen);
+	t = (int*) malloc(malloclen);
 	
 	currop = -1;
 }
@@ -94,7 +94,7 @@ XyStrDiff::~XyStrDiff(void)
 void XyStrDiff::LevenshteinDistance()
 {
 	// Step 1
-	XMLSize_t k, i, j, cost, distance;
+	int k, i, j, cost, distance;
 	n = XMLString::stringLen(x);
 	m = XMLString::stringLen(y);
 
@@ -123,9 +123,9 @@ void XyStrDiff::LevenshteinDistance()
 					c[j*n+i] = intmax(c[(j-1)*n + i], c[j*n + i-1]);
 				}
 				// Step 6
-				XMLSize_t del = d[j*n+i-1] + 1;
-				XMLSize_t ins = d[(j-1)*n+i] + 1;
-				XMLSize_t sub = d[(j-1)*n+i-1] + cost;
+				int del = d[j*n+i-1] + 1;
+				int ins = d[(j-1)*n+i] + 1;
+				int sub = d[(j-1)*n+i-1] + cost;
 				if (sub <= del && sub <= ins) {
 					d[j*n+i] = sub;
 					t[j*n+i] = STRDIFF_SUB;
@@ -139,15 +139,17 @@ void XyStrDiff::LevenshteinDistance()
 			}
 		}
 		distance = d[n*m-1];
-    this->calculatePath(sizex, sizey);
+    this->calculatePath();
     this->flushBuffers();
     
 
 	}
 }
 
-void XyStrDiff::calculatePath(XMLSize_t i, XMLSize_t j)
+void XyStrDiff::calculatePath(int i, int j)
 {
+	if (i == -1) i = sizex;
+	if (j == -1) j = sizey;
 	if (i > 0 && j > 0 && (x[i-1] == y[j-1])) {
 		this->calculatePath(i-1, j-1);
 		this->registerBuffer(i-1, STRDIFF_NOOP, x[i-1]);
@@ -167,7 +169,7 @@ void XyStrDiff::calculatePath(XMLSize_t i, XMLSize_t j)
 	}
 }
 
-void XyStrDiff::registerBuffer(XMLSize_t i, int optype, XMLCh chr)
+void XyStrDiff::registerBuffer(int i, int optype, XMLCh chr)
 {
 
 	xpos = i;
@@ -202,7 +204,7 @@ void XyStrDiff::registerBuffer(XMLSize_t i, int optype, XMLCh chr)
 
 void XyStrDiff::flushBuffers()
 {
-	XMLSize_t startpos, len;
+	int startpos, len;
 	XMLCh tempStrA[100];
 	XMLCh tempStrB[100];
 	if (currop == STRDIFF_NOOP) {

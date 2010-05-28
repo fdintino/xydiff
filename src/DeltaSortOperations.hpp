@@ -28,7 +28,7 @@ class InsertOpWithPos {
 	public:
 		InsertOpWithPos(xercesc::DOMNode *_op);
 		xercesc::DOMNode* op ;
-		size_t pos ;
+		int pos ;
 		XID_t parentXID ;
 	};
 
@@ -46,7 +46,7 @@ class SortInsertOperationsEngine {
 		bool isListEmpty(void);
 	private:
 		std::vector<siblingList> insertList ;
-		std::map<long, size_t> listIndexByParentXID ;
+		std::map<long, unsigned int> listIndexByParentXID ;
 		unsigned long count ;
 		XID_DOMDocument* theDoc ;
 	} ;

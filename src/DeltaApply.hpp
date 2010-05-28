@@ -34,8 +34,8 @@ class DeltaApplyEngine {
 
 		void Subtree_MoveFrom( XID_t myXID );
 		void Subtree_Delete( const char *xidmapStr );
-		void Subtree_MoveTo( XID_t myXID, XID_t parentXID, XMLSize_t position );
-		void Subtree_Insert( xercesc::DOMNode *insertSubtreeRoot, XID_t parentXID, XMLSize_t position, const char *xidmapStr );
+		void Subtree_MoveTo( XID_t myXID, XID_t parentXID, int position );
+		void Subtree_Insert( xercesc::DOMNode *insertSubtreeRoot, XID_t parentXID, int position, const char *xidmapStr );
 		void TextNode_Update( XID_t nodeXID, xercesc::DOMNode *operationNode );
 		void Attribute_Insert( XID_t nodeXID, const XMLCh* attr, const XMLCh* value ) ;
 		void Attribute_Update( XID_t nodeXID, const XMLCh* attr, const XMLCh* value ) ;

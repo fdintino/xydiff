@@ -85,7 +85,7 @@ int watoi(const XMLCh* str) {
 	return intValue;
 }
 
-const XMLCh * witoa(XMLSize_t intValue)
+const XMLCh * witoa(int intValue)
 {
 	const XMLCh *str = XMLString::transcode( itoa(intValue).c_str() );
 	return str;
@@ -103,7 +103,7 @@ bool existsFile(const char *fileName) {
 	return (testFile != NULL);
 }
 
-std::string itoa (XMLSize_t n)
+std::string itoa (int n)
 {	
 	char * s = new char[17];
 	std::string u;
@@ -128,12 +128,12 @@ std::string itoa (XMLSize_t n)
 	return u;
 }
 
-XMLSize_t intmax(XMLSize_t x, XMLSize_t y)
-{
-	return (x > y) ? x : y;
-}
-
-XMLSize_t intmin(XMLSize_t x, XMLSize_t y)
+int intmin(int x, int y)
 {
 	return (x < y) ? x : y;
+}
+
+int intmax(int x, int y)
+{
+	return (x > y) ? x : y;
 }

@@ -26,6 +26,20 @@ XERCES_CPP_NAMESPACE_USE
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 XID_DOMDocument* DeltaApplyEngine::getResultDocument (void) {
+	// if (applyAnnotations) {
+	// 	XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+	// 	deltaDoc     = XID_DOMDocument::createDocument() ;
+	// 	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
+	// 	XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+	// 	DOMNode* resultRoot = xiddoc->getDocumentElement();
+	// 	if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
+	// 		((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+	// 	}
+	// 	// ((DOMElement*)xiddoc)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
+	// 	XMLString::release(&xyDeltaNS_ch);
+	// 	XMLString::release(&xmlnsURI_ch);
+	// 	XMLString::release(&xmlns_ch);
+	// }
   return xiddoc ;
 }
 
@@ -68,7 +82,7 @@ void DeltaApplyEngine::Subtree_Delete( const char *xidmapStr ) {
 
 /* ---- MOVE TO: puts a subtree in the document ---- */
 
-void DeltaApplyEngine::Subtree_MoveTo( XID_t myXID, XID_t parentXID, XMLSize_t position ) {
+void DeltaApplyEngine::Subtree_MoveTo( XID_t myXID, XID_t parentXID, int position ) {
 	vddprintf(("        move subtree rooted by %d to (parent=%d, pos=%d)\n", (int)myXID, (int)parentXID, position));
 	DOMNode* moveRoot = NULL;
 	try {
@@ -85,14 +99,14 @@ void DeltaApplyEngine::Subtree_MoveTo( XID_t myXID, XID_t parentXID, XMLSize_t p
 
 /* ---- INSERT a map of certain nodes in a document ---- */
 
-void DeltaApplyEngine::Subtree_Insert( DOMNode *insertSubtreeRoot, XID_t parentXID, XMLSize_t position, const char *xidmapStr ) {
+void DeltaApplyEngine::Subtree_Insert( DOMNode *insertSubtreeRoot, XID_t parentXID, int position, const char *xidmapStr ) {
 
 	vddprintf(( "        insert xidmap=%s at (parent=%d, pos=%d)\n", xidmapStr, (int)parentXID, position));
 	DOMNode* contentNode  = xiddoc->importNode( insertSubtreeRoot, true );
 	DOMNode* parentNode   = xiddoc->getXidMap().getNodeWithXID( parentXID );
 	if (parentNode==NULL) THROW_AWAY(("parent node with XID=%d not found",(int)parentXID));
 
-	XMLSize_t actual_pos = 1 ;
+	int actual_pos = 1 ;
 	if ((position!=1)&&(!parentNode->hasChildNodes())) THROW_AWAY(("parent has no children but position is %d",position));
 	DOMNode* brother = parentNode->getFirstChild();
 	while (actual_pos < position) {
@@ -120,7 +134,7 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	vddprintf(("opNodes->length() = %d\n", opNodes->getLength()));
 	XyStrDeltaApply *xytext = new XyStrDeltaApply(xiddoc, upNode, 1);
 	xytext->setApplyAnnotations(applyAnnotations);
-	for (XMLSize_t i = opNodes->getLength() - 1; i >= 0; i--) {
+	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
 		DOMElement *op = (DOMElement *) opNodes->item(i);
 		char *optype = XMLString::transcode(op->getNodeName());
 		XMLCh pos_attr[4];
@@ -253,7 +267,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 		}
 		XMLString::transcode("pos", tempStr, 5);
 		DOMNode *n = operationNode->getAttributes()->getNamedItem(tempStr);
-		XMLSize_t position = XySize(n->getNodeValue());
+		int position = XyInt(n->getNodeValue());
 
 		XMLString::transcode("par", tempStr, 5);
 		n = operationNode->getAttributes()->getNamedItem(tempStr);

@@ -89,7 +89,7 @@ InsertOpWithPos::InsertOpWithPos(DOMNode *_op) {
 	op=_op;
 	XMLCh tempStr[4];
 	XMLString::transcode("pos", tempStr, 3);
-	pos = (XMLSize_t)XySize(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
+	pos = (int)XyInt(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 	XMLString::transcode("par", tempStr, 3);
 	parentXID = (XID_t)(int)XyInt(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 	}
@@ -122,7 +122,7 @@ SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDo
 				insertList.push_back(s);
 				}
 			else {
-				size_t index=listIndexByParentXID[iOp.parentXID];
+				unsigned int index=listIndexByParentXID[iOp.parentXID];
 				insertList[index].push(iOp);
 				}
 			
@@ -137,7 +137,7 @@ SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDo
 DOMNode* SortInsertOperationsEngine::getNextInsertOperation(void) {
 	if (insertList.size()==0) THROW_AWAY(("insert list is empty"));
 	
-	size_t countSurvey=insertList.size();
+	int countSurvey=insertList.size();
 	while(!theDoc->getXidMap().findNodeWithXID(insertList[count].top().parentXID)) {
 		count=(count+1)%insertList.size();
 		countSurvey--;

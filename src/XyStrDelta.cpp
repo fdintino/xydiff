@@ -82,7 +82,7 @@ XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, int cha
 	doc = pDoc;
 	node = upNode->getParentNode();
 
-	for (XMLSize_t i = node->getChildNodes()->getLength() - 1; i >= 0; i--) {
+	for (int i = node->getChildNodes()->getLength() - 1; i >= 0; i--) {
 		DOMNode *tmpNode = node->getChildNodes()->item(i);
 		char *nodeName = XMLString::transcode(tmpNode->getNodeName());
 		XMLString::release(&nodeName);
@@ -97,7 +97,7 @@ XyStrDeltaApply::XyStrDeltaApply(XID_DOMDocument *pDoc, DOMNode *upNode, int cha
 }
 
 
-void XyStrDeltaApply::remove(XMLSize_t startpos, XMLSize_t len, bool isReplaceOperation)
+void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 {
 	DOMTreeWalker *walker;
 	DOMNode *currentNode;
@@ -108,14 +108,14 @@ void XyStrDeltaApply::remove(XMLSize_t startpos, XMLSize_t len, bool isReplaceOp
 	DOMNodeFilter *filter = new FilterIfParentIsDelete();
 	walker = doc->createTreeWalker(node, DOMNodeFilter::SHOW_TEXT, filter, true);
 	
-	XMLSize_t curpos = 0;
-	XMLSize_t endpos = startpos + len;
+	int curpos = 0;
+	int endpos = startpos + len;
 
 	currentNode = walker->firstChild();
 	if (currentNode == NULL) return;
 	do { // while (currentNode = walker->nextNode())
 		const XMLCh *currentNodeValue = currentNode->getNodeValue();
-		XMLSize_t currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
+		int currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
 
 		parentNode = (DOMElement *)currentNode->getParentNode();
 
@@ -138,8 +138,8 @@ void XyStrDeltaApply::remove(XMLSize_t startpos, XMLSize_t len, bool isReplaceOp
 			continue;
 		}
 
-		XMLSize_t startIndex = intmax(0, startpos - curpos);
-		XMLSize_t endIndex   = intmin( currNodeValueStrLen,  endpos - curpos ) ;	
+		int startIndex = intmax(0, startpos - curpos);
+		int endIndex   = intmin( currNodeValueStrLen,  endpos - curpos ) ;	
 		
 		switch( getOperationType(parentNode) ) {
 			// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
@@ -179,7 +179,7 @@ void XyStrDeltaApply::remove(XMLSize_t startpos, XMLSize_t len, bool isReplaceOp
 	delete filter;
 }
 
-void XyStrDeltaApply::removeFromNode(DOMText *removeNode, XMLSize_t pos, XMLSize_t len, bool isReplaceOperation)
+void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
 		currentValue.erase(pos, len);
@@ -217,7 +217,7 @@ void XyStrDeltaApply::removeFromNode(DOMText *removeNode, XMLSize_t pos, XMLSize
 	doc->getXidMap().registerNewNode(deletedText);
 }
 
-void XyStrDeltaApply::insert(XMLSize_t startpos, const XMLCh *ins, bool isReplaceOperation)
+void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOperation)
 {
 	DOMTreeWalker *walker;
 	DOMNode *currentNode;
@@ -228,13 +228,13 @@ void XyStrDeltaApply::insert(XMLSize_t startpos, const XMLCh *ins, bool isReplac
 	DOMNodeFilter *filter = new FilterIfParentIsDelete();
 	walker = doc->createTreeWalker(node, DOMNodeFilter::SHOW_TEXT, filter, true);
 	
-	XMLSize_t curpos = 0;
+	int curpos = 0;
 
 	currentNode = walker->firstChild();
 	if (currentNode == NULL) return;
 	do { // while (currentNode = walker->nextNode())
 		const XMLCh *currentNodeValue = currentNode->getNodeValue();
-		XMLSize_t currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
+		int currNodeValueStrLen = XMLString::stringLen(currentNodeValue);
 
 		parentNode = (DOMElement *)currentNode->getParentNode();
 		
@@ -257,7 +257,7 @@ void XyStrDeltaApply::insert(XMLSize_t startpos, const XMLCh *ins, bool isReplac
 			continue;
 		}
 		
-		XMLSize_t startIndex = intmax(0, startpos - curpos);
+		int startIndex = intmax(0, startpos - curpos);
 		switch( getOperationType(parentNode) ) {
 			case XYDIFF_TXT_INS:
 				if (startIndex == 0) {
@@ -284,7 +284,7 @@ void XyStrDeltaApply::insert(XMLSize_t startpos, const XMLCh *ins, bool isReplac
 	
 }
 
-void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, XMLSize_t pos, const XMLCh *ins, bool isReplaceOperation)
+void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *ins, bool isReplaceOperation)
 {
 	if (!applyAnnotations) {
 		currentValue.insert(pos, ins);
@@ -327,7 +327,7 @@ void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, XMLSize_t pos, const X
 	doc->getXidMap().registerNewNode(insText);
 }
 
-void XyStrDeltaApply::replace(XMLSize_t pos, XMLSize_t len, const XMLCh *repl)
+void XyStrDeltaApply::replace(int pos, int len, const XMLCh *repl)
 {
 	bool isReplaceOperation = true;
 	this->remove(pos, len,  isReplaceOperation);
@@ -355,7 +355,7 @@ void XyStrDeltaApply::complete()
 	// confusing and isn't particularly helpful. Here we search for replace, insert, or delete operations
 	// that surround a text node with no whitespace, and then merge the three into a single replace operation.
 	childNodes = node->getChildNodes();
-	XMLSize_t i;
+	int i;
 	for (i = 0; i < childNodes->getLength(); i++) {
 		node1 = (DOMElement *) childNodes->item(i);
 		if (node1 == NULL) {
@@ -424,7 +424,7 @@ bool XyStrDeltaApply::mergeTwoNodes(DOMElement *node1, DOMElement *node2)
 	value1 = node1->getFirstChild()->getNodeValue();
 	value2 = node2->getFirstChild()->getNodeValue();
 
-	XMLSize_t textSize = XMLString::stringLen(value1) + XMLString::stringLen(value2);
+	int textSize = XMLString::stringLen(value1) + XMLString::stringLen(value2);
 
 	std::vector<XMLCh> nodeValue_vec(textSize+1);
 	XMLString::copyString(&nodeValue_vec[0], value1);
