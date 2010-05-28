@@ -132,7 +132,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 		child = nodesManager->v0node[child].nextSibling ;
 		}
 	
-	for(size_t i=childList.size()-1; i>=0; i--) {
+	for(int i=childList.size()-1; i>=0; i--) {
 		// ConstructDeleteScript( childList[i], ancestorDeleted||(myAtomicInfo.myEvent==AtomicInfo::DELETED));
 		ConstructDeleteScript( childList[i], (myAtomicInfo.myEvent==AtomicInfo::DELETED));
 		}
