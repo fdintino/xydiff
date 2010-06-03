@@ -42,6 +42,7 @@ public:
 	void calculatePath(int i=-1, int j=-1);
 	void registerBuffer(int i, int optype, XMLCh chr);
 	void flushBuffers();
+	void simpleReplace();
 private :
 	xercesc::DOMImplementation* impl;
 	xercesc::DOMDocument *doc;
@@ -49,9 +50,9 @@ private :
 	int xpos, ypos;
 	XMLCh *x;
 	XMLCh *y;
-	int *c;
-	int *d;
-	int *t;
+	uint16_t *c;
+	unsigned short *d;
+	char *t;
 	int currop; // Current operation in alterText()
   std::basic_string<XMLCh> insbuf;
   std::basic_string<XMLCh> delbuf;

@@ -62,19 +62,13 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, co
 	if ((strY==NULL)||(sizey==0)) return;
 	if (sizey<0) sizey = XMLString::stringLen(strY);
 
-  x = XMLString::replicate(strX);
-  y = XMLString::replicate(strY);
+	x = XMLString::replicate(strX);
+	y = XMLString::replicate(strY);
 
 	n = sizex;
 	m = sizey;
+	c = NULL;
 
-	int malloclen = (sizeof(int))*(sizex+1)*(sizey+1);
-	// c = LCS Length matrix
-	c = (int*) malloc(malloclen);
-	// d = Levenshtein Distance matrix
-	d = (int*) malloc(malloclen);
-	t = (int*) malloc(malloclen);
-	
 	currop = -1;
 }
 
@@ -84,17 +78,29 @@ XyStrDiff::XyStrDiff(DOMDocument *myDoc, DOMElement *elem, const XMLCh *strX, co
 
 XyStrDiff::~XyStrDiff(void)
 {
-	free(t);
-	free(c);
-	free(d);
-  XMLString::release(&x);
-  XMLString::release(&y);
+	if (c != NULL) {
+		free(c);
+	}
+	XMLString::release(&x);
+	XMLString::release(&y);
 }
 
 void XyStrDiff::LevenshteinDistance()
 {
+	if (n > 65535 || m > 65535) {
+		// do a simple replace
+		this->simpleReplace();
+		return;
+	}
+
+	if (c == NULL) {
+		int cmalloclen = (sizeof(uint16_t))*(sizex+1)*(sizey+1);
+		c = (uint16_t*) malloc(cmalloclen);
+	}
+
 	// Step 1
-	int k, i, j, cost, distance;
+	uint16_t k, i, j, cost, distance;
+	
 	n = XMLString::stringLen(x);
 	m = XMLString::stringLen(y);
 
@@ -104,13 +110,11 @@ void XyStrDiff::LevenshteinDistance()
 		// Step 2
 		for(k = 0; k < n; k++) {
 			c[k] = 0;
-			d[k] = k;
 		}
 		for(k = 0; k < m; k++) {
 			c[k*n] = 0;
-			d[k*n] = k;
 		}
-		
+		int del, ins, sub, a, b;
 		// Step 3 and 4	
 		for(i = 1; i < n; i++) {
 			for(j = 1; j < m; j++) {
@@ -120,29 +124,14 @@ void XyStrDiff::LevenshteinDistance()
 					c[j*n+i] = c[(j-1)*n + i-1] + 1;
 				} else {
 					cost = 1;
-					c[j*n+i] = intmax(c[(j-1)*n + i], c[j*n + i-1]);
-				}
-				// Step 6
-				int del = d[j*n+i-1] + 1;
-				int ins = d[(j-1)*n+i] + 1;
-				int sub = d[(j-1)*n+i-1] + cost;
-				if (sub <= del && sub <= ins) {
-					d[j*n+i] = sub;
-					t[j*n+i] = STRDIFF_SUB;
-				} else if (del <= ins) {
-					d[j*n+i] = del;
-					t[j*n+i] = STRDIFF_DEL;
-				} else {
-					d[j*n+i] = ins;
-					t[j*n+i] = STRDIFF_INS;
+					a = c[(j-1)*n + i];
+					b = c[j*n + i-1];
+					c[j*n+i] = (a > b) ? a : b;
 				}
 			}
 		}
-		distance = d[n*m-1];
     this->calculatePath();
     this->flushBuffers();
-    
-
 	}
 }
 
@@ -181,7 +170,7 @@ void XyStrDiff::calculatePath(int i, int j)
 				ops[opnum*4 + 3] = j-1;
 				j = j-1;
 				opnum++;
-				continue;				
+				continue;
 			} else if (i > 0 && (j == 0 || c[(j-1)*n+i] < c[j*n+i-1])) {
 				if (i == sizex && j == sizey) {
 					ops[opnum*4 + 0] = i;
@@ -247,6 +236,41 @@ void XyStrDiff::registerBuffer(int i, int optype, XMLCh chr)
 		currop = optype;
 	}
 }
+
+void XyStrDiff::simpleReplace()
+{
+	int startpos, len;
+	XMLCh tempStrA[100];
+	XMLCh tempStrB[100];
+
+	startpos = 0;
+	len = sizex;
+	try {
+		XMLString::transcode("tr", tempStrA, 99);
+		DOMElement *r = doc->createElement(tempStrA);
+		XMLString::transcode("pos", tempStrA, 99);
+		XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
+		r->setAttribute(tempStrA, tempStrB);
+		XMLString::transcode("len", tempStrA, 99);
+		XMLString::transcode(itoa(len).c_str(), tempStrB, 99);
+		r->setAttribute(tempStrA, tempStrB);
+
+		DOMText *textNode = doc->createTextNode(y);
+
+		r->appendChild((DOMNode *)textNode);
+		root->appendChild((DOMNode *)r);
+	}
+	catch (const XMLException& toCatch) {
+		std::cout << "XMLException: " << XMLString::transcode(toCatch.getMessage()) << std::endl;
+	}
+	catch (const DOMException& toCatch) {
+		std::cout << "DOMException: " << XMLString::transcode(toCatch.getMessage()) << std::endl;
+	}
+	catch (...) {
+		std::cout << "Unexpected Exception: " << std::endl;
+	}
+}
+
 
 void XyStrDiff::flushBuffers()
 {
