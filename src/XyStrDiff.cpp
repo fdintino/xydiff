@@ -94,12 +94,12 @@ void XyStrDiff::LevenshteinDistance()
 	}
 
 	if (c == NULL) {
-		int cmalloclen = (sizeof(uint16_t))*(sizex+1)*(sizey+1);
-		c = (uint16_t*) malloc(cmalloclen);
+		int cmalloclen = (sizeof(unsigned short))*(sizex+1)*(sizey+1);
+		c = (unsigned short*) malloc(cmalloclen);
 	}
 
 	// Step 1
-	uint16_t k, i, j, cost, distance;
+	unsigned short k, i, j, cost, distance;
 	
 	n = XMLString::stringLen(x);
 	m = XMLString::stringLen(y);

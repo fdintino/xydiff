@@ -50,7 +50,7 @@ private :
 	int xpos, ypos;
 	XMLCh *x;
 	XMLCh *y;
-	uint16_t *c;
+	unsigned short *c;
 	unsigned short *d;
 	char *t;
 	int currop; // Current operation in alterText()
