@@ -148,23 +148,69 @@ void XyStrDiff::LevenshteinDistance()
 
 void XyStrDiff::calculatePath(int i, int j)
 {
+	int malloclen = (sizeof(int))*4*(sizex + 1 + sizey+1);
+
+	// ops is a 2-dimensional integer array with 4 values per row
+	// 0 - xpos, the first parameter passed to registerBuffer
+	// 1 - the operation (integer constant, STRDIFF_NOOP, STRDIFF_INS, or STRDIFF_DEL)
+	// 2 - whether to use x or y as the string from which we are passing the character
+	//      1 = x, 2 = y
+	// 3 - the character position within the string determined by (2) that is passed to registerBuffer()
+
+	int *ops = (int *) malloc(malloclen);
+
 	if (i == -1) i = sizex;
 	if (j == -1) j = sizey;
-	if (i > 0 && j > 0 && (x[i-1] == y[j-1])) {
-		this->calculatePath(i-1, j-1);
-		this->registerBuffer(i-1, STRDIFF_NOOP, x[i-1]);
-	} else {
-		if (j > 0 && (i == 0 || c[(j-1)*n+i] >= c[j*n+i-1])) {
-			this->calculatePath(i, j-1);
-			this->registerBuffer(i, STRDIFF_INS, y[j-1]);
-		} else if (i > 0 && (j == 0 || c[(j-1)*n+i] < c[j*n+i-1])) {
-			this->calculatePath(i-1, j);
-			if (i == sizex && j == sizey) {
-				this->registerBuffer(i, STRDIFF_DEL, x[i-1]);
-			} else {
-				this->registerBuffer(i-1, STRDIFF_DEL, x[i-1]);
+
+	int opnum = 0;
+	while (i >= 0 && j >= 0) {
+		if (i > 0 && j > 0 && (x[i-1] == y[j-1])) {
+			ops[opnum*4 + 0] = i-1;
+			ops[opnum*4 + 1] = STRDIFF_NOOP;
+			ops[opnum*4 + 2] = 1;
+			ops[opnum*4 + 3] = i-1;
+			i = i-1;
+			j = j-1;
+			opnum++;
+			continue;				
+		} else {
+			if (j > 0 && (i == 0 || c[(j-1)*n+i] >= c[j*n+i-1])) {
+				ops[opnum*4 + 0] = i;
+				ops[opnum*4 + 1] = STRDIFF_INS;
+				ops[opnum*4 + 2] = 2;
+				ops[opnum*4 + 3] = j-1;
+				j = j-1;
+				opnum++;
+				continue;				
+			} else if (i > 0 && (j == 0 || c[(j-1)*n+i] < c[j*n+i-1])) {
+				if (i == sizex && j == sizey) {
+					ops[opnum*4 + 0] = i;
+				} else {
+					ops[opnum*4 + 0] = i-1;
+				}
+				ops[opnum*4 + 1] = STRDIFF_DEL;
+				ops[opnum*4 + 2] = 1;
+				ops[opnum*4 + 3] = i-1;
+				i = i - 1;
+				opnum++;
+				continue;
 			}
-			
+		}
+		break;
+	}
+	int xpos;
+	int optype;
+	int charpos;
+	int z;
+	
+	for (z = opnum-1; z > 0; z--) {
+		xpos    = ops[z*4 + 0];
+		optype  = ops[z*4 + 1];
+		charpos = ops[z*4 + 3];
+		if (ops[z*4 + 2] == 1) {
+			this->registerBuffer(xpos, optype, x[charpos]);
+		} else {
+			this->registerBuffer(xpos, optype, y[charpos]);
 		}
 	}
 }
@@ -210,7 +256,7 @@ void XyStrDiff::flushBuffers()
 	if (currop == STRDIFF_NOOP) {
 		return;
 	} else if (currop == STRDIFF_SUB) {
-    len = delbuf.length();
+    	len = delbuf.length();
 		startpos = xpos - len;
 		
 		try {
