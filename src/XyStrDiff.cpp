@@ -192,7 +192,7 @@ void XyStrDiff::calculatePath(int i, int j)
 	int charpos;
 	int z;
 	
-	for (z = opnum-1; z > 0; z--) {
+	for (z = opnum-1; z >= 0; z--) {
 		xpos    = ops[z*4 + 0];
 		optype  = ops[z*4 + 1];
 		charpos = ops[z*4 + 3];
