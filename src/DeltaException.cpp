@@ -114,8 +114,8 @@ void MessageEngine::add(const char *format, ...) {
 #else
 	va_list var_arg ;
 	va_start (var_arg, format);
-	vsnprintf(s+len, 499-len, format, var_arg);
-	vsnprintf(why+lenwhy, 499-lenwhy, format, var_arg);
+	vsnprintf(s+len-1, 499-len, format, var_arg);
+	vsnprintf(why+lenwhy-1, 499-lenwhy, format, var_arg);
 	va_end(var_arg);
 #endif
 	};
