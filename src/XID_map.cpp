@@ -285,7 +285,11 @@ void XID_map::registerNode( DOMNode *node, XID_t xid ) {
 	if (xid==XID_INVALID) THROW_AWAY(("XID is INVALID"));
         if (node==NULL) THROW_AWAY(("can not register NULL DOMNode"));
           
-	if (nodeByXid->find(xid)!=nodeByXid->end()) THROW_AWAY(("XID %d already used", (int)xid));
+	if (nodeByXid->find(xid)!=nodeByXid->end()) {
+		char error[30];
+		sprintf(error, "XID %d already used", (int)xid);
+		THROW_AWAY((error));
+	}
 	if (xidByNode->find(node)!=xidByNode->end()) THROW_AWAY(("this node is already registered"));
           
 	if ((firstAvailableXID!=XID_INVALID)&&(xid>=firstAvailableXID)) firstAvailableXID=xid+1;
@@ -298,7 +302,11 @@ void XID_map::registerNewNode( DOMNode *node ) {//}, XID_t xid ) {
 	if (xid==XID_INVALID) THROW_AWAY(("XID is INVALID"));
         if (node==NULL) THROW_AWAY(("can not register NULL DOMNode"));
           
-	if (nodeByXid->find(xid)!=nodeByXid->end()) THROW_AWAY(("XID %d already used", (int)xid));
+	if (nodeByXid->find(xid)!=nodeByXid->end()) {
+		char error[30];
+		sprintf(error, "XID %d already used", (int)xid);
+		THROW_AWAY((error));
+	}
 	if (xidByNode->find(node)!=xidByNode->end()) THROW_AWAY(("this node is already registered"));
           
 	if ((firstAvailableXID!=XID_INVALID)&&(xid>=firstAvailableXID)) firstAvailableXID=xid+1;
