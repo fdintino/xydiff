@@ -18,11 +18,6 @@
 // PentiumIII 600 MHz:
 #define CLOCKRATE 602269556
 
-#ifdef VERBOSE
-#define vddprintf(a) printf a
-#else
-#define vddprintf(a)
-#endif
 
 extern FILE *timeFile ;
 

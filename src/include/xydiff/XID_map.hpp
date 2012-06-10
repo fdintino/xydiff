@@ -2,10 +2,10 @@
 #define XID_MAP_HXX__
 
 #include <map>
-#include "infra/general/hash_map.hpp"
+//#include "infra/general/hash_map.hpp"
 #include <vector>
 #include <string>
-#include "Tools.hpp"
+#include "xydiff/VersionManagerException.hpp"
 //#include "xercesc/dom/deprecated/DOM_Node.hpp"
 #include "xercesc/dom/DOMNode.hpp"
 

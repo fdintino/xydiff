@@ -1,8 +1,6 @@
 #ifndef DELTAEXCEPTION_HXX
 #define DELTAEXCEPTION_HXX
 
-#include "infra/general/Log.hpp"
-
 #include <string>
 
 #include <stdio.h>

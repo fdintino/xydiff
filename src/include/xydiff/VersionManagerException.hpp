@@ -4,6 +4,12 @@
 #include <string>
 #include <stdio.h>
 
+#ifdef VERBOSE
+#define vddprintf(a) printf a
+#else
+#define vddprintf(a)
+#endif
+
 class VersionManagerException {
 	public:
 		VersionManagerException(const std::string &IncStatus,	const std::string &IncContext, const std::string &IncMessage);
