@@ -11,7 +11,7 @@
 
 #include "Tools.hpp"
 #include "DeltaException.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 
@@ -31,14 +31,14 @@
 #include "xercesc/sax/ErrorHandler.hpp"
 #include "xercesc/sax/SAXException.hpp"
 #include "xercesc/sax/SAXParseException.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
 
 #include <stdlib.h>
 #include <string.h>
 #include <sstream>
 
-#include "include/XyStrDiff.hpp"
+#include "xydiff/XyStrDiff.hpp"
 
 
 

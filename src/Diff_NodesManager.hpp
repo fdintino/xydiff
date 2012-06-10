@@ -4,8 +4,8 @@
 #include "CommonSubSequenceAlgorithms.hpp"
 #include "Tools.hpp"
 #include "lookup2.hpp"
-#include "include/XID_map.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 

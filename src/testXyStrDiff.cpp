@@ -7,7 +7,7 @@
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 
-#include "include/XyStrDiff.hpp"
+#include "xydiff/XyStrDiff.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>

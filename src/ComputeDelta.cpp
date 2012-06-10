@@ -1,7 +1,7 @@
-#include "include/XyLatinStr.hpp"
-#include "include/XyUTF8Str.hpp"
-#include "include/XID_map.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
 #include "DOMPrint.hpp"
 #include "CommonSubSequenceAlgorithms.hpp"

@@ -3,11 +3,11 @@
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"
 
-#include "include/XyDelta_FileInterface.hpp"
-#include "include/XyStr.hpp"
+#include "xydiff/XyDelta_FileInterface.hpp"
+#include "xydiff/XyStr.hpp"
 #include "Tools.hpp"
 #include "DeltaException.hpp"
-//#include "include/XID_map.hxx"
+//#include "xydiff/XID_map.hxx"
 //#include <stdio.h>
 //#include <string>
 

@@ -2,8 +2,8 @@
 #define DIFF_DELTACONSTRUCTOR_HXX
 
 #include "Tools.hpp"
-#include "include/XID_map.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
 #include <string>
 #include <vector>

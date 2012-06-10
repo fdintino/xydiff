@@ -1,4 +1,4 @@
-#include "include/XyStr.hpp"
+#include "xydiff/XyStr.hpp"
 
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/PlatformUtils.hpp"

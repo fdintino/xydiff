@@ -2,8 +2,8 @@
 #include "DeltaManager.hpp"
 
 #include "Tools.hpp"
-#include "include/XyLatinStr.hpp"
-#include "include/XyUTF8Str.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
 #include "DOMPrint.hpp"
 
 //#include <util/PlatformUtils.hpp>

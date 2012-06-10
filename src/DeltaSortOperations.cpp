@@ -1,8 +1,8 @@
 #include "DeltaSortOperations.hpp"
 #include "DeltaException.hpp"
-#include "include/XID_map.hpp"
-#include "include/XyLatinStr.hpp"
-#include "include/XyInt.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyInt.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMElement.hpp"

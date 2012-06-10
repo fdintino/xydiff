@@ -2,10 +2,10 @@
 #include "xercesc/dom/DOMException.hpp"
 
 #include "DeltaException.hpp"
-#include "include/XID_DOMDocument.hpp"
-#include "include/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
 #include "Tools.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "xyleme_DOMPrint.hpp"
 #include <stdio.h>
 #include <fstream>

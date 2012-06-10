@@ -4,7 +4,7 @@
 /* Class that handles transcode value of XMLString */
 
 // #include "xercesc/dom/deprecated/DOMString.hpp"
-#include "include/XyStr.hpp"
+#include "xydiff/XyStr.hpp"
 #include <stdio.h>
 #include <iostream>
 

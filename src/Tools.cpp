@@ -1,5 +1,5 @@
 #include "Tools.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
 
 #include <iostream>
 #include "xercesc/util/XMLUni.hpp"

@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/XyLatinStr.hpp"
-#include "include/XyUTF8Str.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
 #include "Tools.hpp"
 
 XERCES_CPP_NAMESPACE_USE

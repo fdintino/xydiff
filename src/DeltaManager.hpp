@@ -12,7 +12,7 @@
 //
 
 #include "xercesc/dom/DOMNode.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 //#include "RepositoryContext/VersionManager.hpp"
 
 #include <vector>

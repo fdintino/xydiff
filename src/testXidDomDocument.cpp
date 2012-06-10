@@ -2,9 +2,9 @@
 //#include <../src/dom/RefCountedImpl.hpp>
 #include "xercesc/dom/DOMException.hpp"
 
-#include "include/XID_DOMDocument.hpp"
-#include "include/XID_map.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "Tools.hpp"
 #include <stdio.h>
 #include <fstream>

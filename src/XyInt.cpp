@@ -1,5 +1,5 @@
-#include "include/XyInt.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyInt.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 

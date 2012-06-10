@@ -1,8 +1,8 @@
 #ifndef DELTA_SORT_OPERATIONS_HXX__
 #define DELTA_SORT_OPERATIONS_HXX__
 
-#include "include/XID_DOMDocument.hpp"
-#include "include/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
 
 #include "xercesc/dom/DOMNode.hpp"
 

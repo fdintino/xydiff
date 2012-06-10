@@ -1,6 +1,6 @@
 #include "xyleme_DOMPrint.hpp"
-#include "include/XID_map.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XyLatinStr.hpp"
 
 /*
  * The Apache Software License, Version 1.1

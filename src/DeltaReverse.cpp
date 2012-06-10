@@ -1,4 +1,4 @@
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "DeltaReverse.hpp"
 #include "DeltaException.hpp"
 
@@ -10,8 +10,8 @@
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 
-#include "include/XID_DOMDocument.hpp"
-#include "include/XyDelta_DOMInterface.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XyDelta_DOMInterface.hpp"
 
 #include "DOMPrint.hpp"
 #include "Tools.hpp"

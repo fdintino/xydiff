@@ -1,5 +1,5 @@
-#include "include/XyUTF8Str.hpp"
-#include "include/XyStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
+#include "xydiff/XyStr.hpp"
 
 #include "xercesc/sax/SAXParseException.hpp"
 #include "xercesc/sax/Locator.hpp"

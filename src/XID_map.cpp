@@ -1,8 +1,8 @@
 #include "infra/general/Log.hpp"
 
-#include "include/XID_map.hpp"
+#include "xydiff/XID_map.hpp"
 
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "DeltaException.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"

@@ -1,12 +1,12 @@
-#include "include/XyLatinStr.hpp"
-#include "include/XyUTF8Str.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
 #include "Diff_DeltaConstructor.hpp"
 
 #include "CommonSubSequenceAlgorithms.hpp"
 #include "Tools.hpp"
-#include "include/XID_map.hpp"
+#include "xydiff/XID_map.hpp"
 #include "Diff_NodesManager.hpp"
-#include "include/XyStrDiff.hpp"
+#include "xydiff/XyStrDiff.hpp"
 #include "DeltaException.hpp"
 
 #include "xercesc/dom/DOMNode.hpp"

@@ -3,8 +3,8 @@
 
 #include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/dom/DOMElement.hpp"
-#include "include/XID_DOMDocument.hpp"
-#include "include/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
 #include <string>
 
 class DeltaApplyEngine {

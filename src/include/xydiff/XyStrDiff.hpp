@@ -12,8 +12,8 @@
 
 /* Class to do diffs on strings character-by-character */
 
-#include "include/XyStr.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XyStr.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
 // #include "xercesc/dom/deprecated/DOMString.hpp"
 #include <stdio.h>

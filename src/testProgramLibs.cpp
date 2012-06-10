@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "include/XID_DOMDocument.hpp"
-#include "include/XyDelta_DOMInterface.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XyDelta_DOMInterface.hpp"
+#include "xydiff/XyLatinStr.hpp"
 
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMDocument.hpp"

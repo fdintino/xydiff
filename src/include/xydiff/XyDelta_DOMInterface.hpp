@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include "xercesc/dom/DOMDocument.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
 namespace XyDelta {
 	// doc1xidmap can be NULL => the default XidMap (1-n|n+1) will be used

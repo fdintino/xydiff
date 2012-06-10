@@ -4,13 +4,13 @@
 #include "xercesc/dom/DOMException.hpp"
 
 #include "DeltaException.hpp"
-#include "include/XID_DOMDocument.hpp"
-#include "include/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
 #include "Tools.hpp"
-#include "include/XyStr.hpp"
-#include "include/XyLatinStr.hpp"
-#include "include/XyUTF8Str.hpp"
-#include "include/XyUTF8Document.hpp"
+#include "xydiff/XyStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
+#include "xydiff/XyUTF8Document.hpp"
 #include "xyleme_DOMPrint.hpp"
 #include <stdio.h>
 #include <fstream>

@@ -1,7 +1,7 @@
 #ifndef XID_DOM_DOCUMENT
 #define XID_DOM_DOCUMENT
 
-#include "include/XID_map.hpp"
+#include "xydiff/XID_map.hpp"
 
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xercesc/dom/DOMConfiguration.hpp"

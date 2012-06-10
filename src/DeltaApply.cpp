@@ -11,14 +11,14 @@
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 
-#include "include/XyLatinStr.hpp"
-#include "include/XyInt.hpp"
-#include "include/XyDelta_DOMInterface.hpp"
-#include "include/XyStrDiff.hpp"
-#include "include/XyStrDelta.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyInt.hpp"
+#include "xydiff/XyDelta_DOMInterface.hpp"
+#include "xydiff/XyStrDiff.hpp"
+#include "xydiff/XyStrDelta.hpp"
 
 #include "Tools.hpp"
-#include "include/XID_map.hpp"
+#include "xydiff/XID_map.hpp"
 #include <stdio.h>
 
 XERCES_CPP_NAMESPACE_USE

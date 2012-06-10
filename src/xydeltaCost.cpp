@@ -1,9 +1,9 @@
 // toto
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyLatinStr.hpp"
 
 #include "DeltaException.hpp"
-#include "include/XID_map.hpp"
-#include "include/XID_DOMDocument.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 #include "Tools.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"

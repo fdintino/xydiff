@@ -1,7 +1,7 @@
 
 #include "Tools.hpp"
-#include "include/XyDelta_FileInterface.hpp"
-#include "include/XyLatinStr.hpp"
+#include "xydiff/XyDelta_FileInterface.hpp"
+#include "xydiff/XyLatinStr.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"
