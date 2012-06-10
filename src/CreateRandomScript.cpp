@@ -17,7 +17,7 @@
 #include "xydiff/XID_DOMDocument.hpp"
 #include "Tools.hpp"
 
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"

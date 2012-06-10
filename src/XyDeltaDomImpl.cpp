@@ -13,7 +13,7 @@
 #include "Diff_NodesManager.hpp"
 #include "Diff_DeltaConstructor.hpp"
 #include "Diff_UniqueIdHandler.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "DeltaManager.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"

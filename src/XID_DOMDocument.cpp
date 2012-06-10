@@ -28,7 +28,7 @@
 #include "xydiff/XID_DOMDocument.hpp"
 #include "xydiff/XID_map.hpp"
 
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "DOMPrint.hpp"
 #include "Tools.hpp"
 #include <stdio.h>

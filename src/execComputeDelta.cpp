@@ -2,7 +2,7 @@
 #include "xydiff/XID_map.hpp"
 #include "xydiff/XyDelta_FileInterface.hpp"
 #include "xydiff/XyLatinStr.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"

@@ -3,7 +3,7 @@
 #include "xydiff/XID_map.hpp"
 
 #include "xydiff/XyLatinStr.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/util/XMLString.hpp"

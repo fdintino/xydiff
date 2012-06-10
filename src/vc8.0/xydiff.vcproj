@@ -282,10 +282,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\DeltaException.hpp"
-				>
-			</File>
-			<File
 				RelativePath="..\DeltaManager.hpp"
 				>
 			</File>

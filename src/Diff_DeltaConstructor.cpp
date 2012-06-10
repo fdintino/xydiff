@@ -7,7 +7,7 @@
 #include "xydiff/XID_map.hpp"
 #include "Diff_NodesManager.hpp"
 #include "xydiff/XyStrDiff.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 
 #include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/dom/DOMNodeList.hpp"

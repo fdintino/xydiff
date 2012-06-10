@@ -1,7 +1,7 @@
 // toto
 #include "xydiff/XyLatinStr.hpp"
 
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XID_map.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
 #include "Tools.hpp"

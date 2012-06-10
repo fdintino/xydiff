@@ -6,7 +6,7 @@
 #include "xydiff/XyDelta_FileInterface.hpp"
 #include "xydiff/XyLatinStr.hpp"
 #include "Tools.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XID_map.hpp"
 #include <stdio.h>
 #include <string>

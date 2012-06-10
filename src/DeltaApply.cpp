@@ -1,4 +1,4 @@
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "DeltaApply.hpp"
 #include "DeltaSortOperations.hpp"
 #include "DeltaManager.hpp"

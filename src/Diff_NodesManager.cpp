@@ -2,7 +2,7 @@
 
 #include "Diff_NodesManager.hpp"
 #include "Diff_UniqueIdHandler.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "lookup2.hpp"
 #include "CommonSubSequenceAlgorithms.hpp"
 #include "Tools.hpp"

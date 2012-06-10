@@ -10,7 +10,7 @@
 
 
 #include "Tools.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XyLatinStr.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"

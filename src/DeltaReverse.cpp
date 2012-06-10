@@ -1,6 +1,6 @@
 #include "xydiff/XyLatinStr.hpp"
 #include "DeltaReverse.hpp"
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 
 //#include <../src/dom/NodeImpl.hpp>
 

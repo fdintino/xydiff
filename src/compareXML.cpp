@@ -1,7 +1,7 @@
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/dom/DOMException.hpp"
 
-#include "DeltaException.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
 #include "xydiff/XID_map.hpp"
 #include "Tools.hpp"
