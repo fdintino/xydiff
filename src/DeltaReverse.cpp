@@ -17,6 +17,9 @@
 #include "Tools.hpp"
 #include <fstream>
 
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
+
 XERCES_CPP_NAMESPACE_USE
 
 class DeltaReverseException : public VersionManagerException {
@@ -88,13 +91,13 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
 	while (child != NULL) {
 		if (child->getNodeType()!=DOMNode::ELEMENT_NODE) THROW_AWAY(("Bad type (%d) for Delta Operation Node", (int)child->getNodeType()));
 		DOMElement* operationNode = (DOMElement*) child ;
-		XyLatinStr operation(child->getNodeName());
+		XyLatinStr operation(child->getLocalName());
 		
 		// Reverse DELETE into INSERT
 		
 		if (strcmp(operation, "d")==0) {
 			vddprintf(("    reversing delete into insert\n"));
-			DOMElement* iElement = reversedDoc->createElement(XMLString::transcode("i")) ;
+			DOMElement* iElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:i")) ;
 			CopyAttr(iElement, operationNode, XMLString::transcode("par"), true);
 			CopyAttr(iElement, operationNode, XMLString::transcode("pos"), true);
 			CopyAttr(iElement, operationNode, XMLString::transcode("xm"), true);
@@ -109,7 +112,7 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
 		
 		else if (strcmp(operation, "i")==0) {
 	    		vddprintf(("    reversing insert into delete\n")); 
-			DOMElement *iElement = reversedDoc->createElement(XMLString::transcode("d")) ;
+			DOMElement *iElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:d")) ;
 			CopyAttr(iElement, operationNode, XMLString::transcode("par"), true);
 			CopyAttr(iElement, operationNode, XMLString::transcode("pos"), true);
 			CopyAttr(iElement, operationNode, XMLString::transcode("xm"), true);
@@ -133,7 +136,7 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
                         const XMLCh* newValue = operationNode->getAttributes()->getNamedItem(XMLString::transcode("nv"))->getNodeValue();
                         
 
-			DOMElement* auElement = reversedDoc->createElement(XMLString::transcode("au"));
+			DOMElement* auElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:au"));
 			auElement->setAttribute(XMLString::transcode("xid"), xidElem);
 			auElement->setAttribute(XMLString::transcode("a"),   attrName);
 			auElement->setAttribute(XMLString::transcode("nv"),  oldValue);
@@ -153,7 +156,7 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
 			const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(XMLString::transcode("a"))->getNodeValue();
 			const XMLCh* attrVal  = operationNode->getAttributes()->getNamedItem(XMLString::transcode("v"))->getNodeValue();
 			
-			DOMElement* aiElement = reversedDoc->createElement(XMLString::transcode("ai"));
+			DOMElement* aiElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:ai"));
 			aiElement->setAttribute(XMLString::transcode("xid"), xidElem);
 			aiElement->setAttribute(XMLString::transcode("a"), attrName);
 			aiElement->setAttribute(XMLString::transcode("v"), attrVal);
@@ -172,7 +175,7 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
 			const XMLCh* attrName = operationNode->getAttributes()->getNamedItem(XMLString::transcode("a"))->getNodeValue();
 			const XMLCh* attrVal  = operationNode->getAttributes()->getNamedItem(XMLString::transcode("v"))->getNodeValue();
 			
-			DOMElement* adElement = reversedDoc->createElement(XMLString::transcode("ad"));
+			DOMElement* adElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:ad"));
 			adElement->setAttribute(XMLString::transcode("xid"), xidElem);
 			adElement->setAttribute(XMLString::transcode("a"), attrName);
 			adElement->setAttribute(XMLString::transcode("v"), attrVal);
@@ -195,14 +198,14 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
 			//DOMString xid= child.getAttributes().getNamedItem("xid").getNodeValue() ;
                         const XMLCh* xid= child->getAttributes()->getNamedItem(XMLString::transcode("xid"))->getNodeValue() ;
 			
-			DOMElement *uElement = reversedDoc->createElement(XMLString::transcode("u")) ;
+			DOMElement *uElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:u")) ;
 			uElement->setAttribute(XMLString::transcode("xid"), xid);
 			
-			DOMElement* uOld = reversedDoc->createElement(XMLString::transcode("ov"));
+			DOMElement* uOld = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:ov"));
 			DOMNode* uOldText = reversedDoc->importNode( newValue->getFirstChild(), true );
 			uOld->appendChild( uOldText );
 			
-			DOMElement* uNew = reversedDoc->createElement(XMLString::transcode("nv"));
+			DOMElement* uNew = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:nv"));
 			DOMNode* uNewText = reversedDoc->importNode( oldValue->getFirstChild(), true );
 			uNew->appendChild( uNewText );
 			
@@ -218,7 +221,7 @@ DOMNode* DeltaReverse( DOMNode *deltaElement, DOMDocument *reversedDoc ) {
 			const XMLCh* rFrom = operationNode->getAttributes()->getNamedItem(XMLString::transcode("from"))->getNodeValue();
 			const XMLCh* rTo   = operationNode->getAttributes()->getNamedItem(XMLString::transcode("to"))->getNodeValue();
 			
-			DOMElement *rrElement = reversedDoc->createElement(XMLString::transcode("renameRoot"));
+			DOMElement *rrElement = reversedDoc->createElementNS(XYDIFF_XYDELTA_NS, XMLString::transcode("xy:renameRoot"));
 			rrElement->setAttribute(XMLString::transcode("from"), rTo);
 			rrElement->setAttribute(XMLString::transcode("to"), rFrom);
 			

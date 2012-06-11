@@ -34,7 +34,6 @@ class DeltaConstructor {
 		xercesc::DOMNode*        scriptRoot ;
 	
 		bool ignoreUnimportantData ;
-		XMLCh xyDiffNS_ch[100];
 	} ;
 
 #endif

@@ -17,6 +17,7 @@
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMNodeList.hpp"
 
+
 #include "xercesc/dom/DOMLocator.hpp"
 #include "xercesc/dom/DOMAttr.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
@@ -34,6 +35,9 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
 
 XERCES_CPP_NAMESPACE_USE
 using namespace std;
@@ -59,6 +63,12 @@ XID_DOMDocument* XID_DOMDocument::createDocument(void) {
   DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
   DOMDocument* doc = impl->createDocument();
   return new XID_DOMDocument(doc, NULL, true);
+}
+
+XID_DOMDocument* XID_DOMDocument::createDocument(const XMLCh *namespaceURI, const XMLCh *qualifiedName) {
+	DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
+	DOMDocument* doc = impl->createDocument(namespaceURI, qualifiedName, (DOMDocumentType *)NULL);
+	return new XID_DOMDocument(doc, NULL, true);
 }
 
 DOMDocument * XID_DOMDocument::getDOMDocumentOwnership() {
@@ -417,9 +427,8 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
 		XMLCh tempStrA[100];
 		XMLCh tempStrB[100];
-		XMLString::transcode("urn:schemas-xydiff:xydelta", tempStrA, 99);
 		XMLString::transcode("xy:xid", tempStrB, 99);
-		DOMAttr* attrNode = doc->createAttributeNS(tempStrA, tempStrB);
+		DOMAttr* attrNode = doc->createAttributeNS(XYDIFF_XYDELTA_NS, tempStrB);
 		XMLString::transcode(xidStr, tempStrA, 99);
 		attrNode->setValue(tempStrA);
 		attr->setNamedItem(attrNode);
@@ -430,9 +439,8 @@ void Restricted::XidTagSubtree(XID_DOMDocument *doc, DOMNode* node) {
 		if (attr==NULL) throw VersionManagerException("Internal Error", "XidTagSubtree()", "Element node getAttributes() returns NULL");
 		XMLCh tempStrA[100];
 		XMLCh tempStrB[100];
-		XMLString::transcode("urn:schemas-xydiff:xydelta", tempStrA, 99);
 		XMLString::transcode("xy:txid", tempStrB, 99);
-		DOMAttr* attrNode = doc->createAttributeNS(tempStrA, tempStrB);
+		DOMAttr* attrNode = doc->createAttributeNS(XYDIFF_XYDELTA_NS, tempStrB);
 		XMLString::transcode(xidStr, tempStrA, 99);
 		attrNode->setValue(tempStrA);
 		attr->setNamedItem(attrNode);

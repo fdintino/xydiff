@@ -30,7 +30,7 @@ void SortDeleteOperationsEngine::registerOperations(XID_DOMDocument *sourceDoc, 
 	
 	while(op!=NULL) {
 		XMLString::transcode("d", tempStr, 2);
-		if (XMLString::equals(op->getNodeName(),tempStr)) {
+		if (XMLString::equals(op->getLocalName(),tempStr)) {
 			XMLString::transcode("xm", tempStr, 2);
 			char *xidmapStr = XMLString::transcode(op->getAttributes()->getNamedItem(tempStr)->getNodeValue());
 			XidMap_Parser parse(xidmapStr) ;
@@ -111,7 +111,7 @@ SortInsertOperationsEngine::SortInsertOperationsEngine(XID_DOMDocument *sourceDo
 	XMLCh iStr[2];
 	XMLString::transcode("i", iStr, 1);
 	while(op!=NULL) {
-		if ( XMLString::equals(op->getNodeName(), iStr) ) {
+		if ( XMLString::equals(op->getLocalName(), iStr) ) {
 
 			InsertOpWithPos iOp(op);
 			

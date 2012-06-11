@@ -11,4 +11,5 @@ nobase_xydiffinclude_HEADERS = xydiff/XID_DOMDocument.hpp \
     xydiff/XyUTF8Document.hpp \
     xydiff/XyUTF8Str.hpp \
     xydiff/VersionManagerException.hpp \
-    xydiff/DeltaException.hpp
+    xydiff/DeltaException.hpp \
+    xydiff/XyDiffNS.hpp

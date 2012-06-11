@@ -246,7 +246,7 @@ void XyStrDiff::simpleReplace()
 	startpos = 0;
 	len = sizex;
 	try {
-		XMLString::transcode("tr", tempStrA, 99);
+		XMLString::transcode("xy:tr", tempStrA, 99);
 		DOMElement *r = doc->createElement(tempStrA);
 		XMLString::transcode("pos", tempStrA, 99);
 		XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
@@ -284,7 +284,7 @@ void XyStrDiff::flushBuffers()
 		startpos = xpos - len;
 		
 		try {
-			XMLString::transcode("tr", tempStrA, 99);
+			XMLString::transcode("xy:tr", tempStrA, 99);
 			DOMElement *r = doc->createElement(tempStrA);
 			XMLString::transcode("pos", tempStrA, 99);
 			XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);
@@ -314,7 +314,7 @@ void XyStrDiff::flushBuffers()
 		startpos = xpos;
 		
 		try {
-			XMLString::transcode("ti", tempStrA, 99);
+			XMLString::transcode("xy:ti", tempStrA, 99);
 			DOMElement *r = doc->createElement(tempStrA);
 
 			XMLString::transcode("pos", tempStrA, 99);
@@ -341,7 +341,7 @@ void XyStrDiff::flushBuffers()
     len = delbuf.length();
 		startpos = xpos - len;
 		try {
-			XMLString::transcode("td", tempStrA, 99);
+			XMLString::transcode("xy:td", tempStrA, 99);
 			DOMElement *r = doc->createElement(tempStrA);
 			XMLString::transcode("pos", tempStrA, 99);
 			XMLString::transcode(itoa(startpos).c_str(), tempStrB, 99);

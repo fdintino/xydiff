@@ -26,6 +26,7 @@ class XID_DOMDocument : public xercesc::DOMDocument {
 		// Constructors
 		
 		static XID_DOMDocument* createDocument(void);
+		static XID_DOMDocument* createDocument(const XMLCh *namespaceURI, const XMLCh *qualifiedName);
 		static XID_DOMDocument* copy(const XID_DOMDocument *doc, bool withXID=true);
 		XID_DOMDocument(xercesc::DOMDocument *doc, const char *xidmapStr=NULL, bool adoptDocument=false, xercesc::DOMLSParser *domParser=NULL);
 		XID_DOMDocument(const char* xmlfile, bool useXidMap=true, bool doValidation=false);

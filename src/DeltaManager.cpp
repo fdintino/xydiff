@@ -18,6 +18,9 @@
 #include <stdio.h>
 #include <set>
 
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
+
 XERCES_CPP_NAMESPACE_USE
 
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
@@ -107,7 +110,7 @@ DeltaManager::DeltaManager(const char *fileName) {
 
 	for ( node = node->getNextSibling(); node != NULL; node = node->getNextSibling()) {
 		// cout << XyLatinStr(node->getNodeName()) << " " <<  XyLatinStr(node->getNodeValue()) << endl;
-		if ((node->getNodeType() != DOMNode::ELEMENT_NODE) || (!XMLString::equals(node->getNodeName(),XMLString::transcode("t")))) 
+		if ((node->getNodeType() != DOMNode::ELEMENT_NODE) || (!XMLString::equals(node->getLocalName(),XMLString::transcode("t")))) 
 			throw VersionManagerException("Data error", "DeltaManager", "incorrect input delta document: tags");
 		headerList.insert(headerList.begin(), DeltaHeader(node));
 	}
@@ -142,8 +145,8 @@ DeltaManager::DeltaManager(const char *deltaFileName, const char *newVersionFile
         DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(gLS);
         
 	deltaDocument = new XID_DOMDocument(impl->createDocument(
-			0,                    // root element namespace URI.
-			XMLString::transcode("unit_delta"),            // root element name
+			XYDIFF_XYDELTA_NS,                     // root element namespace URI.
+			XMLString::transcode("xy:unit_delta"), // root element name
 			0));  // document type object (DTD)
 
 	DOMElement* deltaRoot = deltaDocument->getDocumentElement();

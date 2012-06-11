@@ -38,7 +38,7 @@ bool nomove = false ;
 void createMoveInfoList(DOMNode* operation) {
 	while (operation!=NULL) {
 	
-		if (operation->getNodeName() == XMLString::transcode("d")) {
+		if (operation->getLocalName() == XMLString::transcode("d")) {
 			DOMNode* moveAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("move"));
 			if (moveAttr!=NULL) {
 				struct MoveInfo myMoveInfo ;
@@ -73,7 +73,7 @@ int getXyDeltaCost(DOMNode* operation) {
 	if (operation==NULL) return 0;
 	int myCost = 0;
 	
-	if (XMLString::equals(operation->getNodeName(),XMLString::transcode("d"))) {
+	if (XMLString::equals(operation->getLocalName(),XMLString::transcode("d"))) {
 		DOMNode* updateAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("update"));
 		DOMNode* moveAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("move"));
 
@@ -122,7 +122,7 @@ int getXyDeltaCost(DOMNode* operation) {
 			}
 		}
 
-	if (XMLString::equals(operation->getNodeName(),XMLString::transcode("i"))) {
+	if (XMLString::equals(operation->getLocalName(),XMLString::transcode("i"))) {
 		DOMNode* updateAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("update"));
 		DOMNode* moveAttr = operation->getAttributes()->getNamedItem(XMLString::transcode("move"));
 		

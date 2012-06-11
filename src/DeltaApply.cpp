@@ -21,6 +21,9 @@
 #include "xydiff/XID_map.hpp"
 #include <stdio.h>
 
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
+
 XERCES_CPP_NAMESPACE_USE
 
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
@@ -136,7 +139,7 @@ void DeltaApplyEngine::TextNode_Update( XID_t nodeXID, DOMNode *operationNode ) 
 	xytext->setApplyAnnotations(applyAnnotations);
 	for (int i = opNodes->getLength() - 1; i >= 0; i--) {
 		DOMElement *op = (DOMElement *) opNodes->item(i);
-		char *optype = XMLString::transcode(op->getNodeName());
+		char *optype = XMLString::transcode(op->getLocalName());
 		XMLCh pos_attr[4];
 		XMLCh len_attr[4];
 		XMLString::transcode("pos", pos_attr, 3);
@@ -231,7 +234,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 	XMLString::transcode("au", auStr, 2);
 	XMLString::transcode("renameRoot", renameRootStr, 10);
 	XMLCh tempStr[6];
-	if (XMLString::equals(operationNode->getNodeName(), dStr)) {
+	if (XMLString::equals(operationNode->getLocalName(), dStr)) {
 		vddprintf(("        d(elete)\n"));
 		
 		bool move = false ;
@@ -255,7 +258,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 		XMLString::release(&xidmapStr);
 	}
 
-	else if (XMLString::equals(operationNode->getNodeName(),iStr)) {
+	else if (XMLString::equals(operationNode->getLocalName(),iStr)) {
 		vddprintf(("        i(nsert)\n"));
 
 		bool move = false ;
@@ -292,7 +295,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 		XMLString::release(&xidmapStr);
 	}
 
-	else if (XMLString::equals(operationNode->getNodeName(), uStr)) {
+	else if (XMLString::equals(operationNode->getLocalName(), uStr)) {
 		vddprintf(("        u(pdate)\n"));
 		XMLString::transcode("oldxm", tempStr, 5);
 		char *xidmapStr = XMLString::transcode(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
@@ -302,7 +305,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
 		XMLString::release(&xidmapStr);
 		}
 
-	else if (XMLString::equals(operationNode->getNodeName(), adStr)) {
+	else if (XMLString::equals(operationNode->getLocalName(), adStr)) {
 		vddprintf(("        a(ttribute) d(elete)\n"));
 		XMLString::transcode("xid", tempStr, 5);
 		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
@@ -311,7 +314,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
         const XMLCh* attr = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		Attribute_Delete( nodeXID, attr );
 		}
-	else if (XMLString::equals(operationNode->getNodeName(), aiStr)) {
+	else if (XMLString::equals(operationNode->getLocalName(), aiStr)) {
 		vddprintf(("        a(ttribute) i(nsert)\n"));
 		XMLString::transcode("xid", tempStr, 5);
 		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
@@ -321,7 +324,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
         const XMLCh* value = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		Attribute_Insert( nodeXID, attr, value );
 		}
-	else if (XMLString::equals(operationNode->getNodeName(), auStr)) {
+	else if (XMLString::equals(operationNode->getLocalName(), auStr)) {
 		vddprintf(("        a(ttribute) u(pdate)\n"));
 		XMLString::transcode("xid", tempStr, 5);
 		XID_t nodeXID = (XID_t)(int)XyInt(operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue());
@@ -331,7 +334,7 @@ void DeltaApplyEngine::ApplyOperation(DOMNode *operationNode) {
         const XMLCh* value = operationNode->getAttributes()->getNamedItem(tempStr)->getNodeValue() ;
 		Attribute_Update( nodeXID, attr, value );
 		}
-	else if (XMLString::equals(operationNode->getNodeName(), renameRootStr)) {
+	else if (XMLString::equals(operationNode->getLocalName(), renameRootStr)) {
 		vddprintf(("        renameRoot\n"));
 		DOMNode *root = xiddoc->getDocumentElement();
 		XID_t rootXID = xiddoc->getXidMap().getXIDbyNode(root);
@@ -402,9 +405,9 @@ void DeltaApplyEngine::ApplyDeltaElement(DOMNode* incDeltaElement) {
 	XMLCh dStr[100];
 	XMLString::transcode("d", dStr, 99);
 	while (child != NULL) {
-		if ( (!XMLString::equals(child->getNodeName(),iStr))
+		if ( (!XMLString::equals(child->getLocalName(),iStr))
 		
-		   &&(!XMLString::equals(child->getNodeName(), dStr)) ) ApplyOperation(child);
+		   &&(!XMLString::equals(child->getLocalName(), dStr)) ) ApplyOperation(child);
 	  child = child->getNextSibling() ;
 		}
 		
@@ -458,7 +461,7 @@ DeltaApplyEngine::DeltaApplyEngine(XID_DOMDocument *sourceDoc) {
 	XMLString::release(&moveRootCh);
 	moveDocument->appendChild( moveRoot );
 	applyAnnotations = false;
-	}
+}
 
 DeltaApplyEngine::~DeltaApplyEngine() {
 	moveDocument->release();
@@ -467,14 +470,14 @@ DeltaApplyEngine::~DeltaApplyEngine() {
 DOMNode* DeltaApplyEngine::getDeltaElement(XID_DOMDocument *IncDeltaDoc) {
 
 	if (IncDeltaDoc  == NULL) THROW_AWAY(("delta document is null"));
-	//DOMNode* dRoot    = IncDeltaDoc->getDocumentElement();
-	DOMNode* dRoot = IncDeltaDoc->getElementsByTagName(XMLString::transcode("unit_delta"))->item(0);
+
+	DOMNode* dRoot = IncDeltaDoc->getElementsByTagNameNS(XYDIFF_XYDELTA_NS, XMLString::transcode("unit_delta"))->item(0);
 	if ( (dRoot==NULL)
-	   ||(!XMLString::equals(dRoot->getNodeName(), XMLString::transcode("unit_delta")))) THROW_AWAY(("no <unit_delta> root found on document"));
+	   ||(!XMLString::equals(dRoot->getLocalName(), XMLString::transcode("unit_delta")))) THROW_AWAY(("no <unit_delta> root found on document"));
 
 //	const XMLCh * firstChildNodeName = dRoot->getFirstChild()->getNodeName();
 //	char * firstChildNodeChar = XMLString::transcode(firstChildNodeName);
-	DOMNodeList * tElementNodes = IncDeltaDoc->getElementsByTagName(XMLString::transcode("t"));
+	DOMNodeList * tElementNodes = IncDeltaDoc->getElementsByTagNameNS(XYDIFF_XYDELTA_NS, XMLString::transcode("t"));
 	if (tElementNodes->getLength() == 0) THROW_AWAY(("no delta element <t> found"));
 //	   ||(!XMLString::equals(dRoot->getFirstChild()->getNodeName(), tempStr))) THROW_AWAY(("no delta element <t> found"));
 	

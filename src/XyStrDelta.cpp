@@ -40,6 +40,8 @@
 
 #include "xydiff/XyStrDelta.hpp"
 
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
 
 XERCES_CPP_NAMESPACE_USE 
 
@@ -47,10 +49,10 @@ using namespace XyStrDelta;
 
 XyStrOperationType XyStrDeltaApply::getOperationType(DOMNode *node)
 {
-	XMLCh xyd_ch[6];
-	XMLCh xyi_ch[6];
-	XMLString::transcode("xy:d", xyd_ch, 5);
-	XMLString::transcode("xy:i", xyi_ch, 5);
+	XMLCh xyd_ch[7];
+	XMLCh xyi_ch[7];
+	XMLString::transcode("xyu:d", xyd_ch, 6);
+	XMLString::transcode("xyu:i", xyi_ch, 6);
 	if ( XMLString::equals(node->getNodeName(), xyd_ch) ) {
 		return XYDIFF_TXT_DEL;
 	}
@@ -68,8 +70,8 @@ DOMNodeFilter::FilterAction FilterIfParentIsDelete::acceptNode(const DOMNode *no
 			return DOMNodeFilter::FILTER_SKIP;
 		}
 	}
-	XMLCh xyd_ch[6];
-	XMLString::transcode("xy:d", xyd_ch, 5);
+	XMLCh xyd_ch[7];
+	XMLString::transcode("xyu:d", xyd_ch, 6);
 	if ( XMLString::equals(node->getParentNode()->getNodeName(), xyd_ch) ) {
 		return DOMNodeFilter::FILTER_SKIP;
 	} else {
@@ -104,7 +106,7 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 	DOMElement *parentNode;
 	
 	// Create a DOMTreeWalker out of all text nodes under the parent that
-	// aren't children of <xy:d> elements
+	// aren't children of <xyu:d> elements
 	DOMNodeFilter *filter = new FilterIfParentIsDelete();
 	walker = doc->createTreeWalker(node, DOMNodeFilter::SHOW_TEXT, filter, true);
 	
@@ -143,7 +145,7 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 		
 		switch( getOperationType(parentNode) ) {
 			// If operation type is XYDIFF_TXT_NOOP, it means that the parent node is the original
-			// text node, so we simply insert a regular <xy:d> tag around the removed text
+			// text node, so we simply insert a regular <xyu:d> tag around the removed text
 			case XYDIFF_TXT_NOOP:
 				removeFromNode((DOMText*)currentNode, startIndex, endIndex - startIndex, isReplaceOperation);
 			break;
@@ -155,8 +157,8 @@ void XyStrDeltaApply::remove(int startpos, int len, bool isReplaceOperation)
 					// This keeps the DOMTreeWalker from going haywire after our changes to the structure
 					walker->previousNode();
 					node->removeChild(parentNode);
-					doc->getXidMap().removeNode(parentNode);     // Remove <xy:i> from xidmap
-				// Only a substring of the <xy:i> text needs to be removed
+					doc->getXidMap().removeNode(parentNode);     // Remove <xyu:i> from xidmap
+				// Only a substring of the <xyu:i> text needs to be removed
 				} else {
 					// Anything that had been inserted and then subsequently deleted in another
 					// change can just be removed, since we're only interested in annotating
@@ -194,13 +196,11 @@ void XyStrDeltaApply::removeFromNode(DOMText *removeNode, int pos, int len, bool
 
 	node->insertBefore(endText, removeNode->getNextSibling());
 
-	XMLCh tempStrA[6];
-	XMLCh tempStrB[6];
-	XMLCh xyDeltaNS_ch[36];
-	XMLString::transcode("urn:schemas-xydiff:xydelta", xyDeltaNS_ch, 35);
+	XMLCh tempStrA[7];
+	XMLCh tempStrB[7];
 
-	XMLString::transcode("xy:d", tempStrA, 5);
-	delNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
+	XMLString::transcode("xyu:d", tempStrA, 6);
+	delNode = doc->createElementNS(XYDIFF_UNIT_DELTA_NS, tempStrA);
 	XMLString::transcode("cid", tempStrA, 5);
 	delNode->setAttribute( tempStrA, witoa(cid) );
 
@@ -224,7 +224,7 @@ void XyStrDeltaApply::insert(int startpos, const XMLCh *ins, bool isReplaceOpera
 	DOMElement *parentNode;
 	
 	// Create a DOMTreeWalker out of all text nodes under the parent that
-	// aren't children of <xy:d> elements
+	// aren't children of <xyu:d> elements
 	DOMNodeFilter *filter = new FilterIfParentIsDelete();
 	walker = doc->createTreeWalker(node, DOMNodeFilter::SHOW_TEXT, filter, true);
 	
@@ -294,14 +294,12 @@ void XyStrDeltaApply::insertIntoNode(DOMNode *insertNode, int pos, const XMLCh *
 	DOMText *insText;
 	DOMNode *endText;
 	DOMNode *parentNode;
-	XMLCh tempStrA[6];
+	XMLCh tempStrA[7];
 	XMLCh tempStrB[6];
-	XMLCh xyDeltaNS_ch[36];
-	XMLString::transcode("urn:schemas-xydiff:xydelta", xyDeltaNS_ch, 35);
 
 	parentNode = insertNode->getParentNode();
-	XMLString::transcode("xy:i", tempStrA, 5);
-	insNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
+	XMLString::transcode("xyu:i", tempStrA, 6);
+	insNode = doc->createElementNS(XYDIFF_UNIT_DELTA_NS, tempStrA);
 	XMLString::transcode("cid", tempStrA, 5);
 	insNode->setAttribute( tempStrA, witoa(cid) );
 
@@ -380,7 +378,7 @@ void XyStrDeltaApply::complete()
 	}
 	
 	// Second go-around we see if adjacent operation nodes can be merged (ie ones that don't have
-	// any text nodes between them, for instance two adjacent xy:i tags with matching changeIds
+	// any text nodes between them, for instance two adjacent xyu:i tags with matching changeIds
 	for (i = 0; i < childNodes->getLength(); i++) {
 		node1 = (DOMElement *) childNodes->item(i);
 		if (node1 == NULL) {
@@ -518,23 +516,21 @@ bool XyStrDeltaApply::mergeNodes(DOMElement *node1, DOMElement *node2, DOMElemen
 
 	XMLCh tempStrA[6];
 	XMLCh tempStrB[6];
-	XMLCh xyDeltaNS_ch[36];
-	XMLString::transcode("urn:schemas-xydiff:xydelta", xyDeltaNS_ch, 35);
 
 	XMLString::transcode("repl", tempStrA, 5);
 	const XMLCh *repl1 = node1->getAttribute( tempStrA );
 	const XMLCh *repl3 = node3->getAttribute( tempStrA );
 	isReplaceOperation = (XMLString::stringLen(repl1) > 0 || XMLString::stringLen(repl3) > 0);
 
-	XMLString::transcode("xy:d", tempStrA, 5);
+	XMLString::transcode("xyu:d", tempStrA, 6);
 	
-	delNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
+	delNode = doc->createElementNS(XYDIFF_UNIT_DELTA_NS, tempStrA);
 	parent->insertBefore(delNode, node1);
 	XMLString::transcode("cid", tempStrA, 5);
 	delNode->setAttribute( tempStrA, cid1 );	
 
-	XMLString::transcode("xy:i", tempStrA, 5);
-	insNode = doc->createElementNS(xyDeltaNS_ch, tempStrA);
+	XMLString::transcode("xyu:i", tempStrA, 6);
+	insNode = doc->createElementNS(XYDIFF_UNIT_DELTA_NS, tempStrA);
 	parent->insertBefore(insNode, node1);
 
 	XMLString::transcode("cid", tempStrA, 5);

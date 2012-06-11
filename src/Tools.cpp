@@ -40,7 +40,7 @@ bool isDelta(const DOMDocument *doc) {
 	if ((doc!=NULL)&&(doc->hasChildNodes())) {
 		DOMElement* docRoot = doc->getDocumentElement() ;
 		if (docRoot!=NULL) {
-        	        if (XMLString::equals(docRoot->getNodeName(), XMLString::transcode("unit_delta"))) {
+        	        if (XMLString::equals(docRoot->getLocalName(), XMLString::transcode("unit_delta"))) {
 				return true ;
 			}
 		}

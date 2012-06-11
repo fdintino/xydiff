@@ -26,6 +26,9 @@
 
 XERCES_CPP_NAMESPACE_USE
 
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
+
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 
 DOMNode* XyDelta::ReverseDelta(DOMDocument *reversedDeltaDoc, DOMNode *deltaElement) {
@@ -107,9 +110,9 @@ void XyDelta::SaveDomDocument(DOMDocument* d, const char *filename) {
 // 		XID_DOMDocument *resultxdoc = appliqueDoc.getResultDocument();
 // 		DOMNode* resultRoot = resultDoc->importNode(resultxdoc->getDocumentElement(), true);
 // 		if (applyAnnotations) {
-// 			XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+// 			XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:unit-delta");
 // 			XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-// 			XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+// 			XMLCh *xmlns_ch = XMLString::transcode("xmlns:xyu");
 // 			if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
 // 				((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
 // 			}
@@ -131,9 +134,9 @@ XID_DOMDocument* XyDelta::ApplyDelta(XID_DOMDocument* xdoc, DOMNode* deltaElemen
 		XID_DOMDocument *resultxdoc = appliqueDoc.getResultDocument();
 		// DOMNode* resultRoot = resultxdoc->getDocumentElement();
 		// if (applyAnnotations) {
-		// 	XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:xydelta");
+		// 	XMLCh *xyDeltaNS_ch = XMLString::transcode("urn:schemas-xydiff:unit-delta");
 		// 	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-		// 	XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+		// 	XMLCh *xmlns_ch = XMLString::transcode("xmlns:xyu");
 		// 	if (!((DOMElement*)resultRoot)->hasAttributeNS(xmlnsURI_ch, xmlns_ch)) {
 		// 		((DOMElement*)resultRoot)->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDeltaNS_ch);
 		// 	}

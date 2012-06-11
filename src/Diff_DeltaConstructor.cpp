@@ -28,6 +28,9 @@
 
 bool _XyDiff_DontSaveXidmapToFile = false;
 
+#include "xydiff/XyDiffNS.hpp"
+using namespace XyDiff;
+
 XERCES_CPP_NAMESPACE_USE
 
 XID_DOMDocument *DeltaConstructor::getDeltaDocument(void) {
@@ -56,19 +59,14 @@ DeltaConstructor::DeltaConstructor(
 	XMLCh tempStrB[100];
 
 	XMLCh *xmlnsURI_ch = XMLString::transcode("http://www.w3.org/2000/xmlns/");
-	XMLCh *xmlns_ch = XMLString::transcode("xmlns");
+	XMLCh *xmlns_ch = XMLString::transcode("xmlns:xy");
+	XMLString::transcode("xy:unit_delta", tempStrA, 99);
 
-	XMLString::transcode("urn:schemas-xydiff:unit-delta", xyDiffNS_ch, 99);
-	deltaDoc     = XID_DOMDocument::createDocument() ;
+	deltaDoc = XID_DOMDocument::createDocument(XYDIFF_XYDELTA_NS, tempStrA);
+	DOMElement* deltaRoot = deltaDoc->getDocumentElement();
 
-
-	XMLString::transcode("unit_delta", tempStrA, 99);
-	DOMElement* deltaRoot = deltaDoc->createElement(tempStrA);
-	deltaRoot->setAttributeNS(xmlnsURI_ch, xmlns_ch, xyDiffNS_ch);
-	deltaDoc->appendChild( (DOMNode*) deltaRoot );
-
-	XMLString::transcode("t", tempStrA, 99);
-	DOMElement* tElem = deltaDoc->createElement(tempStrA);
+	XMLString::transcode("xy:t", tempStrA, 99);
+	DOMElement* tElem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 
 	if (ignoreUnimportantData) {
 		XMLString::transcode("IgnoreBlankTexts", tempStrA, 99);
@@ -178,8 +176,8 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 				XMLCh *pos_str_ch    = XMLString::transcode(pos_str);
 				XMLCh *myXidMap_ch   = XMLString::transcode(myXidMap.c_str());
 
-				XMLString::transcode("d", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("xy:d", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 				XMLString::transcode( "par", tempStrA, 99 );
 				elem->setAttribute( tempStrA, parXID_str_ch );
 				XMLString::transcode( "pos", tempStrA, 99 );
@@ -213,8 +211,8 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 						elem->setAttribute(tempStrA, tempStrB);
 						updateCount++ ;
 						// Add update tag
-						XMLString::transcode("u", tempStrA, 99);
-						upElem = deltaDoc->createElement(tempStrA);
+						XMLString::transcode("xy:u", tempStrA, 99);
+						upElem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 						XMLString::transcode( "par", tempStrA, 99 );
 						upElem->setAttribute( tempStrA, parXID_str_ch );
 						XMLString::transcode( "pos", tempStrA, 99 );
@@ -239,7 +237,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 				XMLString::release(&pos_str_ch);
 				XMLString::release(&myXidMap_ch);
 
-				vddprintf(("<d xm=""%s"" par=""%d"" pos=""%d"" %s%s%s/>\n",
+				vddprintf(("<xy:d xm=""%s"" par=""%d"" pos=""%d"" %s%s%s/>\n",
 					myXidMap.c_str(),
 					(int)parentXID,
 					myPosition,
@@ -307,6 +305,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 	// Apply to Self first
 	XMLCh tempStrA[100];
 	XMLCh tempStrB[100];
+
 	switch( myAtomicInfo.myEvent ) {
 	
 		case AtomicInfo::NOP:
@@ -337,8 +336,8 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 				XMLCh *parXID_str_ch = XMLString::transcode(parXID_str);
 				XMLCh *pos_str_ch = XMLString::transcode(pos_str);
 
-				XMLString::transcode("i", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("xy:i", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 				XMLString::transcode("par", tempStrA, 99);
 				elem->setAttribute(tempStrA, parXID_str_ch);
 				XMLString::transcode("pos", tempStrA, 99);
@@ -378,7 +377,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 					case AtomicInfo::UPDATE_NEW: {
 						// Find associated update element created in ConstructDeleteScript()
 						XMLString::transcode("u", tempStrA, 99);
-						DOMNodeList *upNodes = ((DOMElement *)scriptRoot)->getElementsByTagName(tempStrA);
+						DOMNodeList *upNodes = ((DOMElement *)scriptRoot)->getElementsByTagNameNS(XYDIFF_XYDELTA_NS, tempStrA);
 						if (upNodes->getLength() ==0) {
 							THROW_AWAY(("Could not find any matching <u> elements for insert\n"));
 						}
@@ -410,7 +409,11 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 						vddprintf(("found %i matching update nodes\n", upNodes->getLength()));
 						if (upElem != NULL) {
 							DOMNode *delElem = upElem->getFirstChild();
-							XMLString::transcode("d", tempStrA, 99);
+							XMLString::transcode("xy:d", tempStrA, 99);
+							if (!delElem) {
+								const char *error_msg = "<u> element has incorrect first child, should be <d>\n";
+                                THROW_AWAY((error_msg));
+							}
 							if (XMLString::compareString(delElem->getNodeName(), tempStrA) != 0) {
 								char *delElemNodeName = XMLString::transcode(delElem->getNodeName());
 								char *error_msg = NULL;
@@ -514,8 +517,8 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 			DOMNode* oldattr = oldnode->getAttributes()->getNamedItem(attr->getNodeName()) ;
 			if (oldattr==NULL) {
 				vddprintf(("new node %d, attribute %d inserted\n", v1nodeID, i));
-				XMLString::transcode("ai", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("xy:ai", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 				XMLString::transcode("xid", tempStrA, 99);
 				XMLString::transcode(xidstr, tempStrB, 99);
 				elem->setAttribute(tempStrA, tempStrB);
@@ -527,8 +530,8 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 			}
 			else if (!XMLString::equals(attr->getNodeValue(), oldattr->getNodeValue())) {
 				vddprintf(("new node %d, attribute %d updated\n", v1nodeID, i));
-				XMLString::transcode("au", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("xy:au", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 				XMLString::transcode("xid", tempStrA, 99);
 				XMLString::transcode(xidstr, tempStrB, 99);
 				elem->setAttribute(tempStrA, tempStrB);
@@ -551,8 +554,8 @@ void DeltaConstructor::AddAttributeOperations( int v1nodeID ) {
 			DOMNode* attr = node->getAttributes()->getNamedItem(oldattr->getNodeName()) ;
 			if (attr==NULL) {
 				vddprintf(("old node %d, attribute %d deleted\n", v0nodeID, i));
-				XMLString::transcode("ad", tempStrA, 99);
-				DOMElement* elem = deltaDoc->createElement(tempStrA);
+				XMLString::transcode("xy:ad", tempStrA, 99);
+				DOMElement* elem = deltaDoc->createElementNS(XYDIFF_XYDELTA_NS, tempStrA);
 				XMLString::transcode("xid", tempStrA, 99);
 				XMLString::transcode(xidstr, tempStrB, 99);
 				elem->setAttribute(tempStrA, tempStrB);
@@ -670,8 +673,8 @@ void DeltaConstructor::constructDeltaDocument(void) {
 	/* --- Add Rename Root Operation --- */
 	if (!XMLString::equals(v0XML->getDocumentElement()->getNodeName(), v1XML->getDocumentElement()->getNodeName())) {
 		XMLCh tempStr[100];
-		XMLString::transcode("renameRoot", tempStr, 99);
-		DOMElement *rrOp = scriptRoot->getOwnerDocument()->createElement(tempStr);
+		XMLString::transcode("xy:renameRoot", tempStr, 99);
+		DOMElement *rrOp = scriptRoot->getOwnerDocument()->createElementNS(XYDIFF_XYDELTA_NS, tempStr);
 		XMLString::transcode("from", tempStr, 99);
 		rrOp->setAttribute(tempStr, v0XML->getDocumentElement()->getNodeName());
 		XMLString::transcode("to", tempStr, 99);

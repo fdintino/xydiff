@@ -10,7 +10,6 @@
 #include "Diff_DeltaConstructor.hpp"
 #include "Diff_UniqueIdHandler.hpp"
 #include "xydiff/DeltaException.hpp"
-#include "DeltaManager.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMElement.hpp"
