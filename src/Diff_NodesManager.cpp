@@ -1,29 +1,19 @@
-//#define VERBOSE
-
 #include "Diff_NodesManager.hpp"
-#include "Diff_UniqueIdHandler.hpp"
-#include "xydiff/DeltaException.hpp"
-#include "lookup2.hpp"
-#include "CommonSubSequenceAlgorithms.hpp"
-#include "Tools.hpp"
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyUTF8Str.hpp"
-#include "xydiff/XID_map.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
+
+#include <math.h>
+#include <queue>
+#include <vector>
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 
+#include "xydiff/DeltaException.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/XyUTF8Str.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
-#include <stdio.h>
-#include <map>
-#include <queue>
-#include <list>
-#include <math.h>
-#include <fstream>
-#include "infra/general/hash_map.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
+#include "Diff_UniqueIdHandler.hpp"
 
-#include <sys/timeb.h>
-#include <time.h>
 
 #define MIN_CANDIDATEPARENT_LEVEL (3)
 

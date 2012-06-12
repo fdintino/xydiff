@@ -1,9 +1,10 @@
 #include "convertUTF.hpp"
+
+#include <string.h>
+
 #include "StringPusher.hpp"
 #include "infra/general/Log.hpp"
 
-#include <assert.h>
-#include <string.h>
 
 /** reference for latin9 encoding:
     http://www.cs.tut.fi/~jkorpela/latin9.html

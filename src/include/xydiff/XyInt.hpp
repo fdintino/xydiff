@@ -1,13 +1,9 @@
 #ifndef XYINT_HXX__
 #define XYINT_HXX__
 
-/* Class to transform directly a DOMString into an int */
-
-#include "xydiff/XyStr.hpp"
-
-// #include "xercesc/dom/deprecated/DOMString.hpp"
-#include <stdio.h>
 #include <iostream>
+#include "xercesc/util/XMLString.hpp"
+
 
 class XyInt {
 	public:

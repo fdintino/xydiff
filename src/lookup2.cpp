@@ -8,7 +8,6 @@ You can use this free for any purpose.  It has no warranty.
 */
 // #define SELF_TEST
 
-#include "xercesc/util/XMLString.hpp"
 #include "lookup2.hpp"
 #include <stdio.h>
 #include <stddef.h>

@@ -1,69 +1,14 @@
+#include "xydiff/DeltaException.hpp"
+
 #ifdef __SunOS
 #include <sys/varargs.h>
 #endif
 
-#include "xydiff/DeltaException.hpp"
 #include <errno.h>
-
 #include <stdarg.h>
-
-#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
-#else
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
-#endif
-
-#if defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-struct timezone 
-{
-  int  tz_minuteswest; /* minutes W of Greenwich */
-  int  tz_dsttime;     /* type of dst correction */
-};
-
-int gettimeofday(struct timeval *tv, struct timezone *tz)
-{
-  FILETIME ft;
-  unsigned __int64 tmpres = 0;
-  static int tzflag;
- 
-  if (NULL != tv)
-  {
-    GetSystemTimeAsFileTime(&ft);
- 
-    tmpres |= ft.dwHighDateTime;
-    tmpres <<= 32;
-    tmpres |= ft.dwLowDateTime;
- 
-    /*converting file time to unix epoch*/
-    tmpres /= 10;  /*convert into microseconds*/
-    tmpres -= DELTA_EPOCH_IN_MICROSECS; 
-    tv->tv_sec = (long)(tmpres / 1000000UL);
-    tv->tv_usec = (long)(tmpres % 1000000UL);
-  }
- 
-  if (NULL != tz)
-  {
-    if (!tzflag)
-    {
-      _tzset();
-      tzflag++;
-    }
-    tz->tz_minuteswest = _timezone / 60;
-    tz->tz_dsttime = _daylight;
-  }
- 
-  return 0;
-}
-#endif
 
 
 DeltaException::DeltaException(std::string msg, char *e) {
-#ifndef ZEND_API
-	// ERROR("msg="<<msg.c_str());
-	// printf("\n\n*** DELTA-EXCEPTION ***\n>> %s\n\n", msg.c_str());
-	// fflush(stdout);
-#endif
 	message = new char[msg.size() + 1];
 	std::copy(msg.begin(), msg.end(), message);
 	message[msg.size()] = '\0';
@@ -76,7 +21,6 @@ DeltaException::~DeltaException() {
 	delete [] message;
 	delete [] error;
 }	
-
 
 MessageEngine::MessageEngine(const char *filename, int line, const char *method) {
   struct tm tm_time;
@@ -125,4 +69,4 @@ char* MessageEngine::getStr(void) {
 	};
 char* MessageEngine::getWhy(void) {
 	return why;
-	};
+};

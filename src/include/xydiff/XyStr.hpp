@@ -1,20 +1,10 @@
 #ifndef XYSTR_HXX__
 #define XYSTR_HXX__
 
-/* Class that handles transcode value of XMLString */
-
-#include <stdio.h>
-#include <iostream>
 #include <map>
 #include <string>
 
 #include "xercesc/util/TransService.hpp"
-
-#ifndef XERCES_STRINGS_HPP_INCLUDED
-#define XERCES_STRINGS_HPP_INCLUDED
-
-#include <xercesc/util/XMLString.hpp>
-#endif // #ifndef XERCES_STRINGS_HPP_INCLUDED
 
 
 class XyStr {

@@ -1,28 +1,19 @@
-/*
- *  XyStrDeltaApply.hpp
- *  xydiff
- *
- *  Created by Frankie Dintino on 2/13/09.
- *
- */
-
 #ifndef XyStrDeltaApply_HXX__
 #define XyStrDeltaApply_HXX__
 
 /* Class to do diffs on strings character-by-character */
 
-#include "xydiff/XyStr.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
-
-// #include "xercesc/dom/deprecated/DOMString.hpp"
 #include <stdio.h>
-#include <iostream>
 #include <string>
 #include <vector>
-#include "xercesc/dom/DOMDocument.hpp"
-#include "xercesc/dom/DOMElement.hpp"
-
 #include <map>
+
+#include "xercesc/dom/DOMElement.hpp"
+#include "xercesc/dom/DOMNodeFilter.hpp"
+#include "xercesc/dom/DOMNode.hpp"
+#include "xercesc/dom/DOMText.hpp"
+
+#include "xydiff/XID_DOMDocument.hpp"
 
 namespace XyStrDelta {
 

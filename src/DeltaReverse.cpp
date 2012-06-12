@@ -1,24 +1,16 @@
-#include "xydiff/XyLatinStr.hpp"
 #include "DeltaReverse.hpp"
-#include "xydiff/DeltaException.hpp"
 
-//#include <../src/dom/NodeImpl.hpp>
+#include <fstream>
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMAttr.hpp"
-#include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 
-#include "xydiff/XID_DOMDocument.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XyDelta_DOMInterface.hpp"
-
-#include "DOMPrint.hpp"
-#include "Tools.hpp"
-#include <fstream>
-
 #include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
 
 XERCES_CPP_NAMESPACE_USE
 

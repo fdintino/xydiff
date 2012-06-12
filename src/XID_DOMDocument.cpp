@@ -1,11 +1,8 @@
 #include "infra/general/Log.hpp"
 
-#include "xercesc/util/PlatformUtils.hpp"
+#include <stdio.h>
+#include <fstream>
 
-#include "xercesc/framework/MemBufInputSource.hpp"
-#include "xercesc/framework/LocalFileFormatTarget.hpp"
-#include "xercesc/framework/LocalFileInputSource.hpp"
-#include "xercesc/framework/Wrapper4InputSource.hpp"
 #include "xercesc/dom/DOMImplementation.hpp"
 #include "xercesc/dom/DOMImplementationLS.hpp"
 #include "xercesc/dom/DOMImplementationRegistry.hpp"
@@ -16,28 +13,24 @@
 #include "xercesc/dom/DOMLSSerializer.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMNodeList.hpp"
-
-
 #include "xercesc/dom/DOMLocator.hpp"
 #include "xercesc/dom/DOMAttr.hpp"
+#include "xercesc/framework/LocalFileFormatTarget.hpp"
+#include "xercesc/framework/LocalFileInputSource.hpp"
+#include "xercesc/framework/Wrapper4InputSource.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
+#include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/sax/ErrorHandler.hpp"
-#include "xercesc/sax/SAXException.hpp"
 #include "xercesc/sax/SAXParseException.hpp"
 
-#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
 #include "xydiff/XID_map.hpp"
+#include "xydiff/XyDiffNS.hpp"
+#include "xydiff/XyLatinStr.hpp"
 
-#include "xydiff/DeltaException.hpp"
 #include "DOMPrint.hpp"
 #include "Tools.hpp"
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
-
-#include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
 
 XERCES_CPP_NAMESPACE_USE
 using namespace std;

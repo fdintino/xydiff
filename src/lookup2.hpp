@@ -1,7 +1,7 @@
 #ifndef HASH32_FAST__
 #define HASH32_FAST__
 
-#include "xercesc/util/XMLUniDefs.hpp"
+#include "xercesc/util/XMLString.hpp"
 
 /*
  *

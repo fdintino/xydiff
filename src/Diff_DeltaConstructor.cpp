@@ -1,13 +1,7 @@
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyUTF8Str.hpp"
 #include "Diff_DeltaConstructor.hpp"
 
-#include "CommonSubSequenceAlgorithms.hpp"
-#include "Tools.hpp"
-#include "xydiff/XID_map.hpp"
-#include "Diff_NodesManager.hpp"
-#include "xydiff/XyStrDiff.hpp"
-#include "xydiff/DeltaException.hpp"
+#include <stdio.h>
+#include <fstream>
 
 #include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/dom/DOMNodeList.hpp"
@@ -16,26 +10,20 @@
 #include "xercesc/dom/DOMAttr.hpp"
 #include "xercesc/util/XMLString.hpp"
 
-//#define SKIP_UNIMPORTANT_MOVE 1
+#include "xydiff/XyStrDiff.hpp"
+#include "xydiff/DeltaException.hpp"
+#include "xydiff/XyDiffNS.hpp"
 
-#include <stdio.h>
-#include <map>
-#include <queue>
-#include <list>
-#include <math.h>
-#include <fstream>
-#include "infra/general/hash_map.hpp"
+#include "Diff_NodesManager.hpp"
+
 
 bool _XyDiff_DontSaveXidmapToFile = false;
-
-#include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
 
 XERCES_CPP_NAMESPACE_USE
 
 XID_DOMDocument *DeltaConstructor::getDeltaDocument(void) {
 	return deltaDoc ;
-	}
+}
 
 DeltaConstructor::DeltaConstructor(
 		class NodesManager *incMappings,
@@ -166,7 +154,7 @@ void DeltaConstructor::ConstructDeleteScript( int v0nodeID, bool ancestorDeleted
 					myXidMap = std::string( xidstr );
 					}
 				XID_t parentXID = nodesManager->v0doc->getXidMap().getXIDbyNode( parentNode ) ;
-				int myPosition = myAtomicInfo.myPosition ; //getPosition( parentNode, node );
+				int myPosition = myAtomicInfo.myPosition;
 
 				char parXID_str[10] ;
 				char pos_str[10] ;
@@ -327,7 +315,7 @@ void DeltaConstructor::ConstructInsertScript( int v1nodeID, bool ancestorInserte
 			else {
 				DOMNode* parentNode = node->getParentNode() ;
 				XID_t parentXID = nodesManager->v1doc->getXidMap().getXIDbyNode( parentNode );
-				int myPosition = myAtomicInfo.myPosition ; // getPosition( parentNode, node );
+				int myPosition = myAtomicInfo.myPosition;
 
 				char parXID_str[10] ;
 				char pos_str[10] ;
@@ -686,4 +674,4 @@ void DeltaConstructor::constructDeltaDocument(void) {
 
 	
 	return ;
-  }
+}

@@ -1,13 +1,7 @@
-
 #include "DeltaManager.hpp"
 
-#include "Tools.hpp"
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyUTF8Str.hpp"
-#include "DOMPrint.hpp"
+#include <set>
 
-//#include <util/PlatformUtils.hpp>
-#include "xercesc/dom/DOMException.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMElement.hpp"
@@ -15,11 +9,11 @@
 #include "xercesc/dom/DOMImplementation.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 
-#include <stdio.h>
-#include <set>
-
 #include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/VersionManagerException.hpp"
+
+#include "Tools.hpp"
 
 XERCES_CPP_NAMESPACE_USE
 

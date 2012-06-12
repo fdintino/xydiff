@@ -13,7 +13,6 @@
 
 #include "xercesc/dom/DOMNode.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
-//#include "RepositoryContext/VersionManager.hpp"
 
 #include <vector>
 #include <string>

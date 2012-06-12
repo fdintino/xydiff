@@ -1,46 +1,13 @@
-/*
- *  StringDiff.cpp
- *  xydiff
- *
- *  Created by Frankie Dintino on 2/3/09.
- *
- */
-
-#include "xercesc/util/PlatformUtils.hpp"
-
-
-#include "Tools.hpp"
-#include "xydiff/DeltaException.hpp"
-#include "xydiff/XyLatinStr.hpp"
-#include "xercesc/util/XMLString.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-
-#include "xercesc/dom/DOMImplementation.hpp"
-#include "xercesc/dom/DOMImplementationLS.hpp"
-#include "xercesc/dom/DOMImplementationRegistry.hpp"
-#include "xercesc/dom/DOMException.hpp"
-#include "xercesc/dom/DOMDocument.hpp"
-#include "xercesc/dom/DOMElement.hpp"
-#include "xercesc/dom/DOMText.hpp"
-#include "xercesc/dom/DOMTreeWalker.hpp"
-
-#include "xercesc/dom/DOMNodeList.hpp"
-
-#include "xercesc/dom/DOMAttr.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-#include "xercesc/sax/ErrorHandler.hpp"
-#include "xercesc/sax/SAXException.hpp"
-#include "xercesc/sax/SAXParseException.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
-
-
-#include <stdlib.h>
-#include <string.h>
-#include <sstream>
-
 #include "xydiff/XyStrDiff.hpp"
 
+#include <iostream>
 
+#include "xercesc/util/XMLUniDefs.hpp"
+#include "xercesc/dom/DOMException.hpp"
+#include "xercesc/dom/DOMText.hpp"
+#include "xercesc/dom/DOMNodeList.hpp"
+
+#include "Tools.hpp"
 
 /*
  * XyStrDiff functions (character-by-character string diffs)

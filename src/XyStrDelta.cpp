@@ -1,47 +1,17 @@
-/*
- *  XyStrDeltaApply.cpp
- *  xydiff
- *
- *  Created by Frankie Dintino on 2/13/09.
- *
- */
-
-#include "xercesc/util/PlatformUtils.hpp"
-
-
-#include "Tools.hpp"
-#include "xydiff/DeltaException.hpp"
-#include "xydiff/XyLatinStr.hpp"
-#include "xercesc/util/XMLString.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-
-#include "xercesc/dom/DOMImplementation.hpp"
-#include "xercesc/dom/DOMImplementationLS.hpp"
-#include "xercesc/dom/DOMImplementationRegistry.hpp"
-#include "xercesc/dom/DOMException.hpp"
-#include "xercesc/dom/DOMDocument.hpp"
-#include "xercesc/dom/DOMElement.hpp"
-#include "xercesc/dom/DOMText.hpp"
-#include "xercesc/dom/DOMTreeWalker.hpp"
-
-#include "xercesc/dom/DOMNodeList.hpp"
-
-#include "xercesc/dom/DOMAttr.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-#include "xercesc/sax/ErrorHandler.hpp"
-#include "xercesc/sax/SAXException.hpp"
-#include "xercesc/sax/SAXParseException.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
-
-
-#include <stdlib.h>
-#include <string.h>
-#include <sstream>
-
 #include "xydiff/XyStrDelta.hpp"
 
+#include <string.h>
+
+#include "xercesc/util/XMLString.hpp"
+#include "xercesc/dom/DOMTreeWalker.hpp"
+#include "xercesc/dom/DOMNodeList.hpp"
+
+#include "xydiff/DeltaException.hpp"
+#include "xydiff/XyLatinStr.hpp"
 #include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
+#include "xydiff/XyStr.hpp"
+
+#include "Tools.hpp"
 
 XERCES_CPP_NAMESPACE_USE 
 

@@ -1,7 +1,6 @@
 #ifndef __XYDELTADOM_HXX
 #define __XYDELTADOM_HXX
 
-#include <stdio.h>
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
 

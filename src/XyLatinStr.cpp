@@ -1,21 +1,13 @@
 #include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyUTF8Str.hpp"
-#include "xydiff/XyStr.hpp"
 
-#include "xercesc/sax/SAXParseException.hpp"
-#include "xercesc/sax/Locator.hpp"
-#include "xercesc/util/PlatformUtils.hpp"
-#include "xercesc/util/TransService.hpp"
-#include "xercesc/util/XMLString.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-#include "xercesc/validators/schema/SchemaSymbols.hpp"
-
-#include "infra/general/Logf.hpp"
-#include "convertUTF.hpp"
-
-#include <iostream>
-#include <fstream>
 #include <string.h>
+
+#include "xercesc/util/XMLString.hpp"
+
+#include "xydiff/XyStr.hpp"
+#include "infra/general/Logf.hpp"
+
+#include "convertUTF.hpp"
 
 XyLatinStr::XyLatinStr(const XMLCh* const toTranscode, int size, const int fastOp, bool escapeSequenceXyHack) : XyStr(toTranscode, size, fastOp), theEscapeSequenceXyHack(escapeSequenceXyHack) {
 	if (theFastOptions & XyStr::NO_SOURCE_COPY) {

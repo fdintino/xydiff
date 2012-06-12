@@ -1,7 +1,6 @@
 #ifndef DIFF_DELTACONSTRUCTOR_HXX
 #define DIFF_DELTACONSTRUCTOR_HXX
 
-#include "Tools.hpp"
 #include "xydiff/XID_map.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
 

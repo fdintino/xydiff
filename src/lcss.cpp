@@ -24,21 +24,10 @@
  of the resulting common subsequence is set to 0
  
 */
-
-#include "CommonSubSequenceAlgorithms.hpp"
-
-#include <stdio.h>
-#define _PTHREAD
 #include <vector>
 
-//#define DEBUG_VERBOSE
-//#define TESTING
-
-#ifdef DEBUG_VERBOSE
-#define vddprintf(a) printf a
-#else
-#define vddprintf(a)
-#endif
+#include "xydiff/VersionManagerException.hpp"
+#include "CommonSubSequenceAlgorithms.hpp"
 
 
 inline char min3(float a, float b, float c) {

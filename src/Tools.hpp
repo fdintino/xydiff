@@ -1,6 +1,7 @@
 #ifndef __VM2_TOOLS_HXX_GFBFD__
 #define __VM2_TOOLS_HXX_GFBFD__
 
+#include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/dom/DOMDocument.hpp"
 
@@ -9,32 +10,8 @@
 #include <string>
 #include <stdio.h>
 
-// #define VERBOSE
-//#define DONT_SAVE_RESULT
-//#define DISABLE_POSITION_MOVING
-//#define DISABLE_PRIORITY_FIFO
-#define HW_PROF
-
-// PentiumIII 600 MHz:
-#define CLOCKRATE 602269556
-
-
-extern FILE *timeFile ;
 
 std::ostream& operator << (std::ostream& target, const VersionManagerException &e) ;
-
-/*
- * get the child position of a node in the source document
- *
- * Valid values are 1...n, where n is the number of childs
- *
- */
-
-int getPosition(xercesc::DOMNode *parent, xercesc::DOMNode *child) ;
-
-/* Test if document is a delta */
-
-bool isDelta(const xercesc::DOMDocument *doc) ;
 
 /* 
  * it transforms a DOMString into an int; if it's error returns 0 

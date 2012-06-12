@@ -1,33 +1,9 @@
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyUTF8Str.hpp"
-#include "xydiff/XID_map.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
-
-#include "DOMPrint.hpp"
-#include "CommonSubSequenceAlgorithms.hpp"
-#include "Tools.hpp"
+#include "Diff_UniqueIdHandler.hpp"
 #include "Diff_NodesManager.hpp"
 #include "Diff_DeltaConstructor.hpp"
-#include "Diff_UniqueIdHandler.hpp"
-#include "xydiff/DeltaException.hpp"
 
-#include "xercesc/dom/DOMNamedNodeMap.hpp"
-#include "xercesc/dom/DOMElement.hpp"
-#include "xercesc/validators/DTD/DTDValidator.hpp"
-
+#include "xydiff/XID_DOMDocument.hpp"
 #include "infra/general/Log.hpp"
-
-#include <stdio.h>
-#include <map>
-#include <queue>
-#include <list>
-#include <math.h>
-#include <fstream>
-#include "infra/general/hash_map.hpp"
-
-//class DTDValidator;
-
-
 
 XERCES_CPP_NAMESPACE_USE
 /*******************************************************************

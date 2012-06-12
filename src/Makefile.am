@@ -25,12 +25,10 @@ libXyDelta_la_SOURCES = convertUTF.cpp StringPusher.cpp \
                     XyDeltaDomImpl.cpp \
                     XyInt.cpp \
                     XyLatinStr.cpp \
-                    XyLatinDocument.cpp \
                     XyStr.cpp \
                     XyStrDiff.cpp \
                     XyStrDelta.cpp \
-                    XyUTF8Str.cpp \
-                    XyUTF8Document.cpp
+                    XyUTF8Str.cpp
 
 libXyDelta_la_CPPFLAGS = $(XERCESC_INCLUDE) -I$(top_srcdir)/src -I$(top_srcdir)/src/include
 # libXyDelta_la_LIBADD = $(XERCESC_LIB)

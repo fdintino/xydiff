@@ -1,6 +1,17 @@
 #include "xyleme_DOMPrint.hpp"
+
+#include <string.h>
+#include <stdlib.h>
+
+#include "xercesc/dom/DOMNamedNodeMap.hpp"
+#include "xercesc/util/XMLString.hpp"
+#include "xercesc/util/XMLUniDefs.hpp"
+
 #include "xydiff/XID_map.hpp"
 #include "xydiff/XyLatinStr.hpp"
+
+XERCES_CPP_NAMESPACE_USE
+using namespace std;
 
 /*
  * The Apache Software License, Version 1.1
@@ -197,23 +208,6 @@
 //
 // ---------------------------------------------------------------------------
 
-
-// ---------------------------------------------------------------------------
-//  Includes
-// ---------------------------------------------------------------------------
-#include "xercesc/util/PlatformUtils.hpp"
-#include "xercesc/dom/DOMImplementationRegistry.hpp"
-// #include "xercesc/dom/DOMBuilder.hpp"
-#include "xercesc/dom/DOMNode.hpp"
-#include "xercesc/dom/DOMNamedNodeMap.hpp"
-#include "xercesc/util/XMLString.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-//#include "DOMTreeErrorReporter.hpp"
-#include <string.h>
-#include <stdlib.h>
-
-XERCES_CPP_NAMESPACE_USE
-using namespace std;
 
 // ---------------------------------------------------------------------------
 //  Local data

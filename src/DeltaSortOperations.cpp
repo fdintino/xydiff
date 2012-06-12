@@ -1,12 +1,12 @@
 #include "DeltaSortOperations.hpp"
-#include "xydiff/DeltaException.hpp"
-#include "xydiff/XID_map.hpp"
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyInt.hpp"
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/util/XMLString.hpp"
+
+#include "xydiff/DeltaException.hpp"
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XyInt.hpp"
 
 XERCES_CPP_NAMESPACE_USE
 

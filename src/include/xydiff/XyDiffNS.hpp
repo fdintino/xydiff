@@ -5,7 +5,7 @@
 
 XERCES_CPP_NAMESPACE_USE
 
-namespace XyDiff {
+namespace {
 	
 static const XMLCh XYDIFF_XYDELTA_NS[] = {
 	chLatin_u,

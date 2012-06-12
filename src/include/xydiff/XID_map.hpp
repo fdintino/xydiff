@@ -2,12 +2,12 @@
 #define XID_MAP_HXX__
 
 #include <map>
-//#include "infra/general/hash_map.hpp"
 #include <vector>
 #include <string>
-#include "xydiff/VersionManagerException.hpp"
-//#include "xercesc/dom/deprecated/DOM_Node.hpp"
+
 #include "xercesc/dom/DOMNode.hpp"
+
+#include "xydiff/VersionManagerException.hpp"
 
 #define XID_INVALID (-1)
 typedef long int XID_t ;

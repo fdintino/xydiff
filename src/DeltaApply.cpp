@@ -1,7 +1,6 @@
-#include "xydiff/DeltaException.hpp"
 #include "DeltaApply.hpp"
-#include "DeltaSortOperations.hpp"
-#include "DeltaManager.hpp"
+
+#include <stdio.h>
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/dom/DOMNodeList.hpp"
@@ -11,18 +10,15 @@
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/XMLUniDefs.hpp"
 
+#include "DeltaSortOperations.hpp"
+#include "Tools.hpp"
+
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XyLatinStr.hpp"
 #include "xydiff/XyInt.hpp"
 #include "xydiff/XyDelta_DOMInterface.hpp"
-#include "xydiff/XyStrDiff.hpp"
 #include "xydiff/XyStrDelta.hpp"
-
-#include "Tools.hpp"
-#include "xydiff/XID_map.hpp"
-#include <stdio.h>
-
 #include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
 
 XERCES_CPP_NAMESPACE_USE
 

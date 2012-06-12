@@ -1,5 +1,8 @@
 #include "xydiff/XyStr.hpp"
 
+#include <string>
+#include <vector>
+
 #include "xercesc/util/XMLString.hpp"
 #include "xercesc/util/PlatformUtils.hpp"
 #include "xercesc/util/TransService.hpp"
@@ -9,12 +12,6 @@
 #include "infra/general/Log.hpp"
 #include "infra/general/Logf.hpp"
 
-
-#include <iostream>
-#include <fstream>
-#include <string.h>
-#include <string>
-#include <vector>
 
 XERCES_CPP_NAMESPACE_USE 
 

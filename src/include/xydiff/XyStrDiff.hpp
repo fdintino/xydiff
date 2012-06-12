@@ -1,29 +1,17 @@
-/*
- *  StringDiff.h
- *  xydiff
- *
- *  Created by Frankie Dintino on 2/3/09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
- */
-
 #ifndef XyStrDiff_HXX__
 #define XyStrDiff_HXX__
 
 /* Class to do diffs on strings character-by-character */
 
-#include "xydiff/XyStr.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
-
-// #include "xercesc/dom/deprecated/DOMString.hpp"
-#include <stdio.h>
-#include <iostream>
 #include <string>
-#include <vector>
+
+#include "xercesc/util/XMLString.hpp"
 #include "xercesc/dom/DOMDocument.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/dom/DOMNodeFilter.hpp"
+#include "xercesc/dom/DOMImplementation.hpp"
 
+#include "xydiff/XyStr.hpp"
 
 #define STRDIFF_NOOP 0
 #define STRDIFF_SUB 1

@@ -1,17 +1,10 @@
+#include <iostream>
+
+#include "xercesc/util/XMLString.hpp"
+
 #include "xydiff/XyUTF8Str.hpp"
 #include "xydiff/XyStr.hpp"
 
-#include "xercesc/sax/SAXParseException.hpp"
-#include "xercesc/sax/Locator.hpp"
-#include "xercesc/util/PlatformUtils.hpp"
-#include "xercesc/util/TransService.hpp"
-#include "xercesc/util/XMLString.hpp"
-#include "xercesc/util/XMLUniDefs.hpp"
-#include "xercesc/validators/schema/SchemaSymbols.hpp"
-
-#include <iostream>
-#include <fstream>
-#include <string.h>
 
 /*
  * XyUTF8Str functions (identical to StrX in xerces samples)

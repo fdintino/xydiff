@@ -1,52 +1,14 @@
 #include "Tools.hpp"
-#include "xydiff/XyLatinStr.hpp"
 
 #include <iostream>
-#include "xercesc/util/XMLUni.hpp"
 
-#include "xercesc/util/XMLString.hpp"
-
-#include "xercesc/dom/DOMNode.hpp"
 #include "xercesc/dom/DOMElement.hpp"
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 
+#include "xydiff/XyLatinStr.hpp"
+
 XERCES_CPP_NAMESPACE_USE
 
-//--------------------------------------------------------------------------
-//
-//get the child position of a node in the source document
-//
-//--------------------------------------------------------------------------
-
-int getPosition(DOMNode *parent, DOMNode *child) {
-  int pos = 1;
-	if (!parent->hasChildNodes()) throw VersionManagerException("getPosition()", "Parent has no child") ;
-  DOMNode* test = parent->getFirstChild();
-  while (test!=child) {
-    test=test->getNextSibling();
-    pos++;
-    }
-	if (test==NULL) throw VersionManagerException("getPosition()", "Child not found");
-	return pos;
-  }
-
-//--------------------------------------------------------------------------
-//
-// tests if the DOM_Document is a delta
-//
-//--------------------------------------------------------------------------
-
-bool isDelta(const DOMDocument *doc) {
-	if ((doc!=NULL)&&(doc->hasChildNodes())) {
-		DOMElement* docRoot = doc->getDocumentElement() ;
-		if (docRoot!=NULL) {
-        	        if (XMLString::equals(docRoot->getLocalName(), XMLString::transcode("unit_delta"))) {
-				return true ;
-			}
-		}
-	}
-	return false;
-}
 
 //--------------------------------------------------------------------------
 //

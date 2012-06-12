@@ -1,14 +1,12 @@
-#include "infra/general/Log.hpp"
-
-#include "xydiff/XID_map.hpp"
-
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/DeltaException.hpp"
-
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 #include "xercesc/util/XMLString.hpp"
 
-#include <stdio.h>
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XyLatinStr.hpp"
+#include "xydiff/DeltaException.hpp"
+
+#include "infra/general/Log.hpp"
+
 
 XERCES_CPP_NAMESPACE_USE
 

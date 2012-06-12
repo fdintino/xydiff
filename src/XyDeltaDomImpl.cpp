@@ -1,33 +1,17 @@
 #include "xydiff/XyDelta_DOMInterface.hpp"
 
-#include "xydiff/XyLatinStr.hpp"
-#include "xydiff/XyUTF8Str.hpp"
-#include "xydiff/XID_map.hpp"
+#include "xercesc/dom/DOMNamedNodeMap.hpp"
+
 #include "xydiff/XID_DOMDocument.hpp"
+#include "infra/general/Log.hpp"
 
 #include "DeltaApply.hpp"
 #include "DeltaReverse.hpp"
-#include "DOMPrint.hpp"
-#include "CommonSubSequenceAlgorithms.hpp"
-#include "Tools.hpp"
-#include "Diff_NodesManager.hpp"
-#include "Diff_DeltaConstructor.hpp"
-#include "Diff_UniqueIdHandler.hpp"
-#include "xydiff/DeltaException.hpp"
-#include "DeltaManager.hpp"
 
-#include "xercesc/dom/DOMNamedNodeMap.hpp"
-#include "xercesc/dom/DOMElement.hpp"
-#include "xercesc/dom/DOMImplementationRegistry.hpp"
-#include "xercesc/dom/DOMImplementation.hpp"
-#include "xercesc/validators/DTD/DTDValidator.hpp"
-
-#include "infra/general/Log.hpp"
 
 XERCES_CPP_NAMESPACE_USE
 
 #include "xydiff/XyDiffNS.hpp"
-using namespace XyDiff;
 
 static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
 

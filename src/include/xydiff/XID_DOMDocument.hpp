@@ -8,9 +8,6 @@
 #include "xercesc/dom/DOMError.hpp"
 #include "xercesc/dom/DOMErrorHandler.hpp"
 #include "xercesc/dom/DOMLSParser.hpp"
-#include <iostream>
-#include "xercesc/sax/ErrorHandler.hpp"
-#include "xercesc/sax/SAXException.hpp"
 #include "xercesc/sax/SAXParseException.hpp"
 
 class DTDValidator;

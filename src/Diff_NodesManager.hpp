@@ -1,22 +1,16 @@
 #ifndef DIFF_NODESMANAGER_HXX
 #define DIFF_NODESMANAGER_HXX
 
-#include "CommonSubSequenceAlgorithms.hpp"
-#include "Tools.hpp"
-#include "lookup2.hpp"
-#include "xydiff/XID_map.hpp"
-#include "xydiff/XID_DOMDocument.hpp"
+#include <map>
+#include <iostream>
 
 #include "xercesc/dom/DOMNamedNodeMap.hpp"
 
+#include "xydiff/XID_map.hpp"
+#include "xydiff/XID_DOMDocument.hpp"
 
-#include <stdio.h>
-#include <map>
-#include <math.h>
-#include <fstream>
-
-#include <sys/timeb.h>
-#include <time.h>
+#include "Tools.hpp"
+#include "lookup2.hpp"
 
 
 /**** HEADERS ****/

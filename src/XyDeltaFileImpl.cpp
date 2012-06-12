@@ -1,41 +1,27 @@
 #include "xydiff/XyDelta_FileInterface.hpp"
 
+#include "xercesc/dom/DOMNamedNodeMap.hpp"
+#include "xercesc/dom/DOMNodeList.hpp"
+#include "xercesc/dom/DOMLSOutput.hpp"
+#include "xercesc/dom/DOMLSSerializer.hpp"
+#include "xercesc/dom/DOMImplementationLS.hpp"
+#include "xercesc/dom/DOMImplementationRegistry.hpp"
+#include "xercesc/dom/DOMException.hpp"
+#include "xercesc/framework/LocalFileFormatTarget.hpp"
+#include "xercesc/framework/StdOutFormatTarget.hpp"
+
+#include "xydiff/DeltaException.hpp"
 #include "xydiff/XyLatinStr.hpp"
 #include "xydiff/XyUTF8Str.hpp"
 #include "xydiff/XID_map.hpp"
 #include "xydiff/XID_DOMDocument.hpp"
+#include "infra/general/hash_map.hpp"
 
 #include "DeltaApply.hpp"
-#include "DOMPrint.hpp"
-#include "CommonSubSequenceAlgorithms.hpp"
-#include "Tools.hpp"
-#include "Diff_NodesManager.hpp"
-#include "Diff_DeltaConstructor.hpp"
-#include "Diff_UniqueIdHandler.hpp"
-#include "xydiff/DeltaException.hpp"
 #include "DeltaManager.hpp"
-
-#include "xercesc/dom/DOMNamedNodeMap.hpp"
-#include "xercesc/dom/DOMNodeList.hpp"
-#include "xercesc/dom/DOMElement.hpp"
-#include "xercesc/dom/DOMLSOutput.hpp"
-#include "xercesc/dom/DOMLSSerializer.hpp"
-#include "xercesc/dom/DOMLSOutput.hpp"
-#include "xercesc/dom/DOMImplementationLS.hpp"
-#include "xercesc/dom/DOMImplementationRegistry.hpp"
-#include "xercesc/dom/DOMException.hpp"
-#include "xercesc/validators/DTD/DTDValidator.hpp"
-#include "xercesc/framework/LocalFileFormatTarget.hpp"
-#include "xercesc/framework/StdOutFormatTarget.hpp"
+#include "Tools.hpp"
 
 
-#include <stdio.h>
-#include <map>
-#include <queue>
-#include <list>
-#include <math.h>
-#include <fstream>
-#include "infra/general/hash_map.hpp"
 
 XERCES_CPP_NAMESPACE_USE
 

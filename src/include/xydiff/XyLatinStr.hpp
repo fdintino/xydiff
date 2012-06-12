@@ -1,10 +1,7 @@
 #ifndef XYLATINSTR_HXX__
 #define XYLATINSTR_HXX__
 
-/* Class that handles transcode value of XMLString */
-
 #include "xydiff/XyStr.hpp"
-#include <stdio.h>
 #include <iostream>
 
 
