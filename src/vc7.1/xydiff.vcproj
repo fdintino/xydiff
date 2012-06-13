@@ -166,9 +166,6 @@
 				RelativePath="..\XyLatinStr.cpp">
 			</File>
 			<File
-				RelativePath="..\xyleme_DOMPrint.cpp">
-			</File>
-			<File
 				RelativePath="..\XyStr.cpp">
 			</File>
 			<File
@@ -229,9 +226,6 @@
 				RelativePath="..\Diff_UniqueIdHandler.hpp">
 			</File>
 			<File
-				RelativePath="..\DOMPrint.hpp">
-			</File>
-			<File
 				RelativePath="..\lookup2.hpp">
 			</File>
 			<File
@@ -239,9 +233,6 @@
 			</File>
 			<File
 				RelativePath="..\Tools.hpp">
-			</File>
-			<File
-				RelativePath="..\xyleme_DOMPrint.hpp">
 			</File>
 		</Filter>
 		<Filter

@@ -6,7 +6,7 @@
 #include "xydiff/XID_map.hpp"
 #include "Tools.hpp"
 #include "xydiff/XyLatinStr.hpp"
-#include "xyleme_DOMPrint.hpp"
+#include "legacy/xyleme_DOMPrint.hpp"
 #include <stdio.h>
 #include <fstream>
 #include <string>

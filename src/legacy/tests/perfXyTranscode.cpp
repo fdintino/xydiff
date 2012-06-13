@@ -11,7 +11,7 @@
 #include "xydiff/XyLatinStr.hpp"
 #include "xydiff/XyUTF8Str.hpp"
 #include "xydiff/XyUTF8Document.hpp"
-#include "xyleme_DOMPrint.hpp"
+#include "legacy/xyleme_DOMPrint.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>

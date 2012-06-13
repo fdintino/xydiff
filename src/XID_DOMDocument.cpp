@@ -29,7 +29,6 @@
 #include "xydiff/XyDiffNS.hpp"
 #include "xydiff/XyLatinStr.hpp"
 
-#include "DOMPrint.hpp"
 #include "Tools.hpp"
 
 XERCES_CPP_NAMESPACE_USE
