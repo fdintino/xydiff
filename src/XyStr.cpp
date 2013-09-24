@@ -1,5 +1,7 @@
 #include "xydiff/XyStr.hpp"
 
+#include <cstdio>
+#include <climits>
 #include <string>
 #include <vector>
 

@@ -1,6 +1,8 @@
 #include "convertUTF.hpp"
 
+#include <cstdlib>
 #include <string.h>
+#include <cstdio>
 
 #include "StringPusher.hpp"
 #include "infra/general/Log.hpp"

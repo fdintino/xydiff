@@ -4,6 +4,7 @@
 #include <sys/varargs.h>
 #endif
 
+#include <cstring>
 #include <errno.h>
 #include <stdarg.h>
 

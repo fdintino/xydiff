@@ -29,6 +29,7 @@
  
 */
 
+#include <cstdlib>
 #include <vector>
 #include "xydiff/VersionManagerException.hpp"
 #include "CommonSubSequenceAlgorithms.hpp"

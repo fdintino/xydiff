@@ -1,5 +1,6 @@
 #include "infra/general/Log.hpp"
 
+#include <cstdlib>
 #include <stdio.h>
 #include <fstream>
 
