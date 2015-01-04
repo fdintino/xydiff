@@ -6,7 +6,8 @@ xydiff
 * [About](#about)
 * [Requirements](#requirements)
 * [Installation](#installation)
-  * [Installing with autotools (Linux / Unix / BSD / Mac OS X)](#autotools-installation)
+  * [Building from source](#source-installation)
+  * [Building with autotools](#autotools-installation)
   * [Building on Windows](#win-build)
 * [License](#license)
 * [Authors](#authors)
@@ -42,7 +43,21 @@ installed with the binaries and headers for your platform:
 Installation
 -------------
 
-<a name="unix-installation"></a>
+<a name="source-installation"></a>
+### Building from source
+
+1. Download [xydiff-3.0.0.tar.gz](https://github.com/fdintino/xydiff/releases/download/v3.0.0/xydiff-3.0.0.tar.gz),
+   extract it, and cd into the directory `xydiff-3.0.0`.
+
+2. Run a typical configure / make. If Xerces-C++ was installed into an unusual
+   location, you may need to pass its prefix to `configure` using, for
+   example, `--with-xercesc=/opt/xerces`.
+   
+        ./configure
+        make
+        sudo make install
+
+<a name="autotools-installation"></a>
 ### Building with autotools (Linux / Unix / BSD / Mac OS X)
 
  1. Clone the xydiff repository:
@@ -54,14 +69,7 @@ Installation
 
         ./autogen.sh
 
- 3. Run a typical configure / make. If Xerces-C++ was installed into an unusual
-    location, you may need to pass its prefix to `configure` using, for
-    example, `--with-xercesc=/opt/xerces`.
-
-        ./configure
-        make
-        sudo make install
-
+ 3. Follow step (2) above in "Building from source"
 
 <a name="win-build"></a>
 ### Building on windows
