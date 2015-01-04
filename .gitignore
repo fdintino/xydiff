@@ -15,6 +15,7 @@ config.guess
 config.sub
 configure
 configure.scan
+compile
 depcomp
 doltcompile
 doltlibtool
