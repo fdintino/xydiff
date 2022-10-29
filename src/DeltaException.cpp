@@ -5,6 +5,7 @@
 #endif
 
 #include <cstring>
+#include <ctime>
 #include <errno.h>
 #include <stdarg.h>
 

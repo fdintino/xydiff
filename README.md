@@ -56,6 +56,7 @@ Installation
         ./configure
         make
         sudo make install
+        sudo ldconfig
 
 <a name="autotools-installation"></a>
 ### Building with autotools (Linux / Unix / BSD / Mac OS X)
